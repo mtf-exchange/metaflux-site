@@ -159,15 +159,15 @@ nav .bar::before {
 }
 nav .bar > * { position: relative; z-index: 1; }
 .brand {
-  font-family: var(--serif-display);
-  font-weight: 500;
-  font-size: 24px;
-  letter-spacing: -0.01em;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: -0.02em;
   color: var(--text);
   line-height: 1;
 }
-.brand .b-m { color: var(--blue); font-style: italic; }
-.brand .b-f { color: var(--pink); font-style: italic; }
+.brand .b-m { color: var(--blue); }
+.brand .b-f { color: var(--pink); }
 nav ul { display: flex; gap: 32px; list-style: none; }
 nav ul a {
   font-family: var(--mono);
