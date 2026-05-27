@@ -170,11 +170,12 @@ nav .bar > * { position: relative; z-index: 1; }
 .brand .b-f { color: var(--pink); }
 nav ul { display: flex; gap: 32px; list-style: none; }
 nav ul a {
-  font-family: var(--mono);
-  font-size: 12px;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 450;
   color: var(--text-mid);
   transition: color 0.15s;
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
 }
 nav ul a:hover { color: var(--text); }
 nav .nav-cta {
