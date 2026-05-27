@@ -39,6 +39,19 @@ Trans-pride flag drawn directly:
 
 Plus a neutral text grayscale.
 
+## Open Graph image
+
+`og.svg` is the source for the social-share card. Most platforms (Facebook, X / Twitter, LinkedIn, iMessage) require a raster image, so export it to `og.png` (1200×630) before deploying:
+
+```bash
+# requires rsvg-convert (brew install librsvg)
+rsvg-convert og.svg -o og.png -w 1200 -h 630
+```
+
+Or open `og.svg` in any vector editor (Figma, Illustrator, Inkscape) and export at 1200×630.
+
+The HTML references `/og.png`; deploy it next to `index.html`.
+
 ## License
 
 Marketing content © MetaFlux. No license granted; do not copy.

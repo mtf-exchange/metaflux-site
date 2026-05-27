@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0a0c12"/>
+      <stop offset="1" stop-color="#06070b"/>
+    </linearGradient>
+    <radialGradient id="blue-glow" cx="1080" cy="-40" r="540" gradientUnits="userSpaceOnUse">
+      <stop offset="0"   stop-color="#5BCEFA" stop-opacity="0.55"/>
+      <stop offset="0.7" stop-color="#5BCEFA" stop-opacity="0.05"/>
+      <stop offset="1"   stop-color="#5BCEFA" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="pink-glow" cx="120" cy="640" r="520" gradientUnits="userSpaceOnUse">
+      <stop offset="0"   stop-color="#F5A9B8" stop-opacity="0.50"/>
+      <stop offset="0.7" stop-color="#F5A9B8" stop-opacity="0.04"/>
+      <stop offset="1"   stop-color="#F5A9B8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#blue-glow)"/>
+  <rect width="1200" height="630" fill="url(#pink-glow)"/>
+
+  <!-- pride bar across top -->
+  <rect x="0"   y="0" width="240" height="3" fill="#5BCEFA"/>
+  <rect x="240" y="0" width="240" height="3" fill="#F5A9B8"/>
+  <rect x="480" y="0" width="240" height="3" fill="#ffffff"/>
+  <rect x="720" y="0" width="240" height="3" fill="#F5A9B8"/>
+  <rect x="960" y="0" width="240" height="3" fill="#5BCEFA"/>
+
+  <!-- wordmark, top-left -->
+  <text x="80" y="100"
+        font-family="-apple-system, 'Geist', system-ui, sans-serif"
+        font-size="34" font-weight="600" letter-spacing="-0.5">
+    <tspan fill="#5BCEFA">M</tspan><tspan fill="#f0f3f7">eta</tspan><tspan fill="#F5A9B8">F</tspan><tspan fill="#f0f3f7">lux</tspan>
+  </text>
+
+  <!-- tagline -->
+  <text x="80" y="320"
+        font-family="'Cormorant Garamond', Cambria, Georgia, serif"
+        font-size="124" font-weight="500" fill="#f0f3f7" letter-spacing="-3">
+    Derivatives,
+  </text>
+  <text x="80" y="440"
+        font-family="'Cormorant Garamond', Cambria, Georgia, serif"
+        font-size="124" font-weight="500" fill="#f0f3f7" letter-spacing="-3">
+    on <tspan font-style="italic" fill="#F5A9B8">first principles</tspan>.
+  </text>
+
+  <!-- url + foundation, bottom-left -->
+  <text x="80" y="570"
+        font-family="-apple-system, 'Geist Mono', monospace"
+        font-size="20" font-weight="500" fill="#8b96a8" letter-spacing="0.5">
+    mtf.exchange
+  </text>
+  <text x="80" y="598"
+        font-family="-apple-system, 'Geist Mono', monospace"
+        font-size="13" font-weight="500" fill="#5a6273" letter-spacing="2">
+    A TZAI FOUNDATION PRODUCT
+  </text>
+
+  <!-- pride swatches, bottom-right -->
+  <rect x="1060" y="570" width="20" height="20" fill="#5BCEFA"/>
+  <rect x="1085" y="570" width="20" height="20" fill="#F5A9B8"/>
+  <rect x="1110" y="570" width="20" height="20" fill="#ffffff"/>
+</svg>
