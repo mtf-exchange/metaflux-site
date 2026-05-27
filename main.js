@@ -1,0 +1,77 @@
+// Light interactions.
+//
+// 1. Updates --scroll-y on scroll for any CSS that wants a parallax cue.
+// 2. Adds `scrolled` class to nav once the hero scrolls past, so the glass
+//    bar tightens slightly. Pure aesthetic.
+// 3. Typewriter effect on `.typewriter` elements. Cycles through a list of
+//    phrases sourced from `data-phrases` (pipe-separated). Respects
+//    prefers-reduced-motion (renders the first phrase static, no animation).
+
+(() => {
+  const root = document.documentElement;
+  const nav = document.querySelector('nav');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ── scroll signal ────────────────────────────────────────────────
+  let ticking = false;
+  const onScroll = () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const y = window.scrollY;
+      if (!reduce) root.style.setProperty('--scroll-y', y + 'px');
+      if (nav) nav.classList.toggle('scrolled', y > 80);
+      ticking = false;
+    });
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // ── typewriter ───────────────────────────────────────────────────
+  // Each element:  <span class="typewriter" data-phrases="a|b|c">a</span>
+  //   - `data-phrases` is pipe-separated; first phrase is the static fallback.
+  //   - Optional `data-cps` (chars per second; default 22 typing, 40 deleting).
+  //   - Optional `data-pause` (ms paused after a phrase fully typed; default 1600).
+  document.querySelectorAll('.typewriter').forEach((el) => {
+    const phrases = (el.dataset.phrases || el.textContent || '').split('|').map(s => s.trim()).filter(Boolean);
+    if (phrases.length === 0) return;
+    if (reduce || phrases.length === 1) {
+      el.textContent = phrases[0];
+      return;
+    }
+    const typeMs = 1000 / parseInt(el.dataset.cps || '22', 10);
+    const delMs  = 1000 / parseInt(el.dataset.cpsDel || '40', 10);
+    const pauseMs = parseInt(el.dataset.pause || '1600', 10);
+
+    let i = 0;     // phrase index
+    let j = 0;     // char index
+    let mode = 'typing'; // 'typing' | 'pausing' | 'deleting'
+
+    const tick = () => {
+      const p = phrases[i];
+      if (mode === 'typing') {
+        j++;
+        el.textContent = p.slice(0, j);
+        if (j >= p.length) {
+          mode = 'pausing';
+          setTimeout(tick, pauseMs);
+          return;
+        }
+        setTimeout(tick, typeMs);
+      } else if (mode === 'pausing') {
+        mode = 'deleting';
+        setTimeout(tick, delMs);
+      } else {
+        j--;
+        el.textContent = p.slice(0, Math.max(0, j));
+        if (j <= 0) {
+          mode = 'typing';
+          i = (i + 1) % phrases.length;
+        }
+        setTimeout(tick, delMs);
+      }
+    };
+    el.textContent = '';
+    setTimeout(tick, 400);
+  });
+})();
