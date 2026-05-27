@@ -1,0 +1,893 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>MetaFlux — Derivatives, on first principles.</title>
+<meta name="description" content="MetaFlux is an independent L1 derivatives exchange. Advanced market microstructure, cross-asset portfolio margin, and a parallel EVM purpose-built for trading.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Background system — deep near-black with cool undertone (~Hyperfoundation territory) */
+    --bg:          #06070b;
+    --bg-elev:     #0c0e14;
+    --bg-elev-2:   #12151d;
+    --line:        #1a1e29;
+    --line-strong: #262b39;
+
+    /* Text */
+    --text:        #f0f3f7;
+    --text-mid:    #8b96a8;
+    --text-dim:    #5a6273;
+
+    /* Pride palette as luminous accents on dark */
+    --blue:        #5BCEFA;
+    --blue-deep:   #2ba8e0;
+    --blue-glow:   rgba(91, 206, 250, 0.45);
+    --blue-wash:   rgba(91, 206, 250, 0.08);
+
+    --pink:        #F5A9B8;
+    --pink-deep:   #ee7e95;
+    --pink-glow:   rgba(245, 169, 184, 0.45);
+    --pink-wash:   rgba(245, 169, 184, 0.08);
+
+    --good:        #6ee7a3;
+    --bad:         #ff7a8c;
+
+    --mono:        "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --sans:        "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-feature-settings: "ss01", "cv11";
+    font-variant-numeric: lining-nums tabular-nums;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+  ::selection { background: var(--pink); color: var(--bg); }
+
+  a { color: inherit; text-decoration: none; }
+  a:hover { color: var(--blue); }
+
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+
+  .mono { font-family: var(--mono); }
+
+  /* ── pride bar (subtle, top edge) ───────────────────────── */
+  .pride-bar {
+    height: 2px;
+    background: linear-gradient(
+      to right,
+      var(--blue) 0%, var(--blue) 25%,
+      var(--pink) 25%, var(--pink) 50%,
+      #fff        50%, #fff        62%,
+      var(--pink) 62%, var(--pink) 80%,
+      var(--blue) 80%, var(--blue) 100%
+    );
+    opacity: 0.9;
+  }
+
+  /* ── nav ────────────────────────────────────────────────── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    background: rgba(6,7,11,0.65);
+    border-bottom: 1px solid var(--line);
+  }
+  nav .wrap {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 68px;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 12px;
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    color: var(--text);
+  }
+  .brand .mark {
+    width: 18px; height: 18px;
+    background:
+      linear-gradient(135deg,
+        var(--blue) 0%, var(--blue) 33%,
+        var(--pink) 33%, var(--pink) 66%,
+        #ffffff      66%, #ffffff     100%);
+    box-shadow: 0 0 18px var(--blue-glow);
+  }
+  nav ul { display: flex; gap: 36px; list-style: none; }
+  nav ul a {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-mid);
+    transition: color 0.15s;
+    letter-spacing: 0.02em;
+  }
+  nav .nav-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 16px;
+    background: var(--text); color: var(--bg);
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    transition: all 0.15s;
+  }
+  nav .nav-cta:hover { background: var(--blue); }
+  @media (max-width: 720px) { nav ul { display: none; } }
+
+  /* ── hero ───────────────────────────────────────────────── */
+  .hero {
+    padding: 160px 0 120px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: "";
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(700px circle at 85% -10%, var(--blue-wash), transparent 50%),
+      radial-gradient(800px circle at -10% 110%, var(--pink-wash), transparent 50%);
+    pointer-events: none;
+  }
+  /* Subtle grid texture */
+  .hero::after {
+    content: "";
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(to right, var(--line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+    background-size: 64px 64px;
+    opacity: 0.35;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 80%);
+    pointer-events: none;
+  }
+  .hero .wrap { position: relative; z-index: 1; }
+  .eyebrow {
+    font-family: var(--mono); font-size: 12px;
+    color: var(--blue);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    display: inline-flex; align-items: center; gap: 12px;
+  }
+  .eyebrow::before {
+    content: ""; display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--blue);
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px var(--blue-wash), 0 0 16px var(--blue-glow);
+  }
+  h1 {
+    font-size: clamp(48px, 7vw, 104px);
+    line-height: 0.95;
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    max-width: 16ch;
+    margin-bottom: 32px;
+  }
+  h1 .accent {
+    color: var(--pink);
+    font-style: italic;
+    font-weight: 300;
+  }
+  .hero p.lede {
+    font-size: 21px;
+    color: var(--text-mid);
+    max-width: 60ch;
+    margin-bottom: 48px;
+    line-height: 1.5;
+  }
+  .hero p.lede strong { color: var(--text); font-weight: 500; }
+  .cta-row { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 15px 24px;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid transparent;
+    transition: all 0.15s;
+    cursor: pointer;
+    letter-spacing: 0.01em;
+  }
+  .btn-primary {
+    background: var(--text); color: var(--bg);
+  }
+  .btn-primary:hover {
+    background: var(--blue); color: var(--bg);
+    box-shadow: 0 0 24px var(--blue-glow);
+  }
+  .btn-secondary {
+    background: transparent; color: var(--text);
+    border-color: var(--line-strong);
+  }
+  .btn-secondary:hover {
+    border-color: var(--pink); color: var(--pink);
+  }
+  .btn .arrow { transition: transform 0.15s; }
+  .btn:hover .arrow { transform: translateX(4px); }
+
+  /* ── ticker ─────────────────────────────────────────────── */
+  .ticker {
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    overflow: hidden; white-space: nowrap;
+    background: var(--bg);
+    padding: 16px 0;
+  }
+  .ticker-track {
+    display: inline-block;
+    animation: scroll 80s linear infinite;
+    font-family: var(--mono); font-size: 12px;
+    color: var(--text-mid);
+    letter-spacing: 0.08em;
+  }
+  .ticker-track span { margin: 0 36px; }
+  .ticker-track .sep { color: var(--blue); }
+  .ticker-track .sep-pink { color: var(--pink); }
+  @keyframes scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ── stats strip ────────────────────────────────────────── */
+  .stats {
+    background: var(--bg-elev);
+    border-bottom: 1px solid var(--line);
+    padding: 48px 0;
+  }
+  .stats .wrap {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  .stat-cell {
+    background: var(--bg-elev);
+    padding: 28px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .stat-label {
+    font-family: var(--mono); font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .stat-value {
+    font-family: var(--mono); font-size: 32px;
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+  .stat-delta {
+    font-family: var(--mono); font-size: 12px;
+    color: var(--blue);
+  }
+  @media (max-width: 720px) {
+    .stats .wrap { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ── section primitives ─────────────────────────────────── */
+  section { padding: 140px 0; border-bottom: 1px solid var(--line); }
+  .section-head {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 80px;
+    margin-bottom: 72px;
+    align-items: end;
+  }
+  .section-tag {
+    font-family: var(--mono); font-size: 12px;
+    color: var(--blue);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 16px;
+  }
+  h2 {
+    font-size: clamp(36px, 4.5vw, 56px);
+    line-height: 1.0;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+  }
+  h2 .accent { color: var(--pink); font-style: italic; font-weight: 300; }
+  .section-head p {
+    font-size: 18px;
+    color: var(--text-mid);
+    line-height: 1.55;
+    max-width: 56ch;
+  }
+  @media (max-width: 900px) {
+    .section-head { grid-template-columns: 1fr; gap: 24px; align-items: start; }
+  }
+
+  /* ── pillars ────────────────────────────────────────────── */
+  .pillars {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  .pillar {
+    background: var(--bg);
+    padding: 48px 40px;
+    transition: background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .pillar:hover { background: var(--bg-elev); }
+  .pillar .num {
+    font-family: var(--mono); font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 32px;
+  }
+  .pillar:nth-child(1) .num { color: var(--blue); }
+  .pillar:nth-child(2) .num { color: var(--pink); }
+  .pillar:nth-child(3) .num { color: var(--blue); }
+  .pillar h3 {
+    font-size: 26px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+    line-height: 1.1;
+  }
+  .pillar p {
+    color: var(--text-mid);
+    font-size: 15px;
+    margin-bottom: 32px;
+    line-height: 1.55;
+  }
+  .pillar ul { list-style: none; }
+  .pillar li {
+    font-family: var(--mono); font-size: 12.5px;
+    color: var(--text);
+    padding: 10px 0;
+    border-top: 1px solid var(--line);
+    display: flex; align-items: center; gap: 10px;
+    letter-spacing: 0.01em;
+  }
+  .pillar li::before {
+    content: "+"; font-weight: 700; opacity: 0.8;
+  }
+  .pillar:nth-child(1) li::before { color: var(--blue); }
+  .pillar:nth-child(2) li::before { color: var(--pink); }
+  .pillar:nth-child(3) li::before { color: var(--blue); }
+  @media (max-width: 900px) { .pillars { grid-template-columns: 1fr; } }
+
+  /* ── feature blocks ─────────────────────────────────────── */
+  .features {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  .feature {
+    background: var(--bg);
+    padding: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .feature::before {
+    content: "";
+    position: absolute; top: 0; right: 0;
+    width: 240px; height: 240px;
+    pointer-events: none;
+    opacity: 0.5;
+  }
+  .feature:nth-child(odd)::before {
+    background: radial-gradient(circle at top right, var(--blue-wash), transparent 70%);
+  }
+  .feature:nth-child(even)::before {
+    background: radial-gradient(circle at top right, var(--pink-wash), transparent 70%);
+  }
+  .feature .tag {
+    font-family: var(--mono); font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 24px;
+  }
+  .feature:nth-child(odd) .tag { color: var(--blue); }
+  .feature:nth-child(even) .tag { color: var(--pink); }
+  .feature h4 {
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: -0.025em;
+    margin-bottom: 16px;
+    line-height: 1.1;
+  }
+  .feature p {
+    color: var(--text-mid);
+    margin-bottom: 28px;
+    font-size: 15px;
+    line-height: 1.55;
+    max-width: 50ch;
+  }
+  .feature .link {
+    font-family: var(--mono); font-size: 13px;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: gap 0.2s;
+  }
+  .feature:nth-child(odd) .link { color: var(--blue); }
+  .feature:nth-child(even) .link { color: var(--pink); }
+  .feature .link:hover { gap: 14px; }
+  @media (max-width: 720px) { .features { grid-template-columns: 1fr; } }
+
+  /* ── code block ─────────────────────────────────────────── */
+  .code-frame {
+    margin-top: 40px;
+    border: 1px solid var(--line);
+    background: var(--bg-elev);
+  }
+  .code-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 16px;
+    background: var(--bg-elev-2);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .code-bar .dots { display: flex; gap: 6px; }
+  .code-bar .dots span {
+    width: 8px; height: 8px;
+  }
+  .code-bar .dots span:nth-child(1) { background: var(--pink); }
+  .code-bar .dots span:nth-child(2) { background: var(--blue); }
+  .code-bar .dots span:nth-child(3) { background: #fff; }
+  .code-block {
+    padding: 24px;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text);
+    overflow-x: auto;
+  }
+  .code-block .c { color: var(--text-dim); }
+  .code-block .k { color: var(--pink); }
+  .code-block .s { color: var(--blue); }
+  .code-block .n { color: var(--good); }
+
+  /* ── FAQ ────────────────────────────────────────────────── */
+  .faq-list {
+    border-top: 1px solid var(--line);
+  }
+  details {
+    border-bottom: 1px solid var(--line);
+    padding: 28px 0;
+  }
+  details summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 19px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    gap: 32px;
+  }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::after {
+    content: "+";
+    font-family: var(--mono);
+    font-size: 22px;
+    color: var(--blue);
+    transition: transform 0.2s, color 0.2s;
+    flex-shrink: 0;
+  }
+  details[open] summary::after {
+    transform: rotate(45deg);
+    color: var(--pink);
+  }
+  details p {
+    color: var(--text-mid);
+    margin-top: 16px;
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 72ch;
+  }
+
+  /* ── testnet CTA section ────────────────────────────────── */
+  .testnet-section {
+    border-bottom: none;
+    padding: 160px 0 120px;
+    position: relative;
+    overflow: hidden;
+  }
+  .testnet-section::before {
+    content: "";
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(800px circle at 30% 50%, var(--blue-wash), transparent 60%),
+      radial-gradient(800px circle at 70% 50%, var(--pink-wash), transparent 60%);
+    pointer-events: none;
+  }
+  .testnet-section .wrap { position: relative; z-index: 1; text-align: center; }
+  .testnet-section h2 {
+    max-width: 18ch;
+    margin: 0 auto 28px;
+  }
+  .testnet-section p {
+    font-size: 19px;
+    color: var(--text-mid);
+    max-width: 58ch;
+    margin: 0 auto 40px;
+    line-height: 1.55;
+  }
+  .testnet-section .cta-row { justify-content: center; }
+
+  /* ── footer ─────────────────────────────────────────────── */
+  footer {
+    padding: 80px 0 60px;
+    border-bottom: none;
+    background: var(--bg-elev);
+    border-top: 1px solid var(--line);
+  }
+  .foot-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px;
+    margin-bottom: 60px;
+  }
+  .foot-grid h5 {
+    font-family: var(--mono); font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+  .foot-grid ul { list-style: none; }
+  .foot-grid li { padding: 6px 0; }
+  .foot-grid li a {
+    font-size: 14px;
+    color: var(--text-mid);
+  }
+  .foot-grid li a:hover { color: var(--text); }
+  .foot-bottom {
+    border-top: 1px solid var(--line);
+    padding-top: 28px;
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: var(--mono); font-size: 12px;
+    color: var(--text-dim);
+  }
+  .foot-bottom .pride-swatches {
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .foot-bottom .pride-swatches .sw {
+    width: 10px; height: 10px;
+  }
+  @media (max-width: 720px) { .foot-grid { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="pride-bar"></div>
+
+<!-- ─── nav -->
+<nav>
+  <div class="wrap">
+    <a class="brand" href="/"><span class="mark"></span> METAFLUX</a>
+    <ul>
+      <li><a href="#protocol">Protocol</a></li>
+      <li><a href="#builders">Builders</a></li>
+      <li><a href="#mm">Market makers</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="https://docs.mtf.exchange/" target="_blank">Docs ↗</a></li>
+    </ul>
+    <a class="nav-cta" href="#testnet">Testnet → </a>
+  </div>
+</nav>
+
+<!-- ─── hero -->
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Independent L1 · capability-driven</div>
+    <h1>Derivatives,<br>on <span class="accent">first principles</span>.</h1>
+    <p class="lede">MetaFlux is an independent L1 exchange built from the actual constraints of derivatives clearing — not from copying what came before. <strong>Advanced market microstructure</strong>, <strong>cross-asset portfolio margin</strong>, and a <strong>parallel EVM</strong> purpose-built for trading.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://docs.mtf.exchange/">Read the docs <span class="arrow">→</span></a>
+      <a class="btn btn-secondary" href="#testnet">Apply for testnet <span class="arrow">→</span></a>
+    </div>
+  </div>
+</header>
+
+<!-- ─── ticker -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span>L1 DERIVATIVES</span><span class="sep">/</span>
+    <span>BFT CONSENSUS</span><span class="sep-pink">/</span>
+    <span>PARALLEL EVM</span><span class="sep">/</span>
+    <span>PORTFOLIO MARGIN</span><span class="sep-pink">/</span>
+    <span>API WALLETS</span><span class="sep">/</span>
+    <span>HL-COMPAT</span><span class="sep-pink">/</span>
+    <span>PERMISSIONLESS MARKET DEPLOY</span><span class="sep">/</span>
+    <span>RFQ + FBA</span><span class="sep-pink">/</span>
+    <span>MEV-RESISTANT MATCHING</span><span class="sep">/</span>
+    <span>L1 DERIVATIVES</span><span class="sep">/</span>
+    <span>BFT CONSENSUS</span><span class="sep-pink">/</span>
+    <span>PARALLEL EVM</span><span class="sep">/</span>
+    <span>PORTFOLIO MARGIN</span><span class="sep-pink">/</span>
+    <span>API WALLETS</span><span class="sep">/</span>
+    <span>HL-COMPAT</span><span class="sep-pink">/</span>
+    <span>PERMISSIONLESS MARKET DEPLOY</span><span class="sep">/</span>
+    <span>RFQ + FBA</span><span class="sep-pink">/</span>
+    <span>MEV-RESISTANT MATCHING</span><span class="sep">/</span>
+  </div>
+</div>
+
+<!-- ─── stats -->
+<div class="stats">
+  <div class="wrap">
+    <div class="stat-cell">
+      <div class="stat-label">Block time</div>
+      <div class="stat-value">100 ms</div>
+      <div class="stat-delta">deterministic finality</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Match engine</div>
+      <div class="stat-value">5.8M / s</div>
+      <div class="stat-delta">single-core sustained</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Cancel p50</div>
+      <div class="stat-value">338 ns</div>
+      <div class="stat-delta">O(1) intrusive list</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">EVM</div>
+      <div class="stat-value">parallel</div>
+      <div class="stat-delta">Block-STM optimistic</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── pillars -->
+<section id="protocol">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="section-tag">01 — Differentiation</div>
+        <h2>Three pillars.<br>No <span class="accent">marketing</span> fluff.</h2>
+      </div>
+      <p>Most "next-gen" exchanges win on lower fees. We're not interested in that race. MetaFlux competes on capability — market structure, risk infrastructure, and execution-layer power that other on-chain venues don't offer at all.</p>
+    </div>
+
+    <div class="pillars">
+      <div class="pillar">
+        <div class="num">01 / Microstructure</div>
+        <h3>Order types other chains don't have.</h3>
+        <p>RFQ for size that shouldn't advertise on the book. Frequent batch auctions for markets where fairness beats latency. MEV-resistant matching via threshold-encrypted intent.</p>
+        <ul>
+          <li>RFQ + maker quotes</li>
+          <li>Frequent batch auctions (FBA)</li>
+          <li>Threshold-encrypted order flow</li>
+          <li>On-chain market-making primitives</li>
+        </ul>
+      </div>
+
+      <div class="pillar">
+        <div class="num">02 / Risk</div>
+        <h3>Capital efficiency without cascade risk.</h3>
+        <p>Cross-asset portfolio margin nets hedged books to a single SPAN-derived number. A T0 yellow-card grace tier gives accounts one block to react before partial liquidation fires.</p>
+        <ul>
+          <li>SPAN-style portfolio margin</li>
+          <li>Dynamic risk parameters</li>
+          <li>Tiered liquidation (T0 → T4)</li>
+          <li>Multi-collateral isolation</li>
+        </ul>
+      </div>
+
+      <div class="pillar">
+        <div class="num">03 / Execution</div>
+        <h3>An EVM purpose-built for trading.</h3>
+        <p>Parallel transaction execution via optimistic Block-STM. Derivatives-aware EVM precompiles (portfolio margin eval, ADL pricing, RFQ depth, vault NAV). Native cross-chain primitives.</p>
+        <ul>
+          <li>Parallel EVM (Block-STM)</li>
+          <li>Derivatives precompiles</li>
+          <li>Native cross-chain calls</li>
+          <li>EIP-712 signing, EVM addresses</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── builders -->
+<section id="builders">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="section-tag">02 — Builders</div>
+        <h2>Permissionless market deploy. <span class="accent">Real</span> EVM.</h2>
+      </div>
+      <p>Any builder can list a new perpetual or spot market via an on-chain gas auction — no protocol-team gate, no allow-list, no review committee. The protocol arbitrates; you ship the market.</p>
+    </div>
+
+    <div class="features">
+      <div class="feature">
+        <div class="tag">MIP-3</div>
+        <h4>Deploy a market in one transaction.</h4>
+        <p>Win an on-chain gas auction, supply the market spec (leverage, maintenance ratio, funding parameters, oracle source), and the market is live next block. Liquidity is your problem; the protocol does the rest.</p>
+        <a class="link" href="https://docs.mtf.exchange/mip/mip-3">Read the MIP-3 spec → </a>
+      </div>
+
+      <div class="feature">
+        <div class="tag">EVM</div>
+        <h4>EVM-compatible. Block-STM parallel.</h4>
+        <p>Same address format, same signing primitives, same Solidity. Plus derivatives-aware precompiles for portfolio margin, ADL pricing, RFQ depth, vault NAV — accessible from any smart contract.</p>
+        <a class="link" href="https://docs.mtf.exchange/">EVM developer docs → </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── market makers -->
+<section id="mm">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="section-tag">03 — Market makers</div>
+        <h2>Zero-code <span class="accent">migration</span> from HL.</h2>
+      </div>
+      <p>If your bot speaks Hyperliquid's protocol, point its base URL at the MetaFlux gateway. Same URL shapes, same request/response, same EIP-712 envelope. Different chain ID. That's it.</p>
+    </div>
+
+    <div class="features">
+      <div class="feature">
+        <div class="tag">API WALLETS</div>
+        <h4>Cold-storage master. Hot agent keys.</h4>
+        <p>Approve an agent wallet once from your cold master. The agent signs every trading action without withdrawal authority. Per-bot scoping, expiry timestamps, audit log built in.</p>
+        <a class="link" href="https://docs.mtf.exchange/concepts/agent-wallets">Agent wallets → </a>
+      </div>
+
+      <div class="feature">
+        <div class="tag">HL-COMPAT</div>
+        <h4>One URL change. No other code edits.</h4>
+        <p>POST /info and POST /exchange with HL's exact wire shapes. WS subscriptions with HL's channel names (coming). Your existing fill handlers, your existing order placement, all of it works.</p>
+        <a class="link" href="https://docs.mtf.exchange/integration/migrating-from-hl">Migration guide → </a>
+      </div>
+    </div>
+
+    <div class="code-frame">
+      <div class="code-bar">
+        <div class="dots"><span></span><span></span><span></span></div>
+        <span>migration.ts</span>
+      </div>
+      <div class="code-block">
+<span class="c">// before — pointing at HL</span>
+<span class="k">const</span> client = <span class="k">new</span> <span class="n">HyperliquidClient</span>({
+  baseUrl: <span class="s">"https://api.hyperliquid.xyz"</span>,
+  chainId: <span class="n">1337</span>,
+  privateKey,
+});
+
+<span class="c">// after — pointing at MetaFlux. nothing else changes.</span>
+<span class="k">const</span> client = <span class="k">new</span> <span class="n">HyperliquidClient</span>({
+  baseUrl: <span class="s">"https://gateway.mtf.exchange"</span>,
+  chainId: <span class="n">31337</span>,
+  privateKey,
+});</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FAQ -->
+<section id="faq">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="section-tag">04 — FAQ</div>
+        <h2>The honest <span class="accent">answers</span>.</h2>
+      </div>
+      <p>For deeper coverage, the documentation site at <a class="mono" style="color: var(--blue);" href="https://docs.mtf.exchange/">docs.mtf.exchange</a> has the complete API surface, concept catalog, and integration guides. This is just the highlights.</p>
+    </div>
+
+    <div class="faq-list">
+      <details>
+        <summary>What is MetaFlux, exactly?</summary>
+        <p>An independent L1 derivatives exchange. Its own validator set, its own BFT consensus, its own EVM execution layer. Not a Hyperliquid fork, not a rollup, not a CEX. We borrow the L1 + integrated-EVM architecture pattern, but the implementation is built from first principles and the differentiation is real.</p>
+      </details>
+      <details>
+        <summary>How is it different from Hyperliquid?</summary>
+        <p>Three places. (1) Market microstructure — RFQ, FBA, MEV-resistant matching that HL doesn't offer. (2) Risk — T0 yellow-card grace tier, cross-asset portfolio margin (SPAN), dynamic risk parameters. (3) Execution — parallel EVM via Block-STM plus derivatives-aware precompiles. Same compat surface for traders who don't care about any of this.</p>
+      </details>
+      <details>
+        <summary>When does mainnet launch?</summary>
+        <p>Mainnet timing follows audit and testnet milestones, not calendar dates. The roadmap targets a multi-month testnet phase with phased validator onboarding before mainnet. Subscribe to updates via the docs site.</p>
+      </details>
+      <details>
+        <summary>What does integration look like?</summary>
+        <p>If you already speak Hyperliquid's protocol, change one URL and one chain ID. If you're greenfield, use the MTF-native SDK (TypeScript with WASM-backed crypto for browser performance; Rust SDK for backend). Either way, the EIP-712 envelope is the same, and EVM tooling — MetaMask, Rabby, Ledger, ethers — works unmodified.</p>
+      </details>
+      <details>
+        <summary>How do I become a validator?</summary>
+        <p>Genesis validator recruitment opens ahead of mainnet. Initial set is small (single-digit), expanding through the first year. Reach out via the validators inquiry below; we're looking for operators with on-chain ops experience and geographic diversity.</p>
+      </details>
+      <details>
+        <summary>What bridges do you support?</summary>
+        <p>USDC via Circle CCTP, natively attested. Other assets via a single audited third-party bridge — selection finalised pre-mainnet via a public ADR. We deliberately did not build a monolithic in-house bridge: blast radius reduction.</p>
+      </details>
+      <details>
+        <summary>Why the trans-pride palette?</summary>
+        <p>The flag's blue / pink / white reads cleanly as a brand system and isn't taken by anyone else in this space. It also signals what kind of community we want: technical, welcoming, and uninterested in the dominant aesthetic of the rest of crypto.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ─── testnet CTA -->
+<section id="testnet" class="testnet-section">
+  <div class="wrap">
+    <div class="section-tag" style="margin-bottom: 24px;">05 — Testnet</div>
+    <h2>Build with us, <span class="accent">before launch</span>.</h2>
+    <p>Testnet access is open for market makers, builders, and integrators. We're particularly interested in feedback from teams shipping production trading systems.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="mailto:builders@mtf.exchange?subject=Testnet%20access">Request testnet access <span class="arrow">→</span></a>
+      <a class="btn btn-secondary" href="mailto:validators@mtf.exchange?subject=Validator%20inquiry">Validator inquiry <span class="arrow">→</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── footer -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a class="brand" href="/"><span class="mark"></span> METAFLUX</a>
+        <p style="color: var(--text-mid); font-size: 14px; max-width: 36ch; margin-top: 24px; line-height: 1.55;">A capability-driven L1 derivatives exchange. Independent chain, EVM-compatible, built from first principles for traders who care about market structure.</p>
+        <p style="font-family: var(--mono); font-size: 11px; color: var(--text-dim); margin-top: 20px; letter-spacing: 0.05em; text-transform: uppercase;">A TzAI Foundation product</p>
+      </div>
+      <div>
+        <h5>Protocol</h5>
+        <ul>
+          <li><a href="https://docs.mtf.exchange/">Docs</a></li>
+          <li><a href="https://docs.mtf.exchange/concepts">Concepts</a></li>
+          <li><a href="https://docs.mtf.exchange/api">API reference</a></li>
+          <li><a href="https://docs.mtf.exchange/mip">MIP-3 deploy</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Build</h5>
+        <ul>
+          <li><a href="https://docs.mtf.exchange/integration/migrating-from-hl">Migrating from HL</a></li>
+          <li><a href="https://docs.mtf.exchange/integration/signing">Signing</a></li>
+          <li><a href="https://docs.mtf.exchange/concepts/agent-wallets">Agent wallets</a></li>
+          <li><a href="#testnet">Testnet access</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Connect</h5>
+        <ul>
+          <li><a href="https://github.com/mtf-exchange">GitHub</a></li>
+          <li><a href="mailto:hello@mtf.exchange">hello@mtf.exchange</a></li>
+          <li><a href="mailto:builders@mtf.exchange">builders@mtf.exchange</a></li>
+          <li><a href="mailto:validators@mtf.exchange">validators@mtf.exchange</a></li>
+          <li style="padding-top: 14px; border-top: 1px solid var(--line); margin-top: 8px;"><a href="https://tzai.foundation" style="font-family: var(--mono); font-size: 12px;">TzAI Foundation ↗</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© TzAI Foundation. MetaFlux is a TzAI Foundation series product. Pre-launch.</span>
+      <span class="pride-swatches">
+        <span class="sw" style="background: var(--blue);"></span>
+        <span class="sw" style="background: var(--pink);"></span>
+        <span class="sw" style="background: #fff;"></span>
+        &nbsp;mtf.exchange
+      </span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
