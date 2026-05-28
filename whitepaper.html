@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#06070b">
+
+<title>MetaFlux Whitepaper — Derivatives, on first principles.</title>
+<meta name="description" content="The MetaFlux whitepaper: an independent L1 derivatives exchange. MetaFluxBFT consensus, parallel EVM, cross-asset portfolio margin, MEV-resistant matching, permissionless market deploy.">
+<link rel="canonical" href="https://mtf.exchange/whitepaper.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="MetaFlux">
+<meta property="og:url" content="https://mtf.exchange/whitepaper.html">
+<meta property="og:title" content="MetaFlux Whitepaper — Derivatives, on first principles.">
+<meta property="og:description" content="The MetaFlux whitepaper: an independent L1 derivatives exchange. MetaFluxBFT consensus, parallel EVM, cross-asset portfolio margin, MEV-resistant matching, permissionless market deploy.">
+<meta property="og:image" content="https://mtf.exchange/og.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="MetaFlux — Derivatives, on first principles.">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter / X -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@mtf_exchange">
+<meta name="twitter:title" content="MetaFlux Whitepaper — Derivatives, on first principles.">
+<meta name="twitter:description" content="The MetaFlux whitepaper: an independent L1 derivatives exchange.">
+<meta name="twitter:image" content="https://mtf.exchange/og.png">
+
+<!-- Icons -->
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="favicon.ico">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="mask-icon" href="favicon.svg" color="#5BCEFA">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="whitepaper.css">
+</head>
+<body class="paper">
+
+<div class="ambient">
+  <div class="blob blue"></div>
+  <div class="blob pink"></div>
+  <div class="blob blue-2"></div>
+</div>
+
+<div class="pride-bar"></div>
+
+<nav>
+  <div class="bar">
+    <a class="brand" href="/"><span class="b-m">M</span>eta<span class="b-f">F</span>lux</a>
+    <ul>
+      <li><a href="/#protocol">Protocol</a></li>
+      <li><a href="/#builders">Builders</a></li>
+      <li><a href="/#traders">Traders</a></li>
+      <li><a href="whitepaper.html" aria-current="page">Whitepaper</a></li>
+      <li><a href="https://docs.mtf.exchange/" target="_blank">Docs ↗</a></li>
+    </ul>
+    <a class="nav-cta" href="/#testnet">Testnet →</a>
+  </div>
+</nav>
+
+<header class="paper-hero">
+  <div class="wrap">
+    <div class="paper-kicker">/ MetaFlux whitepaper · v0.1 · pre-launch draft</div>
+    <h1>Derivatives,<br>on <span class="accent">first principles</span>.</h1>
+    <p class="paper-sub">An independent L1 for derivatives clearing: MetaFluxBFT consensus, a parallel EVM, cross-asset portfolio margin, MEV-resistant matching, and permissionless market deploy. This document describes the protocol design and the roadmap that ships it.</p>
+    <div class="paper-meta">
+      <span><span class="k">Authorship</span> TzAI Foundation</span>
+      <span><span class="k">Series</span> A TzAI Foundation product · <a href="https://tzai.net">tzai.net</a></span>
+      <span><span class="k">Status</span> Design + roadmap. No live mainnet.</span>
+    </div>
+  </div>
+</header>
+
+<div class="paper-body wrap">
+
+  <aside class="toc" aria-label="Table of contents">
+    <div class="toc-label">Contents</div>
+    <ol>
+      <li><a href="#abstract">Abstract</a></li>
+      <li><a href="#thesis">Thesis</a></li>
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#microstructure">Market microstructure</a></li>
+      <li><a href="#risk">Risk &amp; margin</a></li>
+      <li><a href="#vm">Execution layer</a></li>
+      <li><a href="#markets">Permissionless markets</a></li>
+      <li><a href="#economics">Token &amp; fee economics</a></li>
+      <li><a href="#security">Security model</a></li>
+      <li><a href="#roadmap">Roadmap</a></li>
+    </ol>
+  </aside>
+
+  <article class="paper-content">
+
+    <!-- 1 ABSTRACT -->
+    <section id="abstract" class="ps">
+      <div class="ps-num">01</div>
+      <h2>Abstract</h2>
+      <p class="lead">MetaFlux is an independent Layer 1 built for one job: clearing derivatives. It runs an on-chain central limit order book and clearinghouse directly in consensus, an EVM sidechain for programmable strategies, and a gateway that speaks the wire formats trading desks already use. It is inspired by Hyperliquid's protocol design and is a competitor to it — MetaFlux runs its own validator set, its own token, and its own bridge, and does not join the Hyperliquid mainnet.</p>
+      <p>The wager is straightforward. Lower fees are a commodity; capability is not. MetaFlux differentiates on three axes a serious trader actually feels: market microstructure (MEV-resistant matching, RFQ, frequent batch auctions, on-chain market-making primitives), advanced risk and margin (cross-asset portfolio margin, a graduated liquidation ladder, regret-minimizing auto-deleveraging), and a stronger execution layer (a parallel EVM with derivatives-aware precompiles). The consensus underneath is a two-chain HotStuff variant in the same family as Hyperliquid's HyperBFT, implemented independently, with MetaFlux-specific protections layered above an unchanged safety kernel.</p>
+      <p>This paper is honest about state. The safety-critical core — consensus, the match engine, state hashing — is implemented and tested on devnet. The differentiation features are at varying stages of design, spike, and implementation, marked as such throughout. Where a number appears, it is a devnet or benchmark figure, never a production claim.</p>
+    </section>
+
+    <!-- 2 THESIS -->
+    <section id="thesis" class="ps">
+      <div class="ps-num">02</div>
+      <h2>Thesis: capability over price</h2>
+      <p>The perpetuals market has converged on a familiar competition: shave a fraction of a basis point off taker fees, subsidize volume with token emissions, clone a vault to bootstrap liquidity. That race has a floor at zero and a predictable winner — whoever can burn the most capital. MetaFlux declines to run it.</p>
+      <p>A professional desk does not choose a venue to save 0.2 bps a fill. It chooses a venue where a hedged book margins to one number instead of three, where a large order does not advertise itself to the proposer before it fills, where a smart contract can read live order-book depth without paying 80,000 gas to reimplement it. Those are structural properties of the protocol, not line items in a fee schedule, and they compound.</p>
+      <p>So the differentiation is capability-driven and concentrated on three axes:</p>
+      <div class="axes">
+        <div class="axis">
+          <div class="axis-tag blue">Axis 1 / Microstructure</div>
+          <p>New order types and a matching pipeline that resists proposer MEV. RFQ for size, frequent batch auctions where fairness should beat latency, threshold-encrypted intent so the proposer orders blobs it cannot read.</p>
+        </div>
+        <div class="axis">
+          <div class="axis-tag pink">Axis 2 / Risk &amp; margin</div>
+          <p>A SPAN-style portfolio margin engine, dynamic risk parameters, a tiered liquidation ladder with a one-block grace tier, and auto-deleveraging reframed as an online-learning problem with a provable regret bound.</p>
+        </div>
+        <div class="axis">
+          <div class="axis-tag blue">Axis 3 / Execution</div>
+          <p>A parallel EVM so contract calls do not queue behind each other, and derivatives-aware precompiles that expose clearing and risk primitives to Solidity at native cost.</p>
+        </div>
+      </div>
+      <p>What is explicitly <em>not</em> on the list: the lowest fee, the most aggressive token subsidy, a liquidity-bombing house vault. Consensus throughput is also not a competition axis — HyperBFT is production-hardened and years live, and MetaFlux does not pretend to out-engineer it on raw consensus speed. MetaFlux competes one level up, on the microstructure and risk layer that sits above a safety kernel of equivalent guarantees.</p>
+    </section>
+
+    <!-- 3 ARCHITECTURE -->
+    <section id="architecture" class="ps">
+      <div class="ps-num">03</div>
+      <h2>Architecture</h2>
+      <p>MetaFlux is a single L1 with two execution domains stitched together by consensus. The core domain runs the clearinghouse and the order-book matcher as deterministic state transitions inside the block. The EVM domain runs general smart contracts. A two-block architecture and an exactly-once internal queue move assets between them. Around the L1 sit a hybrid bridge for inbound and outbound assets and a multi-protocol gateway for clients.</p>
+
+      <h3>3.1 MetaFluxBFT consensus</h3>
+      <p>Consensus is MetaFluxBFT — a two-chain HotStuff variant in the Jolteon / DiemBFT line: pipelined HotStuff with a two-chain commit rule and a linear timeout-certificate pacemaker. Hyperliquid's HyperBFT belongs to the same family, so the two share algorithmic guarantees rather than being a weak-versus-strong pairing. MetaFlux does not fork an existing implementation; it is written from scratch to satisfy the determinism and code-size discipline the rest of the chain demands.</p>
+      <p>The design rule is non-negotiable: the <strong>safety kernel never changes</strong>. The two-chain commit rule, quorum-certificate formation, and the timeout-certificate pacemaker are fixed. Every MetaFlux-specific feature lives strictly above the kernel — in the mempool, in proposal-validity rules, or in begin-block effects — so the chain inherits HotStuff's formally understood safety while still differentiating.</p>
+      <div class="spec-table">
+        <table>
+          <thead><tr><th>Element</th><th>MetaFluxBFT</th></tr></thead>
+          <tbody>
+            <tr><td class="fn">Commit rule</td><td>Two-chain: a block is final once it has a quorum certificate and its child has one referencing it. Finality in roughly two to three rounds.</td></tr>
+            <tr><td class="fn">Quorum</td><td>Two-thirds of stake weight.</td></tr>
+            <tr><td class="fn">View change</td><td>Proposer timeout → two-thirds timeouts → timeout certificate → advance.</td></tr>
+            <tr><td class="fn">Leader election</td><td>Stake-weighted smooth round-robin; jailed validators excluded.</td></tr>
+            <tr><td class="fn">Signatures</td><td>secp256k1 over an EIP-712 envelope in the MetaFlux domain.</td></tr>
+            <tr><td class="fn">State commitment</td><td>An <span class="mono">app_hash</span> built from homomorphic-hash accumulators, so state-diff updates are incremental rather than full re-hashes.</td></tr>
+            <tr><td class="fn">Execution</td><td>Deterministic by construction: no floating point, ordered maps only, and block time derived from consensus rather than any wall clock.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Finality is immediate. There is no probabilistic confirmation and no reorg window: a committed block is final. That property matters more for a derivatives venue than for a general-purpose chain, because liquidations and funding settle against finalized state every block.</p>
+
+      <h3>3.2 EVM sidechain</h3>
+      <p>The execution layer is an EVM domain (revm-based) with a two-block architecture: a small block carries the high-frequency exchange actions, a larger block carries general EVM transactions. Addresses are standard 20-byte EVM addresses derived from secp256k1 keys; signing is EIP-712. Every EVM wallet, hardware signer, and quant framework works unmodified. The chain follows Ethereum's post-quantum roadmap rather than charting its own — current PQC signature schemes are too heavy for high-frequency matching, and EVM compatibility means MetaFlux can adopt whatever Ethereum standardizes.</p>
+
+      <h3>3.3 Hybrid bridge</h3>
+      <p>Assets cross in and out through a deliberately split design rather than one monolithic bridge, to shrink the blast radius of any single failure. USDC — the dominant margin asset — moves over <strong>Circle CCTP</strong>, Circle's native attestation-based transfer, with no wrapped token and burn-and-mint accounting. Other assets move over <strong>MetaBridge</strong>, a MetaFlux-owned set of contracts on Solana, Base, and Arbitrum whose inbound messages are co-signed by a two-thirds stake-weighted validator quorum. An emergency 2-of-N admin multisig can pause deposits and withdrawals but cannot move user funds. Cryptographic inbound-message verification is the bridge's central security boundary and is on the roadmap, not yet shipped; until it lands, cross-chain message handling is treated as the highest-priority exposure to close.</p>
+
+      <h3>3.4 Gateway</h3>
+      <p>A multi-protocol gateway sits in front of the L1 and adapts several wire formats — a CCXT-style REST surface, a Hyperliquid-compatible surface, and a MetaFlux-native gRPC surface — onto the node, with gateway-to-node traffic over mTLS. A desk whose stack already speaks a wire-compatible protocol points its client at the gateway, changes one URL and one chain ID, and keeps trading. The native client SDK is MTF-native only, in TypeScript (with WASM-backed crypto) and Rust.</p>
+    </section>
+
+    <!-- 4 MICROSTRUCTURE -->
+    <section id="microstructure" class="ps">
+      <div class="ps-num">04</div>
+      <h2>Axis 1 — Market microstructure</h2>
+      <p>The order book is a price-time-priority CLOB matched deterministically inside the block. On top of that base, MetaFlux adds order types and a matching pipeline aimed at the two things microstructure actually decides: who gets to extract value from ordering, and how large or sensitive flow finds a counterparty.</p>
+
+      <h3>4.1 MEV-resistant encrypted mempool <span class="status planned">design · crypto spike ready</span></h3>
+      <p>A deterministically ordered block removes MEV <em>within</em> a block, but the proposer still sees plaintext orders and can front-run by choosing what to include and where. MetaFlux closes that gap: protected orders enter the mempool as <strong>threshold ciphertexts</strong>. The proposer orders blobs it cannot read. A begin-block reveal effect on the following block threshold-decrypts the batch and feeds the matcher. The cryptographic foundation is a threshold public-key encryption scheme over BLS12-381 with a commit-then-reveal flow, gated to large and explicitly protected orders so the latency cost is paid only where it buys something. Crucially, this touches the mempool and a single begin-block effect — never the commit rule.</p>
+
+      <h3>4.2 Frequent batch auctions <span class="status building">in flight</span></h3>
+      <p>For markets where fairness should beat latency, MetaFlux offers per-market frequent batch auctions: orders within a short window clear at a single uniform price rather than racing for queue position. FBA neutralizes the latency arms race that lets the fastest co-located bot tax everyone else, and it composes cleanly with the encrypted mempool — a batch that is both sealed and uniform-price is hostile ground for an ordering-based extractor.</p>
+
+      <h3>4.3 RFQ <span class="status building">in flight</span></h3>
+      <p>Size that would move the book if it rested on it should not have to. RFQ lets a taker solicit firm maker quotes off the visible book and fill against the best, so a large hedge clears without telegraphing itself one level at a time. Top-of-RFQ depth is also exposed to smart contracts (see §6.2), so on-chain strategies can route into it.</p>
+
+      <h3>4.4 On-chain market-making primitives <span class="status planned">design</span></h3>
+      <p>Market making is a first-class on-chain activity, not an off-chain afterthought. Derivatives-aware precompiles expose the live CLOB — best bid/offer and aggregated L2 depth — to Solidity at native cost, so a market-making contract reads canonical book state directly instead of reconstructing it. Standard advanced order types, including OCO (one-cancels-the-other) and post-only / ALO resting orders, round out the toolkit.</p>
+    </section>
+
+    <!-- 5 RISK -->
+    <section id="risk" class="ps">
+      <div class="ps-num">05</div>
+      <h2>Axis 2 — Risk &amp; margin</h2>
+      <p>Risk infrastructure is where a derivatives venue earns or loses the trust of professional capital. MetaFlux treats margin, liquidation, and deleveraging as the differentiated surface they are.</p>
+
+      <h3>5.1 Cross-asset portfolio margin <span class="status building">design + scaffold</span></h3>
+      <p>A SPAN-style scenario engine evaluates a portfolio across a grid of price and volatility shocks and charges margin on the worst-case scenario for the book as a whole, not position by position. A trader who is long one correlated asset and short another sees the offset reflected in one margin number rather than paying full isolated margin on each leg. This is the single largest capital-efficiency lever for a hedged or multi-leg desk, and it is exposed both to the clearinghouse and, via a precompile, to smart contracts.</p>
+
+      <h3>5.2 Tiered liquidation grace <span class="status shipped">implemented (devnet)</span></h3>
+      <p>Most on-chain liquidation engines fire the moment an account crosses the maintenance boundary. That single tick of mark price then depresses the book, which trips neighbouring accounts across the same boundary, which depresses the book further — the cascade depth is mostly a function of how many accounts cluster at the edge when the shock lands. MetaFlux inserts a grace tier above the cliff.</p>
+      <div class="spec-table">
+        <table>
+          <thead><tr><th>Tier</th><th>Health band</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td class="fn">T0 — yellow card</td><td><span class="mono">1.0 ≤ health &lt; 1.1</span></td><td>Force-cancel resting orders to free parked collateral; warn the wallet. <strong>No position is touched.</strong></td></tr>
+            <tr><td class="fn">T1 — partial</td><td><span class="mono">0.8 ≤ health &lt; 1.0</span></td><td>50% market close, cooldown-gated.</td></tr>
+            <tr><td class="fn">T2 — full</td><td><span class="mono">0.667 ≤ health &lt; 0.8</span></td><td>Full market close.</td></tr>
+            <tr><td class="fn">T3 — backstop</td><td><span class="mono">health &lt; 0.667</span></td><td>Treasury backstop takeover.</td></tr>
+            <tr><td class="fn">T4 — ADL</td><td>residual shortfall</td><td>Auto-deleverage profitable accounts (see §5.4).</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>T0 is hysteresis, not a partial liquidation. An account knocked into the warning zone by a brief volatility spike gets one consensus block to add margin or de-leverage before the engine escalates — structurally the on-chain analogue of a broker's margin call, compressed to a single block. The decision logic is a deterministic pure function comparing exact fixed-point thresholds, with the yellow-card tier confirmed not to arm the partial-liquidation cooldown.</p>
+
+      <h3>5.3 Dynamic risk parameters <span class="status planned">design</span></h3>
+      <p>Maintenance ratios, leverage caps, and funding parameters are not frozen constants. Risk parameters respond to market conditions through governance-tunable controls, so the protocol can tighten margin into a volatility regime and relax it when conditions normalize, rather than carrying a single worst-case setting at all times.</p>
+
+      <h3>5.4 Auto-deleveraging as online learning <span class="status building">design + scaffold</span></h3>
+      <p>When the liquidation ladder still leaves a shortfall, the protocol must socialize the loss onto profitable accounts. The standard heuristic — rank winners by a return-on-equity score and haircut down the queue — has a documented pathology: under stress it over-liquidates profitable traders, and its ranking is unstable, so two accounts with the same PnL can meet very different fates.</p>
+      <p>MetaFlux reframes deleveraging as a regret-minimizing online-learning problem, following recent published work on the subject. It splits into two pieces. A one-dimensional online gradient descent learns a severity parameter — what fraction of the round's deficit to haircut — with a dynamic regret bound of the form <span class="mono">√((1 + 2·P_T)·Σ D_t²)</span>. Given that budget, a deterministic pro-rata rule allocates the haircut across profitable accounts in proportion to their PnL capacity, with no solver and no floating point. Pro-rata carries built-in min-max fairness: every winner is haircut by the same percentage of capacity.</p>
+      <p>On a replay of the published October 2025 stress event, the pro-rata allocator produced roughly an order-of-magnitude lower over-liquidation than the heuristic baseline in that paper's analysis — about $3.4M of overshoot against roughly $45M — with zero monotonicity violations and near-perfect rank stability, versus the baseline's 11.4% violations and 0.34 stability. Those figures come from the published analysis and devnet replay; they are benchmark results, not production outcomes. The regret bound is a stated formal-verification goal.</p>
+
+      <h3>5.5 Slashing and unbonding <span class="status building">in flight</span></h3>
+      <p>Validator misbehaviour carries economic cost. Double-signing — provable from two conflicting signed messages at the same height and round — is slashable at 100% with self-verifying evidence; downtime carries a smaller penalty, and misbehaving or unresponsive validators are jailed rather than immediately slashed. A slashable unbonding window of seven days is the design target so that "withdraw, then attack" remains punishable. Enforcing that the unbonding window is slashable is an explicit open item, called out below in the security model.</p>
+    </section>
+
+    <!-- 6 VM -->
+    <section id="vm" class="ps">
+      <div class="ps-num">06</div>
+      <h2>Axis 3 — Execution layer</h2>
+      <p>The EVM is the lingua franca of on-chain strategy, but a serial, general-purpose EVM is a poor fit for a high-throughput derivatives chain. MetaFlux keeps full EVM compatibility and makes the execution layer faster and derivatives-aware.</p>
+
+      <h3>6.1 Parallel EVM <span class="status building">spike → production</span></h3>
+      <p>Transactions execute optimistically and in parallel under a Block-STM-style scheduler: independent transactions run concurrently, conflicts are detected and the conflicting transactions re-run, the rest commit. The result is deterministic — identical to a serial execution of the same block — but a contract call no longer queues behind every unrelated transaction in front of it. A fast-fail decision point governs the program: if the parallel speedup fails to clear a threshold over serial revm, the chain falls back to serial execution and doubles down on precompiles and cross-chain primitives instead. Honest framing: parallel execution is a spike maturing toward production, not a shipped guarantee.</p>
+
+      <h3>6.2 Derivatives-aware precompiles <span class="status building">scaffold (wire + gas frozen)</span></h3>
+      <p>A Solidity contract that wants a portfolio-margin number or top-of-book depth today has two bad options: reimplement the logic in EVM bytecode over data it pushed on-chain — expensive, and a second implementation that drifts from the canonical one — or round-trip through an action and wait a block. A precompile collapses both into a single native call priced far below the equivalent bytecode. That gas asymmetry is the moat: it lets on-chain market makers and structured-product contracts consume L1-native clearing primitives directly.</p>
+      <div class="spec-table">
+        <table>
+          <thead><tr><th>Band</th><th>Primitives</th></tr></thead>
+          <tbody>
+            <tr><td class="fn">Derivatives</td><td>portfolio-margin evaluation, vault NAV, ADL pro-rata pricing, mark-to-market settle, RFQ book depth.</td></tr>
+            <tr><td class="fn">Market-maker reads</td><td>best bid/offer, aggregated L2 depth.</td></tr>
+            <tr><td class="fn">Cross-chain</td><td>outbound intent shaping and inbound proof validation.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Status is precise. The precompile envelopes — wire format, gas formula, registration — are frozen and tested. The risk and clearing math inside the derivatives band is filled in line by line under human review rather than generated, so a passing envelope test does not mean the margin model is complete. Each precompile is a stateless pure function: anything that reads consensus state operates on a deterministic snapshot supplied in calldata; anything that mutates state returns a canonical encoding the host applies. Outputs are byte-identical for identical input.</p>
+
+      <h3>6.3 Native cross-chain primitives <span class="status planned">design</span></h3>
+      <p>Cross-chain transfer intents are shaped and validated by precompiles and applied by the host, so a Solidity contract can compute a canonical message and its deterministic identifier cheaply before issuing the state-mutating action. The cryptographic verification of inbound proofs is bridge work and deferred; until it lands, inbound validation is a well-formedness check, not a proof of inclusion.</p>
+    </section>
+
+    <!-- 7 MARKETS -->
+    <section id="markets" class="ps">
+      <div class="ps-num">07</div>
+      <h2>Permissionless markets (MIP-3)</h2>
+      <p>Any builder can list a new perpetual or spot market without a protocol-team gate, an allow-list, or a committee. Listing runs through an on-chain gas auction: win the auction, supply the market spec — leverage, maintenance ratio, funding parameters, oracle source — and the market goes live the next block. The protocol arbitrates the auction and clears the market; liquidity is the deployer's problem.</p>
+      <p>This is a first-class MetaFlux feature, ranked alongside the three differentiation axes rather than treated as a bolt-on. The auction state lives in dedicated begin-block fields for token registration and for perp and spot deployment. Outcome and prediction markets, which share the same deployment infrastructure, are deferred to a post-launch version so the core deployment path can be made solid first. Deployers can configure a deployer fee tier, capped to protect users (see §8).</p>
+    </section>
+
+    <!-- 8 ECONOMICS -->
+    <section id="economics" class="ps">
+      <div class="ps-num">08</div>
+      <h2>Token &amp; fee economics</h2>
+      <p>MTF is the native token: it secures the chain through staking, it is the unit validators and delegators earn, and protocol fees route value back to holders. The fee model is built to apply continuous buy pressure and shrink supply while funding the validators and the foundation that back the chain.</p>
+      <p>Protocol fees are collected in USDC and split three ways:</p>
+      <div class="split">
+        <div class="split-row"><span class="split-pct">80%</span><span class="split-label">Buyback-and-burn — a recurring executor buys MTF on the open market with the accumulated USDC and burns it. Continuous buy pressure plus deflation, both returned to holders.</span></div>
+        <div class="split-row"><span class="split-pct">10%</span><span class="split-label">Validators — distributed by stake.</span></div>
+        <div class="split-row"><span class="split-pct">10%</span><span class="split-label">Foundation — protocol development and security.</span></div>
+      </div>
+      <p>Three optional fee redirections sit on top of the base split, each capped against abuse. A <strong>referrer</strong> earns 10% of the taker fee, carved from the protocol's share rather than added to what the user pays; the referrer is single-level (no multi-level chains) and set once, immutably, to remove an arbitrage surface. A <strong>builder code</strong> lets a third-party frontend or strategy provider charge up to 8 bps per fill, with the trader's explicit, revocable approval — one basis point tighter than the prevailing comparable cap. A <strong>MIP-3 deployer</strong> can set a fee of up to 5 bps on the markets it lists, an incentive to deploy bounded so a deployed market cannot become a fee trap. In the worst case where all three apply, total cost is bounded and disclosed pre-trade; the base case is just the protocol fee.</p>
+    </section>
+
+    <!-- 9 SECURITY -->
+    <section id="security" class="ps">
+      <div class="ps-num">09</div>
+      <h2>Security model</h2>
+      <p>MetaFlux is a stake-weighted BFT L1 with <span class="mono">n = 3f + 1</span> validators. The relevant adversary thresholds are one-third and two-thirds of stake, not a Nakamoto "51%". There is no probabilistic finality and no reorg window.</p>
+      <div class="spec-table">
+        <table>
+          <thead><tr><th>Byzantine stake</th><th>Safety</th><th>Liveness</th><th>Consequence</th></tr></thead>
+          <tbody>
+            <tr><td class="fn">&lt; 1/3</td><td class="yes">holds</td><td class="yes">holds</td><td>Normal operation.</td></tr>
+            <tr><td class="fn">[1/3, 2/3)</td><td class="yes">holds</td><td class="nope">attackable</td><td>Censorship or halt — but no conflicting finality can be forged.</td></tr>
+            <tr><td class="fn">≥ 2/3</td><td class="nope">broken</td><td>—</td><td>Conflicting blocks could finalize. This is the BFT limit.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>No code can make a two-thirds colluding quorum safe; that is the boundary of any BFT protocol. Defense at and above the thresholds is economic and social — stake decentralization, slashing, weak-subjectivity checkpoints — not algorithmic. MetaFlux is candid about which threats matter most for an exchange specifically:</p>
+      <ul class="threats">
+        <li><span class="t-name">Censorship of liquidations (≥ 1/3)</span> is the most reachable attack and the most under-appreciated: a one-third coalition can selectively censor time-critical actions, notably suppressing its own liquidations to push bad debt onto the protocol. The planned defense is forced-inclusion / inclusion lists — a proposal is invalid if it omits eligible time-critical actions that were available. This lives in proposal-validity rules, above the commit rule.</li>
+        <li><span class="t-name">Consensus safety break (≥ 2/3)</span> is the textbook double-spend path. It is deterred by 100%-slash double-sign evidence and by the planned formal verification of the safety kernel, but slashing only deters a rational attacker; a token-short-then-attack adversary is not.</li>
+        <li><span class="t-name">Bridge / cross-chain double-spend</span> is the largest concrete surface. Exactly-once deposit credit, burn-before-release withdrawal, and cryptographic inbound-message verification are the targets; the cryptographic verification is the gating item and is not yet shipped.</li>
+        <li><span class="t-name">Early-launch centralization</span> is an inherent risk: a small genesis validator set makes the supermajority threshold reachable. The mitigation is a credible progressive-decentralization roadmap and transparency, not code.</li>
+      </ul>
+      <p>The safety kernel is targeted for <strong>formal verification</strong> in TLA+ / Stateright — correctness-by-construction alongside the test-proven implementation — and the protocol is scoped for two independent external audit rounds before mainnet. Determinism is enforced mechanically: no floating point, ordered maps only, consensus-derived time, and a per-file size limit, all checked in CI; the match engine is a pure function verified to produce identical output across many runs of identical input.</p>
+    </section>
+
+    <!-- 10 ROADMAP -->
+    <section id="roadmap" class="ps">
+      <div class="ps-num">10</div>
+      <h2>Roadmap</h2>
+      <p>MetaFlux is pre-launch. The plan is milestone-gated, not calendar-driven, and progresses through testnet stability and audit closure before any mainnet. The shape of the journey:</p>
+      <div class="roadmap">
+        <div class="rm">
+          <div class="rm-phase">Foundations</div>
+          <p>Protocol research, consensus and clearinghouse core, the state-hashing pipeline, the match-engine baseline. The safety-critical kernel: implemented and tested on devnet.</p>
+        </div>
+        <div class="rm">
+          <div class="rm-phase">Three axes</div>
+          <p>The differentiation features land: portfolio margin, RFQ and frequent batch auctions, parallel EVM and derivatives precompiles, tiered liquidation, dynamic risk parameters, MEV-resistant matching. Most are in design, spike, or scaffold today.</p>
+        </div>
+        <div class="rm">
+          <div class="rm-phase">Hardening</div>
+          <p>Sustained multi-week testnet, chaos and stress testing of the liquidation and bridge paths, the slashing framework, and the bridge's cryptographic verification.</p>
+        </div>
+        <div class="rm">
+          <div class="rm-phase">Audit &amp; launch</div>
+          <p>Internal review, formal verification of the safety kernel, two external audit rounds with remediation, phased validator onboarding, and a canary mainnet before full launch.</p>
+        </div>
+      </div>
+      <p class="closing">MetaFlux is a bet that the next generation of derivatives infrastructure is won on capability, built deterministically, and proven honestly. Derivatives, on first principles.</p>
+    </section>
+
+  </article>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a class="brand" href="/"><span class="b-m">M</span>eta<span class="b-f">F</span>lux</a>
+        <p style="color: var(--text-mid); font-size: 14px; max-width: 36ch; margin-top: 24px; line-height: 1.55;">An L1 derivatives chain. Independent, EVM-compatible, built from first principles for traders who care about market structure.</p>
+        <p style="font-family: var(--mono); font-size: 11px; color: var(--text-dim); margin-top: 20px; letter-spacing: 0.05em; text-transform: uppercase;">A TzAI Foundation product</p>
+      </div>
+      <div>
+        <h5>Protocol</h5>
+        <ul>
+          <li><a href="https://docs.mtf.exchange/">Docs</a></li>
+          <li><a href="whitepaper.html">Whitepaper</a></li>
+          <li><a href="https://docs.mtf.exchange/api">API reference</a></li>
+          <li><a href="https://docs.mtf.exchange/mip">MIP-3 deploy</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Build</h5>
+        <ul>
+          <li><a href="https://docs.mtf.exchange/integration/migrating-from-hl">Migration guide</a></li>
+          <li><a href="https://docs.mtf.exchange/integration/signing">Signing</a></li>
+          <li><a href="https://docs.mtf.exchange/concepts/agent-wallets">Agent wallets</a></li>
+          <li><a href="/#testnet">Testnet access</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Connect</h5>
+        <ul>
+          <li><a href="https://github.com/mtf-exchange">GitHub</a></li>
+          <li><a href="mailto:hello@mtf.exchange">hello@mtf.exchange</a></li>
+          <li><a href="mailto:builders@mtf.exchange">builders@mtf.exchange</a></li>
+          <li><a href="mailto:validators@mtf.exchange">validators@mtf.exchange</a></li>
+          <li style="padding-top: 14px; border-top: 1px solid var(--line); margin-top: 8px;"><a href="https://tzai.net" style="font-family: var(--mono); font-size: 12px;">TzAI Foundation ↗</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© TzAI Foundation. MetaFlux is a TzAI Foundation series product. Pre-launch.</span>
+      <span class="pride-swatches">
+        <span class="sw" style="background: var(--blue);"></span>
+        <span class="sw" style="background: var(--pink);"></span>
+        <span class="sw" style="background: #fff;"></span>
+        &nbsp;mtf.exchange
+      </span>
+    </div>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>

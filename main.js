@@ -74,4 +74,26 @@
     el.textContent = '';
     setTimeout(tick, 400);
   });
+
+  // ── TOC scroll-spy (whitepaper page only) ────────────────────────
+  // Highlights the table-of-contents link for the section currently in
+  // view. No-op on pages without a `.toc`.
+  const tocLinks = Array.from(document.querySelectorAll('.toc a[href^="#"]'));
+  if (tocLinks.length) {
+    const byId = new Map();
+    tocLinks.forEach((a) => {
+      const id = a.getAttribute('href').slice(1);
+      const target = document.getElementById(id);
+      if (target) byId.set(target, a);
+    });
+    const spy = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        tocLinks.forEach((a) => a.classList.remove('active'));
+        const link = byId.get(entry.target);
+        if (link) link.classList.add('active');
+      });
+    }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
+    byId.forEach((_, target) => spy.observe(target));
+  }
 })();
