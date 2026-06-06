@@ -26,6 +26,7 @@
   --sans:           "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --serif:          "Cormorant Garamond", "Iowan Old Style", Cambria, Georgia, serif;
   --serif-display:  "Cormorant Garamond", "Iowan Old Style", Cambria, Georgia, serif;
+  --serif-flux:     "PT Serif", "Iowan Old Style", Cambria, Georgia, serif;
 
   --scroll-y: 0px;
 }
@@ -104,6 +105,42 @@ a:hover { color: var(--blue); }
   .ambient .blob { animation: none; }
 }
 
+/* ─── preloader (entrance) ──────────────────────────────────────── */
+#preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  transition: opacity 0.7s cubic-bezier(0.65, 0, 0.35, 1), visibility 0.7s;
+}
+#preloader .pl-mark {
+  width: 124px;
+  height: auto;
+  overflow: visible;
+  pointer-events: none;
+}
+#preloader.fade-out {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* climb-on: each curve draws in, faint shoulders first, bold peak last */
+#preloader .pl-p {
+  stroke-dasharray: 1 1.001;
+  stroke-dashoffset: 1;
+  animation: mfx-climb 1.05s cubic-bezier(0.65, 0, 0.2, 1) forwards;
+}
+#preloader .pl-e2 { animation-duration: 0.95s; animation-delay: 0.05s; }
+#preloader .pl-e1 { animation-duration: 1s;    animation-delay: 0.18s; }
+#preloader .pl-pm { animation-delay: 0.34s; }
+@keyframes mfx-climb { to { stroke-dashoffset: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  #preloader .pl-p { stroke-dashoffset: 0; animation: none; }
+}
+
 /* ─── pride bar (top edge) ──────────────────────────────────────── */
 .pride-bar {
   height: 2px;
@@ -159,15 +196,31 @@ nav .bar::before {
 }
 nav .bar > * { position: relative; z-index: 1; }
 .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
   font-family: var(--sans);
-  font-weight: 600;
+  font-weight: 500;
   font-size: 18px;
   letter-spacing: -0.02em;
   color: var(--text);
   line-height: 1;
 }
-.brand .b-m { color: var(--blue); }
-.brand .b-f { color: var(--pink); }
+.brand-mark {
+  height: 22px;
+  width: auto;
+  flex: none;
+  display: block;
+}
+.brand .b-meta { color: var(--text); }
+.brand .b-flux {
+  font-family: var(--serif-flux);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.05em;
+  letter-spacing: 0;
+  color: var(--pink);
+}
 nav ul { display: flex; gap: 32px; list-style: none; }
 nav ul a {
   font-family: var(--sans);
@@ -764,3 +817,154 @@ footer {
 .foot-bottom .pride-swatches { display: inline-flex; align-items: center; gap: 6px; }
 .foot-bottom .pride-swatches .sw { width: 10px; height: 10px; }
 @media (max-width: 720px) { .foot-grid { grid-template-columns: 1fr 1fr; } }
+
+/* ─── architecture stack ────────────────────────────────────────── */
+.arch {
+  margin-top: 56px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+.arch-layer {
+  position: relative;
+  display: grid;
+  grid-template-columns: 156px 1fr;
+  gap: 28px;
+  padding: 22px 24px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: linear-gradient(180deg, var(--bg-elev) 0%, rgba(10,12,18,0.35) 100%);
+}
+/* down-flow cue between layers */
+.arch-layer:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 78px;
+  bottom: -30px;
+  width: 1px;
+  height: 30px;
+  background: linear-gradient(var(--line-strong), transparent);
+}
+.lyr-head { padding-top: 2px; }
+.lyr-head .k {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.lyr-head .n {
+  display: block;
+  margin-top: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+.arch-chips { display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; }
+.arch-groups { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.arch-group .g {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 11px;
+}
+.arch-group:nth-child(2) .g { color: var(--pink); }
+.arch-group:nth-child(3) .g { color: var(--text-dim); }
+.chip {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1;
+  color: var(--text-mid);
+  padding: 8px 11px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--bg);
+  white-space: nowrap;
+}
+.chip.key {
+  color: var(--text);
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--bg-elev), var(--bg-elev)) padding-box,
+    linear-gradient(105deg, var(--blue), var(--pink)) border-box;
+}
+.chip.key::before {
+  content: "✦";
+  margin-right: 7px;
+  font-size: 9px;
+  vertical-align: 1px;
+  color: var(--blue);
+}
+.arch-legend {
+  margin-top: 34px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 24px;
+  font-size: 13px;
+  color: var(--text-mid);
+}
+.arch-legend .lg { font-family: var(--mono); font-size: 12px; color: var(--text-dim); }
+.arch-legend .lg b { color: var(--blue); font-weight: 400; }
+@media (max-width: 900px) {
+  .arch-groups { grid-template-columns: 1fr; gap: 18px; }
+}
+@media (max-width: 720px) {
+  .arch-layer { grid-template-columns: 1fr; gap: 14px; padding: 18px; }
+  .arch-layer:not(:last-child)::after { left: 24px; }
+}
+
+/* isometric figure (desktop) — chip stack (.arch-fallback) is the mobile view */
+.arch-figure { margin: 50px 0 0; }
+.arch-svg { display: block; width: 100%; height: auto; }
+.arch-fallback { display: none; }
+/* assemble bottom-up when scrolled into view */
+.arch-figure.anim .slab,
+.arch-figure.anim .albl { opacity: 0; transform: translateY(26px); }
+.arch-figure.anim.in .slab,
+.arch-figure.anim.in .albl {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.55s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: calc(var(--i) * 0.085s);
+}
+@media (max-width: 720px) {
+  .arch-figure { display: none; }
+  .arch-fallback { display: flex; }
+}
+
+/* phones: caps placed at end of file so they win over the base hero rules
+   (stops the big h1 / typewriter line forcing document width > viewport) */
+@media (max-width: 600px) {
+  .wrap { padding-left: 20px; padding-right: 20px; }
+  .hero h1, .paper-hero h1 { font-size: clamp(38px, 10vw, 58px); max-width: 100%; }
+  h2, .testnet-section h2 { font-size: clamp(27px, 7vw, 40px); }
+  .typed-line { display: flex; flex-wrap: wrap; }
+  .typed-line .typewriter { min-width: 0; max-width: 100%; }
+}
+
+/* ─── legal pages (terms / privacy) ─────────────────────────────── */
+.legal { max-width: 760px; margin: 0 auto; padding: 140px 32px 90px; }
+.legal .kicker { font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); }
+.legal h1 { font-family: var(--serif-display); font-size: clamp(40px, 7vw, 72px); font-weight: 400; letter-spacing: -0.02em; line-height: 1; margin: 14px 0 10px; }
+.legal .updated { font-family: var(--mono); font-size: 12px; color: var(--text-dim); margin-bottom: 26px; }
+.legal .disclaimer { border: 1px solid var(--line-strong); border-radius: 14px; background: var(--bg-elev); padding: 18px 20px; font-size: 14px; color: var(--text-mid); line-height: 1.6; margin-bottom: 46px; }
+.legal .disclaimer b { color: var(--text); }
+.legal h2 { font-family: var(--sans); font-size: 21px; font-weight: 600; letter-spacing: -0.01em; margin: 44px 0 14px; color: var(--text); scroll-margin-top: 100px; }
+.legal h2 .n { font-family: var(--mono); font-size: 13px; color: var(--blue); margin-right: 10px; font-weight: 400; }
+.legal p { color: var(--text-mid); line-height: 1.72; margin-bottom: 14px; font-size: 15.5px; }
+.legal ul { margin: 0 0 14px; padding-left: 20px; color: var(--text-mid); }
+.legal li { line-height: 1.72; margin-bottom: 7px; font-size: 15.5px; }
+.legal a { color: var(--blue); }
+.legal strong { color: var(--text); font-weight: 600; }
+.legal .view { border-left: 2px solid var(--pink); background: var(--pink-wash); border-radius: 0 10px 10px 0; padding: 13px 18px; margin: 18px 0; font-size: 14.5px; color: var(--text-mid); line-height: 1.7; }
+.legal .view .vl { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--pink); display: block; margin-bottom: 6px; }
+.legal-foot { border-top: 1px solid var(--line); margin-top: 30px; }
+.legal-foot .wrap { padding-top: 34px; padding-bottom: 46px; }
+.legal-links { display: flex; flex-wrap: wrap; gap: 22px; margin: 18px 0 22px; }
+.legal-links a { font-size: 14px; color: var(--text-mid); }
+.legal-links a:hover { color: var(--text); }
+@media (max-width: 600px) { .legal { padding: 112px 20px 72px; } }
