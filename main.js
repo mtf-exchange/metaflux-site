@@ -12,6 +12,40 @@
   const nav = document.querySelector('nav');
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  // ── preloader (entrance) ─────────────────────────────────────────
+  // Full-screen mark climb-on, then fade the overlay. Holds long enough
+  // for the animation to read, but never traps the page (failsafe in head
+  // for no-JS). Reduced-motion users get a near-instant dismiss.
+  const preloader = document.getElementById('preloader');
+  if (preloader) {
+    const hold = reduce ? 150 : 1500;
+    let dismissed = false;
+    const dismiss = () => {
+      if (dismissed) return;
+      dismissed = true;
+      preloader.classList.add('fade-out');
+      setTimeout(() => preloader.remove(), 800);
+    };
+    if (document.readyState === 'complete') {
+      setTimeout(dismiss, hold);
+    } else {
+      window.addEventListener('load', () => setTimeout(dismiss, hold), { once: true });
+    }
+    setTimeout(dismiss, 4000); // ceiling: never trap the page if load stalls
+  }
+
+  // ── architecture diagram: assemble bottom-up on scroll into view ─
+  const archFig = document.querySelector('.arch-figure');
+  if (archFig && !reduce) {
+    archFig.classList.add('anim');
+    const archIo = new IntersectionObserver((entries, obs) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) { archFig.classList.add('in'); obs.disconnect(); }
+      });
+    }, { threshold: 0.25 });
+    archIo.observe(archFig);
+  }
+
   // ── scroll signal ────────────────────────────────────────────────
   let ticking = false;
   const onScroll = () => {
