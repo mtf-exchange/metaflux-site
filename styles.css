@@ -400,7 +400,7 @@ h1 .accent {
 }
 
 /* ─── section primitives ────────────────────────────────────────── */
-section { padding: 140px 0; border-bottom: 1px solid var(--line); position: relative; z-index: 1; }
+section { padding: 140px 0; position: relative; z-index: 1; }
 .section-head {
   display: grid;
   grid-template-columns: 1fr 1.4fr;
