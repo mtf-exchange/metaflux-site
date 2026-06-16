@@ -1039,12 +1039,23 @@ footer .wrap {
   .arch-fallback { display: flex; }
 }
 
+/* phones: tighten the generous desktop vertical rhythm so sections don't
+   require endless scrolling on small screens */
+@media (max-width: 720px) {
+  section { padding: 84px 0; }
+  .hero { padding: 116px 0 72px; }
+  .cta-row .btn { flex: 1 1 auto; justify-content: center; }
+}
+
 /* phones: caps placed at end of file so they win over the base hero rules
    (stops the big h1 / typewriter line forcing document width > viewport) */
 @media (max-width: 600px) {
   .wrap { padding-left: 20px; padding-right: 20px; }
+  .hero { padding: 104px 0 64px; }
+  section { padding: 68px 0; }
   .hero h1, .paper-hero h1 { font-size: clamp(38px, 10vw, 58px); max-width: 100%; }
   h2, .testnet-section h2 { font-size: clamp(27px, 7vw, 40px); }
+  .hero p.lede { font-size: 18px; }
   .typed-line { display: flex; flex-wrap: wrap; }
   .typed-line .typewriter { min-width: 0; max-width: 100%; }
 }
