@@ -52,57 +52,59 @@ a:hover { color: var(--blue); }
 .wrap { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
 .mono { font-family: var(--mono); }
 
-/* ─── ambient animated glow (drifting blobs in the background) ──── */
+/* ─── ambient aurora backdrop (same treatment as the footer, full page) ── */
 .ambient {
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: -1;
   overflow: hidden;
+  isolation: isolate;
+  /* colored base mesh — never lets the canvas fall to muddy grey */
+  background:
+    linear-gradient(150deg, #122436 0%, #16213c 26%, #241f3c 50%, #36233c 72%, #241a2e 100%);
 }
-.ambient .blob {
+/* full-screen flowing blue / lavender / pink / white blooms over the base */
+.page-aurora {
   position: absolute;
-  border-radius: 50%;
-  filter: blur(110px);
-  opacity: 0.55;
-  mix-blend-mode: screen;
+  inset: -15%;
+  z-index: 0;
+  background:
+    radial-gradient(42% 40% at 16% 24%, rgba(91,206,250,0.85), transparent 64%),
+    radial-gradient(46% 44% at 84% 30%, rgba(245,169,184,0.78), transparent 66%),
+    radial-gradient(50% 48% at 50% 56%, rgba(186,166,238,0.62), transparent 60%),
+    radial-gradient(40% 44% at 12% 80%, rgba(91,206,250,0.66), transparent 66%),
+    radial-gradient(48% 50% at 88% 84%, rgba(245,169,184,0.80), transparent 66%),
+    radial-gradient(34% 38% at 60% 90%, rgba(255,255,255,0.55), transparent 58%),
+    radial-gradient(30% 34% at 38% 40%, rgba(255,255,255,0.40), transparent 60%);
+  filter: blur(64px) saturate(1.2);
+  animation: foot-aurora 26s ease-in-out infinite alternate;
   will-change: transform;
 }
-.ambient .blob.blue {
-  width: 720px; height: 720px;
-  background: radial-gradient(circle, var(--blue) 0%, transparent 65%);
-  left: -180px; top: -200px;
-  animation: drift-blue 26s ease-in-out infinite;
+/* readability vignette so body copy + glass cards stay legible over the bloom */
+.ambient::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(6,7,11,0.66) 0%, rgba(6,7,11,0.34) 15%, rgba(6,7,11,0.34) 85%, rgba(6,7,11,0.60) 100%),
+    radial-gradient(120% 86% at 50% 40%, transparent 36%, rgba(6,7,11,0.62) 100%);
 }
-.ambient .blob.pink {
-  width: 640px; height: 640px;
-  background: radial-gradient(circle, var(--pink) 0%, transparent 65%);
-  right: -160px; top: 30vh;
-  animation: drift-pink 32s ease-in-out infinite;
-}
-.ambient .blob.blue-2 {
-  width: 540px; height: 540px;
-  background: radial-gradient(circle, var(--blue) 0%, transparent 65%);
-  left: 30vw; bottom: -200px;
-  opacity: 0.35;
-  animation: drift-blue-2 38s ease-in-out infinite;
-}
-@keyframes drift-blue {
-  0%, 100% { transform: translate(0, 0); }
-  33%      { transform: translate(180px, 80px); }
-  66%      { transform: translate(60px, 200px); }
-}
-@keyframes drift-pink {
-  0%, 100% { transform: translate(0, 0); }
-  40%      { transform: translate(-160px, 120px); }
-  75%      { transform: translate(-60px, -120px); }
-}
-@keyframes drift-blue-2 {
-  0%, 100% { transform: translate(0, 0); }
-  50%      { transform: translate(-200px, -120px); }
+/* film-grain for the dreamy texture */
+.page-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.20;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 150px 150px;
 }
 @media (prefers-reduced-motion: reduce) {
-  .ambient .blob { animation: none; }
+  .page-aurora { animation: none; }
 }
 
 /* ─── preloader (entrance) ──────────────────────────────────────── */
@@ -765,10 +767,9 @@ details p {
 /* ─── footer ────────────────────────────────────────────────────── */
 footer {
   border-bottom: none;
-  /* colored base mesh — never lets the centre fall to muddy grey */
-  background:
-    linear-gradient(150deg, #122436 0%, #16213c 26%, #241f3c 50%, #36233c 72%, #241a2e 100%);
-  border-top: 1px solid var(--line);
+  /* no own background / border — share the page-wide aurora so there is no seam */
+  background: transparent;
+  border-top: none;
   position: relative;
   z-index: 1;
   overflow: hidden;
@@ -778,42 +779,20 @@ footer {
   flex-direction: column;
   padding: 84px 0 48px;
 }
-/* full-screen flowing blue / lavender / pink / white blooms over the base */
-.foot-aurora {
-  position: absolute;
-  inset: -15%;
-  z-index: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(42% 40% at 16% 24%, rgba(91,206,250,0.85), transparent 64%),
-    radial-gradient(46% 44% at 84% 30%, rgba(245,169,184,0.78), transparent 66%),
-    radial-gradient(50% 48% at 50% 56%, rgba(186,166,238,0.62), transparent 60%),
-    radial-gradient(40% 44% at 12% 80%, rgba(91,206,250,0.66), transparent 66%),
-    radial-gradient(48% 50% at 88% 84%, rgba(245,169,184,0.80), transparent 66%),
-    radial-gradient(34% 38% at 60% 90%, rgba(255,255,255,0.55), transparent 58%),
-    radial-gradient(30% 34% at 38% 40%, rgba(255,255,255,0.40), transparent 60%);
-  filter: blur(58px) saturate(1.25);
-  animation: foot-aurora 24s ease-in-out infinite alternate;
-  will-change: transform;
-}
+/* footer no longer paints its own bloom — the page-wide .page-aurora shows
+   through the now-transparent footer, so the backdrop is one continuous sheet */
+.foot-aurora { display: none; }
 @keyframes foot-aurora {
   0%   { transform: translate3d(-4%, -2%, 0) scale(1.08) rotate(-1.5deg); }
   50%  { transform: translate3d(4%, 2%, 0) scale(1.2) rotate(1.5deg); }
   100% { transform: translate3d(-2%, 3%, 0) scale(1.12) rotate(-0.5deg); }
 }
-/* soften the top seam + edge vignette for depth/focus */
-footer::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background:
-    linear-gradient(180deg, rgba(6,7,11,0.82) 0%, rgba(6,7,11,0) 12%),
-    radial-gradient(130% 95% at 50% 42%, transparent 52%, rgba(6,7,11,0.55) 100%);
-}
+/* footer's own top-seam + vignette removed — the page-wide vignette
+   (.ambient::after) and grain (.page-grain) already cover this region */
+footer::before { display: none; }
 /* grain / film-noise overlay for the dreamy texture */
 .foot-grain {
+  display: none;
   position: absolute;
   inset: 0;
   z-index: 2;
