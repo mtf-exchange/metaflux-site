@@ -6,3 +6,9 @@ out/
 .env.local
 .vercel
 *.log
+
+# impeccable: local + runtime state (DESIGN.md, PRODUCT.md, .impeccable/design.json
+# and .impeccable/live/config.json are committed; these are not)
+.impeccable/config.local.json
+.impeccable/critique/
+.impeccable/live/sessions/

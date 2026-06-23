@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-23",
+  "title": "Design System: MetaFlux",
+  "extensions": {
+    "colorMeta": {
+      "aurora-blue": {
+        "role": "primary",
+        "displayName": "Aurora Blue",
+        "canonical": "#5BCEFA",
+        "tonalRamp": ["#081e2d", "#0d2f45", "#13415e", "#1b597e", "#2ba8e0", "#5BCEFA", "#93dcfb", "#c8eefd"]
+      },
+      "quartz-rose": {
+        "role": "secondary",
+        "displayName": "Quartz Rose",
+        "canonical": "#F5A9B8",
+        "tonalRamp": ["#391921", "#572530", "#823843", "#b75462", "#ee7e95", "#F5A9B8", "#f8c9d2", "#fce5e9"]
+      },
+      "pure-white": {
+        "role": "tertiary",
+        "displayName": "Pure White",
+        "canonical": "#ffffff",
+        "tonalRamp": ["#3a3d42", "#5a5e64", "#7c8088", "#9fa3ab", "#c4c8cf", "#e2e5ea", "#f2f4f7", "#ffffff"]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#f0f3f7",
+        "tonalRamp": ["#06070b", "#0c0e14", "#12151d", "#1a1e29", "#262b39", "#5a6273", "#8b96a8", "#f0f3f7"]
+      },
+      "surface-base": {
+        "role": "neutral",
+        "displayName": "Surface Base",
+        "canonical": "#06070b",
+        "tonalRamp": ["#06070b", "#0c0e14", "#12151d", "#1a1e29", "#262b39", "#3a4150", "#5a6273", "#8b96a8"]
+      },
+      "signal-positive": {
+        "role": "neutral",
+        "displayName": "Signal Positive",
+        "canonical": "#6ee7a3",
+        "tonalRamp": ["#0c2a1c", "#103d28", "#175438", "#1f724c", "#3fae74", "#6ee7a3", "#a3f0c6", "#d3f8e3"]
+      },
+      "signal-negative": {
+        "role": "neutral",
+        "displayName": "Signal Negative",
+        "canonical": "#ff7a8c",
+        "tonalRamp": ["#3a151b", "#572028", "#822f3b", "#b74351", "#ee5e70", "#ff7a8c", "#ffaab5", "#ffd5db"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero h1 only; Cormorant Garamond with a Quartz Rose italic accent span." },
+      "headline": { "displayName": "Headline", "purpose": "Section h2; Cormorant with one rose italic accent per section." },
+      "title": { "displayName": "Title", "purpose": "Card titles and FAQ summaries; Cormorant 26-34px." },
+      "body": { "displayName": "Body", "purpose": "Geist prose; lede 21px, card body 15px, FAQ 16px. ss01/cv11 + tabular nums on." },
+      "label": { "displayName": "Label", "purpose": "Geist Mono uppercase micro-labels — the instrument-readout voice." },
+      "code": { "displayName": "Code", "purpose": "Geist Mono code frames and architecture chips, with syntax colors." }
+    },
+    "shadows": [
+      { "name": "glass-rest", "value": "inset 0 1px 0 rgba(255,255,255,0.10), inset 0 -1px 0 rgba(255,255,255,0.02), 0 0 0 1px rgba(255,255,255,0.05), 0 24px 60px -16px rgba(0,0,0,0.50)", "purpose": "Default Liquid Glass card / frame at rest." },
+      { "name": "glass-hover", "value": "inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -1px 0 rgba(255,255,255,0.02), 0 0 0 1px rgba(255,255,255,0.08), 0 32px 80px -16px rgba(0,0,0,0.60)", "purpose": "Glass card on hover, paired with translateY(-4px)." },
+      { "name": "nav-glass", "value": "0 0 0 1px rgba(255,255,255,0.06), inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -1px 0 rgba(255,255,255,0.03), 0 20px 60px -10px rgba(0,0,0,0.55), 0 4px 16px -4px rgba(0,0,0,0.30)", "purpose": "Sticky nav pill, under a 28px backdrop blur." },
+      { "name": "button-primary", "value": "inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.06), 0 0 0 1px rgba(255,255,255,0.18), 0 10px 32px -8px rgba(91,206,250,0.25), 0 4px 12px -4px rgba(0,0,0,0.4)", "purpose": "Primary button at rest." },
+      { "name": "button-primary-hover", "value": "inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 0 rgba(0,0,0,0.08), 0 0 0 1px rgba(255,255,255,0.24), 0 14px 40px -8px rgba(91,206,250,0.45), 0 6px 16px -4px rgba(0,0,0,0.5)", "purpose": "Primary button hover — Aurora Blue glow." },
+      { "name": "button-secondary-hover", "value": "inset 0 1px 0 rgba(255,255,255,0.20), inset 0 -1px 0 rgba(255,255,255,0.02), 0 0 0 1px rgba(245,169,184,0.25), 0 14px 40px -8px rgba(245,169,184,0.45), 0 4px 12px -4px rgba(0,0,0,0.3)", "purpose": "Secondary button hover — Quartz Rose glow." }
+    ],
+    "motion": [
+      { "name": "ease-glass", "value": "ease", "purpose": "Default 0.15-0.25s easing for hover lifts and glass state transitions." },
+      { "name": "ease-climb", "value": "cubic-bezier(0.65, 0, 0.2, 1)", "purpose": "Preloader mark draw-on and decisive entrances." },
+      { "name": "ease-assemble", "value": "cubic-bezier(0.2, 0.7, 0.2, 1)", "purpose": "Architecture figure assembling bottom-up on scroll." },
+      { "name": "dur-hover", "value": "0.2s", "purpose": "Button / link / nav hover transitions." },
+      { "name": "dur-card", "value": "0.25s", "purpose": "Card lift + shadow transition." },
+      { "name": "aurora-drift", "value": "26s ease-in-out infinite alternate", "purpose": "Page-wide aurora bloom drift; disabled under reduced-motion." }
+    ],
+    "breakpoints": [
+      { "name": "lg", "value": "900px" },
+      { "name": "md", "value": "720px" },
+      { "name": "sm", "value": "600px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Brightest, most-resolved control on the page; near-white glass with an Aurora Blue hover glow.",
+      "html": "<button class=\"ds-btn-primary\">Read the docs <span class=\"ds-arrow\">→</span></button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; gap: 10px; padding: 13px 22px; font-family: 'Geist', system-ui, sans-serif; font-size: 14px; font-weight: 500; letter-spacing: 0.01em; color: #06070b; border: none; border-radius: 999px; cursor: pointer; background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(240,243,247,0.92) 100%); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.06), 0 0 0 1px rgba(255,255,255,0.18), 0 10px 32px -8px rgba(91,206,250,0.25), 0 4px 12px -4px rgba(0,0,0,0.4); transition: all 0.2s ease; } .ds-btn-primary .ds-arrow { transition: transform 0.2s; } .ds-btn-primary:hover { transform: translateY(-1px); box-shadow: inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 0 rgba(0,0,0,0.08), 0 0 0 1px rgba(255,255,255,0.24), 0 14px 40px -8px rgba(91,206,250,0.45), 0 6px 16px -4px rgba(0,0,0,0.5); } .ds-btn-primary:hover .ds-arrow { transform: translateX(4px); } .ds-btn-primary:focus-visible { outline: 2px solid #5BCEFA; outline-offset: 3px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Dark glass alternative action; text and ring shift to Quartz Rose on hover.",
+      "html": "<button class=\"ds-btn-secondary\">Apply for devnet <span class=\"ds-arrow\">→</span></button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; gap: 10px; padding: 13px 22px; font-family: 'Geist', system-ui, sans-serif; font-size: 14px; font-weight: 500; letter-spacing: 0.01em; color: #f0f3f7; border: none; border-radius: 999px; cursor: pointer; background: linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%), rgba(10,12,18,0.40); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.16), 0 0 0 1px rgba(255,255,255,0.08), 0 10px 30px -10px rgba(0,0,0,0.55); transition: all 0.2s ease; } .ds-btn-secondary .ds-arrow { transition: transform 0.2s; } .ds-btn-secondary:hover { transform: translateY(-1px); color: #F5A9B8; background: linear-gradient(180deg, rgba(245,169,184,0.12) 0%, rgba(245,169,184,0.04) 100%), rgba(10,12,18,0.40); box-shadow: inset 0 1px 0 rgba(255,255,255,0.20), 0 0 0 1px rgba(245,169,184,0.25), 0 14px 40px -8px rgba(245,169,184,0.45); } .ds-btn-secondary:hover .ds-arrow { transform: translateX(4px); } .ds-btn-secondary:focus-visible { outline: 2px solid #F5A9B8; outline-offset: 3px; }"
+    },
+    {
+      "name": "Glass Card",
+      "kind": "card",
+      "refersTo": "card-glass",
+      "description": "The core Liquid Glass surface — translucent dark panel with lit edge, ambient drop, and a 4px hover lift.",
+      "html": "<article class=\"ds-card\"><span class=\"ds-card-tag\">/ EXECUTION</span><h3 class=\"ds-card-title\">The EVM, made parallel.</h3><p class=\"ds-card-body\">Contract calls execute concurrently, so your transaction doesn't queue behind everyone else's.</p></article>",
+      "css": ".ds-card { display: block; padding: 44px; border-radius: 24px; position: relative; overflow: hidden; background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.015) 60%, rgba(255,255,255,0) 100%), rgba(10,12,18,0.50); backdrop-filter: blur(24px) saturate(170%); -webkit-backdrop-filter: blur(24px) saturate(170%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), inset 0 -1px 0 rgba(255,255,255,0.02), 0 0 0 1px rgba(255,255,255,0.05), 0 24px 60px -16px rgba(0,0,0,0.50); transition: transform 0.25s ease, box-shadow 0.25s ease; } .ds-card:hover { transform: translateY(-4px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -1px 0 rgba(255,255,255,0.02), 0 0 0 1px rgba(255,255,255,0.08), 0 32px 80px -16px rgba(0,0,0,0.60); } .ds-card-tag { font-family: 'Geist Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #5BCEFA; } .ds-card-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 32px; font-weight: 400; letter-spacing: -0.015em; line-height: 1.05; margin: 16px 0; color: #f0f3f7; } .ds-card-body { font-family: 'Geist', system-ui, sans-serif; font-size: 15px; line-height: 1.55; color: #8b96a8; max-width: 50ch; margin: 0; }"
+    },
+    {
+      "name": "Spec Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Mono spec token used in the architecture diagram; bordered, nowrap.",
+      "html": "<span class=\"ds-chip\">match-engine</span>",
+      "css": ".ds-chip { display: inline-block; font-family: 'Geist Mono', monospace; font-size: 12px; line-height: 1; color: #8b96a8; padding: 8px 11px; border: 1px solid #262b39; border-radius: 8px; background: #06070b; white-space: nowrap; }"
+    },
+    {
+      "name": "Key Chip",
+      "kind": "chip",
+      "refersTo": "chip-key",
+      "description": "Load-bearing component marker — the only sanctioned blue+rose adjacency, via a gradient border.",
+      "html": "<span class=\"ds-chip-key\">MetaFluxBFT consensus</span>",
+      "css": ".ds-chip-key { display: inline-block; font-family: 'Geist Mono', monospace; font-size: 12px; line-height: 1; color: #f0f3f7; padding: 8px 11px; border: 1px solid transparent; border-radius: 8px; white-space: nowrap; background: linear-gradient(#0c0e14, #0c0e14) padding-box, linear-gradient(105deg, #5BCEFA, #F5A9B8) border-box; } .ds-chip-key::before { content: '✦'; margin-right: 7px; font-size: 9px; vertical-align: 1px; color: #5BCEFA; }"
+    },
+    {
+      "name": "FAQ Disclosure",
+      "kind": "custom",
+      "refersTo": "disclosure",
+      "description": "Native details/summary; the mono + marker rotates 45deg to a x and shifts blue to rose on open.",
+      "html": "<details class=\"ds-faq\" open><summary class=\"ds-faq-summary\">Is this live on mainnet today?</summary><p class=\"ds-faq-body\">No. Components ship across phased testnet milestones; the site says so plainly.</p></details>",
+      "css": ".ds-faq { border-bottom: 1px solid #1a1e29; padding: 28px 0; } .ds-faq-summary { cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 32px; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 26px; font-weight: 400; letter-spacing: -0.01em; color: #f0f3f7; } .ds-faq-summary::-webkit-details-marker { display: none; } .ds-faq-summary::after { content: '+'; font-family: 'Geist Mono', monospace; font-size: 22px; color: #5BCEFA; transition: transform 0.2s, color 0.2s; flex-shrink: 0; } .ds-faq[open] .ds-faq-summary::after { transform: rotate(45deg); color: #F5A9B8; } .ds-faq-body { font-family: 'Geist', system-ui, sans-serif; color: #8b96a8; margin-top: 16px; font-size: 16px; line-height: 1.65; max-width: 72ch; }"
+    },
+    {
+      "name": "Section Kicker",
+      "kind": "custom",
+      "refersTo": "label",
+      "description": "Mono uppercase micro-label — the instrument-readout voice that tags sections and specs.",
+      "html": "<span class=\"ds-kicker\">/ what we ship</span>",
+      "css": ".ds-kicker { font-family: 'Geist Mono', monospace; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: #5BCEFA; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Honest Instrument",
+    "overview": "MetaFlux looks the way a precision instrument feels: a near-black machined housing, faces of liquid glass, and one quiet aurora of light behind it all. The system pairs the elegance of a Cormorant Garamond display serif with the exactness of Geist Mono, so every screen reads as measured. Confidence is expressed through restraint and specificity, never through volume. The surface is a single continuous dark field lit from within by a slow-drifting aurora, over which components are built as Liquid Glass: translucent panels with a hairline ring, an inner top highlight, a deep ambient drop shadow, and a colored glow that appears only on interaction. This system rejects crypto-hype grammar, the gradient-and-cards SaaS template, and any motion that fights legibility. Where competitors perform, MetaFlux demonstrates.",
+    "keyCharacteristics": [
+      "Dark, single-field canvas (#06070b) under one page-wide animated aurora; no section seams.",
+      "Serif-display + mono pairing: Cormorant Garamond for headings, Geist Mono for every technical label, Geist for body.",
+      "Liquid Glass panels everywhere — hairline ring + inner highlight + ambient drop + interaction-only colored glow.",
+      "Accent restraint: Aurora Blue and Quartz Rose alternate as structural signals; white is the third, rarest voice.",
+      "Motion is choreographed but reduced-motion-safe; effects serve comprehension, not spectacle."
+    ],
+    "rules": [
+      { "name": "The Quiet Signal Rule", "body": "The aurora's palette is identity, not message. Never label it, explain it, or build copy around it. Its meaning is carried by presence alone.", "section": "colors" },
+      { "name": "The Two-Voice Rule", "body": "Blue and Rose are a call-and-response, not interchangeable tints. They alternate deliberately and never wash a single surface together; never introduce a third accent hue.", "section": "colors" },
+      { "name": "The Rarity Rule", "body": "Pure white as an accent appears on a deliberately small fraction of any screen. Its scarcity makes it read as the most resolved point.", "section": "colors" },
+      { "name": "The Serif-Says, Mono-Proves Rule", "body": "Claims and prose are set in Cormorant; anything that is a fact, spec, label, or value is set in Geist Mono.", "section": "typography" },
+      { "name": "The Italic-Accent Rule", "body": "Emphasis inside display headings is a Quartz Rose italic serif span — never bold, color-only, or underline. One per heading.", "section": "typography" },
+      { "name": "The Lit-Edge Rule", "body": "Every glass surface must carry the inner top highlight; without it the panel reads as a flat dark box, not glass.", "section": "elevation" },
+      { "name": "The Glow-On-Touch Rule", "body": "Colored shadow is an interaction reward, never a resting state. At rest the ambient shadow is neutral black.", "section": "elevation" },
+      { "name": "The Bordered-Diagram Exception", "body": "The architecture stack is not glass: solid raised surfaces with a 1px hairline border. Schematic content earns a schematic treatment.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep the page a single dark field (#06070b) with one page-wide aurora behind everything; let surfaces float seamlessly.",
+      "Do build every floating surface as full Liquid Glass — ring + inner top highlight + ambient drop + 20-28px backdrop blur.",
+      "Do set claims in Cormorant and facts/labels/values in Geist Mono.",
+      "Do alternate Aurora Blue and Quartz Rose as a deliberate call-and-response; reserve Pure White for the single most resolved point.",
+      "Do make emphasis with a rose italic serif span, never bold or underline.",
+      "Do reserve colored glow for hover/focus only, and ship a prefers-reduced-motion alternative for every animation.",
+      "Do verify Ink Muted (#8b96a8) and Ink Dim (#5a6273) clear contrast on whatever surface they sit over; favor Ink for meaningful text."
+    ],
+    "donts": [
+      "Don't reach for crypto-hype grammar: no neon-casino glow, rocket/moon iconography, APY-bait numbers, or airdrop urgency.",
+      "Don't ship the gradient-and-cards SaaS template, the hero-metric template, or identical icon-heading-text card grids.",
+      "Don't over-animate or let any effect fight legibility; motion serves comprehension or it doesn't ship.",
+      "Don't explain, caption, or sloganize the aurora palette.",
+      "Don't use gradient text (background-clip: text); emphasis comes from the rose italic serif, weight, or size.",
+      "Don't treat glass as decoration on a light or flat surface; it is a committed structural language on a dark field, or it isn't used.",
+      "Don't introduce colored left-stripe accent borders >1px (the legacy .legal .view rose stripe is the one pre-existing exception).",
+      "Don't add a third accent hue or wash a single surface in both blue and rose at once (the gradient-bordered key chip is the only sanctioned adjacency)."
+    ]
+  }
+}
