@@ -15,7 +15,7 @@ Both read in a high-skepticism, high-expertise context. Neither wants to be mark
 
 ## Product Purpose
 
-MetaFlux (mtf.exchange) is the pre-launch marketing site for an independent L1 derivatives exchange — a single chain with a native clearing core on MetaFluxBFT consensus, a parallel EVM, cross-asset portfolio margin, MEV-resistant matching, and permissionless market deploy. A TzAI Foundation product.
+MetaFlux (mtf.exchange) is the pre-launch marketing site for an independent L1 derivatives exchange — a single chain with a native clearing core on MetaFluxBFT consensus, a parallel EVM, cross-asset portfolio margin, MEV-resistant matching, and permissionless market deploy. A MetaFlux Foundation product.
 
 The product is **pre-launch** (devnet / phased testnet). The site's job is not to transact — it's to **establish technical credibility**: convince serious desks and builders that the engineering is real, specific, and shipping, so they apply for devnet and follow to mainnet. Success = a skeptical pro reads the architecture, believes the claims are load-bearing, and signs up.
 
