@@ -261,14 +261,72 @@
     <section id="economics" class="ps">
       <div class="ps-num">08</div>
       <h2>Token &amp; fee economics</h2>
-      <p>MTF is the native token: it secures the chain through staking, it is the unit validators and delegators earn, and protocol fees route value back to holders. The fee model is built to apply continuous buy pressure and shrink supply while funding the validators and the foundation that back the chain.</p>
-      <p>Protocol fees are collected in USDC and split three ways:</p>
-      <div class="split">
-        <div class="split-row"><span class="split-pct">80%</span><span class="split-label">Buyback-and-burn — a recurring executor buys MTF on the open market with the accumulated USDC and burns it. Continuous buy pressure plus deflation, both returned to holders.</span></div>
-        <div class="split-row"><span class="split-pct">10%</span><span class="split-label">Validators — distributed by stake.</span></div>
-        <div class="split-row"><span class="split-pct">10%</span><span class="split-label">Foundation — protocol development and security.</span></div>
+      <p class="lead">MTF is the native token: it secures the chain through staking, it is the unit validators and their stakers earn, and protocol fees route value back to holders through a buyback flywheel. The design has three load-bearing ideas — a supply that tracks a living reference rather than an arbitrary cap, a fee engine that converts every basis point of revenue into buy pressure, and a staking ladder that pays the trader who locks the longest.</p>
+
+      <h3>8.1 Supply — population-pegged</h3>
+      <p>MTF does not have a fixed maximum supply, and it does not have an open-ended emissions schedule either. Total supply is <strong>pegged to the population of China</strong>: it launches at <strong>1,404,890,000 MTF</strong> — one token for each person counted in China's 2026 population — and is re-pegged once a year so the float tracks the living population rather than a number chosen at genesis.</p>
+      <p>The peg is a governed, evidence-based process, not an oracle the team controls. Each year the reference figure is the <strong>median across multiple authoritative Chinese central-government data sources</strong>, which removes any single source's revision or rounding from the result. The validator set then votes to settle the difference: if the population grew, validators vote to <strong>mint</strong> the marginal MTF; if it shrank, they vote to <strong>burn</strong> an equal amount of treasury-held MTF. Supply therefore breathes with the reference population — bounded, auditable, and never inflated by discretion. The annual re-peg is a small adjustment against a billion-token base, so circulating supply is effectively stable while remaining honestly anchored to something real.</p>
+
+      <h3>8.2 Allocation</h3>
+      <p>The full 1,404,890,000 MTF is allocated across three buckets, weighted toward the people who actually use and secure the network:</p>
+      <div class="spec-table">
+        <table>
+          <thead><tr><th>Allocation</th><th>Share</th><th>Terms</th></tr></thead>
+          <tbody>
+            <tr><td class="fn">TGE airdrop</td><td><span class="mono">30%</span></td><td>Distributed on MetaFlux mainnet after the six-month testnet, to active traders, market makers, and points holders. The reward for showing up early and trading real flow.</td></tr>
+            <tr><td class="fn">Core contributors</td><td><span class="mono">20%</span></td><td>One-year cliff, then six-year linear vesting. Long alignment, no fast unlock.</td></tr>
+            <tr><td class="fn">Treasury / community / ecosystem / validators</td><td><span class="mono">50%</span></td><td>A single governed pool funding grants, liquidity programs, validator rewards, and the supply re-peg reserve.</td></tr>
+          </tbody>
+        </table>
       </div>
-      <p>Three optional fee redirections sit on top of the base split, each capped against abuse. A <strong>referrer</strong> earns 10% of the taker fee, carved from the protocol's share rather than added to what the user pays; the referrer is single-level (no multi-level chains) and set once, immutably, to remove an arbitrage surface. A <strong>builder code</strong> lets a third-party frontend or strategy provider charge up to 8 bps per fill, with the trader's explicit, revocable approval — one basis point tighter than the prevailing comparable cap. A <strong>MIP-3 deployer</strong> can set a fee of up to 5 bps on the markets it lists, an incentive to deploy bounded so a deployed market cannot become a fee trap. In the worst case where all three apply, total cost is bounded and disclosed pre-trade; the base case is just the protocol fee.</p>
+      <p>The contributor cliff and long vesting are deliberate: no insider can sell into the airdrop, and the team's tokens unlock over a horizon longer than any single market cycle.</p>
+
+      <h3>8.3 Fee value-accrual — the flywheel</h3>
+      <p>Every protocol fee is converted into buy pressure on MTF. The flow is mechanical, not discretionary. Fees are collected; <strong>maker rebates are paid first</strong>, so liquidity providers are made whole before anything else happens; then <strong>all remaining fee revenue buys MTF on the open market</strong>. That bought-back MTF — not the raw fee currency — is what gets distributed, split three ways:</p>
+      <div class="split">
+        <div class="split-row"><span class="split-pct">70%</span><span class="split-label">Burned — permanently removed from supply. Continuous open-market buy pressure plus deflation, both returned to every holder.</span></div>
+        <div class="split-row"><span class="split-pct">20%</span><span class="split-label">Validators — routed to validators, who distribute it to their stakers as the revenue-share dividend.</span></div>
+        <div class="split-row"><span class="split-pct">10%</span><span class="split-label">Treasury — the governed pool that funds development, security, and ecosystem growth.</span></div>
+      </div>
+      <p>The flywheel turns trading volume directly into MTF demand and supply contraction, while paying the stakers who secure the chain out of the same revenue. Because the buyback executes on the open market, fee accrual is fully transparent on-chain and cannot be diluted by off-book issuance.</p>
+
+      <h3>8.4 Fee structure</h3>
+      <p>A trader's effective fee is set by three <em>independent</em> tier systems that stack — a desk can sit in a high volume tier, a high maker-rebate tier, and a high staking-discount tier at once, and each applies on its own axis:</p>
+      <div class="spec-table">
+        <table>
+          <thead><tr><th>System</th><th>Keyed on</th><th>Range</th></tr></thead>
+          <tbody>
+            <tr><td class="fn">Fee tiers</td><td>30-day total volume</td><td>Taker <span class="mono">0.035% → 0.020%</span>; maker <span class="mono">0.010% → 0.000%</span> as volume climbs.</td></tr>
+            <tr><td class="fn">Maker rebate tiers</td><td>Share of total maker volume</td><td>Escalating rebate for the venue's largest liquidity providers, paid before the buyback.</td></tr>
+            <tr><td class="fn">Staking discount tiers</td><td>ve-weighted MTF stake</td><td>A taker-only discount from <span class="mono">5%</span> up to <span class="mono">50%</span> — the staking ladder of §8.5.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Volume rewards flow; maker-share rewards depth; the staking ladder rewards conviction. Keeping the three orthogonal means a small but committed staker and a large but unstaked desk are each rewarded for the thing they actually bring.</p>
+      <p>Three optional fee redirections sit on top, each capped against abuse. A <strong>referrer</strong> earns a share of the taker fee carved from the protocol's cut rather than added to what the user pays; the referrer is single-level and set once, immutably, to remove an arbitrage surface. A <strong>builder code</strong> lets a third-party frontend or strategy provider charge up to 8 bps per fill with the trader's explicit, revocable approval. A <strong>MIP-3 deployer</strong> can set a fee of up to 5 bps on the markets it lists — an incentive to deploy, bounded so a deployed market cannot become a fee trap. In the worst case where all three apply, total cost is bounded and disclosed pre-trade; the base case is just the protocol fee.</p>
+
+      <h3>8.5 Staking — the administrative ladder</h3>
+      <p>Staking MTF buys two things: a share of the validator dividend, and a taker fee discount that escalates with the size and conviction of the stake. The discount is delivered through a <strong>ten-rung ladder</strong> named for the Chinese administrative hierarchy — climbing from a township office to the top of the state — with each rung granting a larger cut of the taker fee.</p>
+      <div class="spec-table">
+        <table>
+          <thead><tr><th>Rung</th><th>Taker discount</th><th>Seat</th></tr></thead>
+          <tbody>
+            <tr><td class="fn">Section Chief <span class="mono">(Township Head)</span></td><td><span class="mono">5%</span></td><td>threshold</td></tr>
+            <tr><td class="fn">Deputy Section Chief</td><td><span class="mono">8%</span></td><td>threshold</td></tr>
+            <tr><td class="fn">Division Chief <span class="mono">(County Chief)</span></td><td><span class="mono">12%</span></td><td>threshold</td></tr>
+            <tr><td class="fn">Deputy Division Chief</td><td><span class="mono">15%</span></td><td>threshold</td></tr>
+            <tr><td class="fn">Director-General <span class="mono">(Mayor)</span></td><td><span class="mono">20%</span></td><td>threshold</td></tr>
+            <tr><td class="fn">Deputy Director-General</td><td><span class="mono">25%</span></td><td>threshold</td></tr>
+            <tr><td class="fn">Minister <span class="mono">(Governor)</span></td><td><span class="mono">32%</span></td><td>threshold</td></tr>
+            <tr><td class="fn">Vice Minister <span class="mono">(Vice Governor)</span></td><td><span class="mono">35%</span></td><td>threshold</td></tr>
+            <tr><td class="fn">State Councilor / Vice Premier</td><td><span class="mono">40%</span></td><td>threshold</td></tr>
+            <tr><td class="fn">Premier / President / General Secretary</td><td><span class="mono">50%</span></td><td>single seat · cap 1</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Tier is determined by <strong>ve-weighted stake</strong>, not raw balance. A stake's effective weight is the staked amount multiplied by a lock-time multiplier, so locking longer counts for more: a <strong>flexible, no-lock</strong> stake sits at the lowest tier and earns <em>no</em> dividend — the deliberate lane for market makers who need their capital mobile; a <strong>1-month</strong> lock counts at <span class="mono">1.0×</span>, a <strong>6-month</strong> lock at <span class="mono">2.5×</span>, and a <strong>24-month</strong> lock at the <span class="mono">4.0×</span> cap. Time-weighting is what makes the discount earned rather than bought: a long-locked holder outranks a larger holder who keeps the option to leave.</p>
+      <p>Every rung except one is uncapped — pure threshold, so any number of stakers who clear the ve-weight bar hold the title, <strong>including Minister</strong>. The single exception is the top: <strong>Premier / President / General Secretary</strong> is a competitive seat with a cap of one, held by the single largest holder by ve weight. It is the one rung you take from someone else.</p>
+      <p>The validator-routed <strong>20% dividend</strong> requires at least a one-month lock — the flexible lane trades the dividend for mobility. Three timing parameters govern how a stake moves: the <strong>minimum lockup</strong>, an <strong>exit cooldown</strong> on unstaking, and a <strong>fee-discount activation delay</strong> before a new tier takes effect. Each is set by governance and each carries a hard <strong>24-hour floor</strong>, so no parameter change can make staking instantly reversible or make a discount retroactive enough to game.</p>
     </section>
 
     <!-- 9 SECURITY -->
