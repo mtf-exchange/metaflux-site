@@ -965,7 +965,29 @@ footer .wrap {
   border-radius: 8px;
   background: var(--bg);
   white-space: nowrap;
+  /* lit top edge so each chip reads as a tooled key on the diagram face */
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  transition: color 0.2s ease, border-color 0.2s ease,
+    transform 0.2s ease, box-shadow 0.2s ease;
 }
+/* Glow-On-Touch: colored glow is interaction-only, never a resting state */
+.chip:hover, .chip:focus-visible {
+  color: var(--text);
+  border-color: var(--blue);
+  transform: translateY(-1px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 6px 16px -8px var(--blue-glow);
+  outline: none;
+}
+.chip.key:hover, .chip.key:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 6px 16px -8px var(--pink-glow);
+  outline: none;
+}
+/* mobile sub-cluster divider inside the dense settlement group;
+   hidden on desktop where the chip stack is sr-only */
+.arch-subdiv { display: none; }
 .chip.key {
   color: var(--text);
   border: 1px solid transparent;
@@ -980,17 +1002,48 @@ footer .wrap {
   vertical-align: 1px;
   color: var(--blue);
 }
+/* legend as a contained figure-key plate: a top hairline (the layers' own
+   border language) ties the key to the diagram; rows stack on one rhythm */
 .arch-legend {
-  margin-top: 34px;
+  margin-top: clamp(28px, 3.2vw, 40px);
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px 24px;
+  flex-direction: column;
+  gap: 14px;
   font-size: 13px;
   color: var(--text-mid);
 }
-.arch-legend .lg { font-family: var(--mono); font-size: 12px; color: var(--text-dim); }
-.arch-legend .lg b { color: var(--blue); font-weight: 400; }
+.arch-legend .lg-keys { display: flex; flex-direction: column; gap: 9px; }
+.arch-legend .lg {
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-mid);
+}
+.arch-legend .sw {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+}
+.arch-legend .sw-spec { font-weight: 400; font-size: 11px; color: var(--blue); }
+.arch-legend .sw-color {
+  width: 14px; height: 14px; border-radius: 4px;
+  /* the one sanctioned blue+rose adjacency (same rule as .chip.key) */
+  background: linear-gradient(105deg, var(--blue) 0 50%, var(--pink) 50% 100%);
+}
+/* the honest milestones note reads as a trailing caption, not a third key */
+.arch-legend .note {
+  display: block;
+  margin-top: 4px;
+  font-size: 11.5px;
+  letter-spacing: 0.01em;
+}
+.arch-legend .note .link:hover { color: var(--blue); }
 @media (max-width: 900px) {
   .arch-groups { grid-template-columns: 1fr; gap: 18px; }
 }
@@ -1000,9 +1053,25 @@ footer .wrap {
 }
 
 /* isometric figure (desktop) — chip stack (.arch-fallback) is the mobile view */
-.arch-figure { margin: 50px 0 0; }
+/* head→figure and figure→legend breathe on one clamped section step */
+#architecture .section-head { margin-bottom: clamp(40px, 4.5vw, 64px); }
+.arch-figure { margin: clamp(28px, 3.2vw, 40px) 0 0; }
 .arch-svg { display: block; width: 100%; height: auto; }
-.arch-fallback { display: none; }
+/* desktop: the chip stack is the canonical AT-readable representation —
+   kept in the a11y tree (sr-only clip), not display:none, so screen-reader
+   users get the full architecture at every width; the SVG is decorative. */
+.arch-fallback {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
 /* assemble bottom-up when scrolled into view */
 .arch-figure.anim .slab,
 .arch-figure.anim .albl { opacity: 0; transform: translateY(26px); }
@@ -1010,19 +1079,52 @@ footer .wrap {
 .arch-figure.anim.in .albl {
   opacity: 1;
   transform: translateY(0);
-  transition: opacity 0.55s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
-  transition-delay: calc(var(--i) * 0.085s);
+  /* slabs settle with a touch more calm authority + stagger headroom */
+  transition: opacity 0.6s ease, transform 0.78s cubic-bezier(0.16, 0.84, 0.24, 1);
+  transition-delay: calc(var(--i) * 0.095s);
 }
 @media (max-width: 720px) {
   .arch-figure { display: none; }
-  .arch-fallback { display: flex; }
+  /* mobile: SVG is hidden, so the fallback becomes the visible diagram —
+     undo the desktop sr-only clip and lay it out normally. */
+  .arch-fallback {
+    display: flex;
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    clip-path: none;
+    white-space: normal;
+    border: 0;
+  }
+  /* mobile: chips are the visible diagram — slightly more air between keys */
+  .arch-chips { gap: 10px; }
+  /* relieve the dense settlement group: a short left-bright→transparent
+     hairline (the layer-connector language) splits state from settlement */
+  .arch-subdiv {
+    display: block;
+    height: 1px;
+    margin: 12px 0;
+    background: linear-gradient(90deg, var(--line-strong), transparent);
+  }
 }
 
 /* phones: tighten the generous desktop vertical rhythm so sections don't
    require endless scrolling on small screens */
 @media (max-width: 720px) {
   section { padding: 84px 0; }
-  .hero { padding: 116px 0 72px; }
+  /* hero owns the opening screen so the next section stays below the fold —
+     the intro reads on its own, undistracted */
+  .hero {
+    min-height: 100vh;   /* fallback for browsers without svh */
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 96px 0 72px; /* top clears the sticky nav */
+  }
   .cta-row .btn { flex: 1 1 auto; justify-content: center; }
 }
 
@@ -1030,7 +1132,7 @@ footer .wrap {
    (stops the big h1 / typewriter line forcing document width > viewport) */
 @media (max-width: 600px) {
   .wrap { padding-left: 20px; padding-right: 20px; }
-  .hero { padding: 104px 0 64px; }
+  .hero { padding: 88px 0 64px; } /* min-height + vertical centering inherited from the 720px rule */
   section { padding: 68px 0; }
   .hero h1, .paper-hero h1 { font-size: clamp(38px, 10vw, 58px); max-width: 100%; }
   h2, .testnet-section h2 { font-size: clamp(27px, 7vw, 40px); }
@@ -1053,7 +1155,7 @@ footer .wrap {
 .legal li { line-height: 1.72; margin-bottom: 7px; font-size: 15.5px; }
 .legal a { color: var(--blue); }
 .legal strong { color: var(--text); font-weight: 600; }
-.legal .view { border-left: 2px solid var(--pink); background: var(--pink-wash); border-radius: 0 10px 10px 0; padding: 13px 18px; margin: 18px 0; font-size: 14.5px; color: var(--text-mid); line-height: 1.7; }
+.legal .view { border-left: 1px solid var(--pink); background: var(--pink-wash); border-radius: 0 10px 10px 0; padding: 13px 18px; margin: 18px 0; font-size: 14.5px; color: var(--text-mid); line-height: 1.7; }
 .legal .view .vl { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--pink); display: block; margin-bottom: 6px; }
 .legal-foot { border-top: 1px solid var(--line); margin-top: 30px; }
 .legal-foot .wrap { padding-top: 34px; padding-bottom: 46px; }

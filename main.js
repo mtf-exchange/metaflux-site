@@ -44,6 +44,9 @@
       });
     }, { threshold: 0.25 });
     archIo.observe(archFig);
+    // safety: if the IO never fires (background/hidden tab, non-scrolling
+    // crawler) resolve the figure to visible anyway so it never ships blank.
+    setTimeout(() => archFig.classList.add('in'), 1800);
   }
 
   // ── scroll signal ────────────────────────────────────────────────
