@@ -221,6 +221,31 @@ a { color: inherit; text-decoration: none; }
   color: var(--ink);
   text-align: left !important;
 }
+
+/* ── display equations ───────────────────────────────────────── */
+.eq {
+  position: relative;
+  margin: 3.2mm 0 3.4mm;
+  padding: 0 14mm;
+  text-align: center;
+  color: var(--ink);
+  font-size: 9.8pt;
+  line-height: 1.5;
+  break-inside: avoid;
+}
+.eq i { font-style: italic; }
+.eq .rm { font-style: normal; }
+.eq .mono { font-size: 0.8em; }
+.eq sub, .eq sup { font-size: 0.62em; }
+.eq .eqno {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  font-style: normal;
+  font-size: 8.5pt;
+  color: #333;
+}
 </style>
 </head>
 <body>
