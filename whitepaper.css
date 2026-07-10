@@ -348,6 +348,34 @@
   line-height: 1.4 !important;
 }
 
+/* ─── references ────────────────────────────────────────────────── */
+.refs {
+  list-style: none;
+  counter-reset: ref;
+  margin: 8px 0 0;
+}
+.refs li {
+  counter-increment: ref;
+  position: relative;
+  padding: 10px 0 10px 44px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-mid);
+  border-bottom: 1px solid var(--line);
+}
+.refs li:last-child { border-bottom: none; }
+.refs li::before {
+  content: "[" counter(ref) "]";
+  position: absolute;
+  left: 0;
+  top: 11px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--blue);
+}
+.refs li:nth-child(even)::before { color: var(--pink); }
+.refs em { color: var(--text); font-style: italic; }
+
 /* ─── responsive ────────────────────────────────────────────────── */
 @media (max-width: 960px) {
   .paper-body { grid-template-columns: 1fr; gap: 0; }
