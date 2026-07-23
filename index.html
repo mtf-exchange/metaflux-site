@@ -43,6 +43,51 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&family=PT+Serif:ital@1&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 <noscript><style>#preloader{display:none!important}</style></noscript>
+
+<!-- Structured data (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://mtf.exchange/#organization",
+      "name": "MetaFlux",
+      "url": "https://mtf.exchange/",
+      "logo": "https://mtf.exchange/apple-touch-icon.png",
+      "description": "MetaFlux is an independent Layer 1 derivatives exchange with a parallel EVM, cross-asset portfolio margin, MEV-resistant matching, and permissionless market deployment.",
+      "sameAs": [
+        "https://x.com/MetaFluxDex",
+        "https://github.com/mtf-exchange"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://mtf.exchange/#website",
+      "url": "https://mtf.exchange/",
+      "name": "MetaFlux",
+      "description": "An independent L1 derivatives exchange. Parallel EVM, cross-asset portfolio margin, MEV-resistant matching, permissionless market deploy.",
+      "publisher": { "@id": "https://mtf.exchange/#organization" },
+      "inLanguage": "en"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "MetaFlux",
+      "url": "https://mtf.exchange/",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Web",
+      "description": "On-chain derivatives exchange: a Layer 1 perpetuals DEX with parallel EVM execution, cross-asset portfolio margin, tiered liquidation grace, RFQ and frequent batch auctions, MEV-resistant matching, and permissionless market deploy via MIP-3.",
+      "publisher": { "@id": "https://mtf.exchange/#organization" },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD",
+        "description": "Devnet is open — no application, no allow-list."
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 
@@ -64,7 +109,7 @@
 
 <nav>
   <div class="bar">
-    <a class="brand" href="/"><img class="brand-mark" src="logo/metaflux-mark.svg" alt="" aria-hidden="true"><span class="b-word"><span class="b-meta">Meta</span><span class="b-flux">Flux</span></span></a>
+    <a class="brand" href="/"><img class="brand-mark" src="logo/metaflux-mark.svg" alt="MetaFlux — L1 derivatives exchange"><span class="b-word"><span class="b-meta">Meta</span><span class="b-flux">Flux</span></span></a>
     <ul>
       <li><a href="#protocol">Protocol</a></li>
       <li><a href="#builders">Builders</a></li>
@@ -429,8 +474,8 @@
   <div class="wrap">
     <div class="foot-grid">
       <div>
-        <a class="brand" href="/"><img class="brand-mark" src="logo/metaflux-mark.svg" alt="" aria-hidden="true"><span class="b-word"><span class="b-meta">Meta</span><span class="b-flux">Flux</span></span></a>
-        <p class="foot-about">An L1 derivatives chain. Independent, EVM-compatible, built from first principles for traders who care about market structure.</p>
+        <a class="brand" href="/"><img class="brand-mark" src="logo/metaflux-mark.svg" alt="MetaFlux logo"><span class="b-word"><span class="b-meta">Meta</span><span class="b-flux">Flux</span></span></a>
+        <p class="foot-about">An independent L1 derivatives exchange — perpetuals and spot. EVM-compatible, built from first principles for traders who care about market structure.</p>
         <p class="foot-attr">A MetaFlux Foundation product</p>
       </div>
       <div>
