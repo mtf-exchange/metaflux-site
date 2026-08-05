@@ -51,7 +51,11 @@ Vendored from [`mtf-exchange/brand`](https://github.com/mtf-exchange/brand) into
 | `logo/metaflux-mark-square-mono.svg` | 64×64 mono mark — Safari pinned-tab `mask-icon` |
 | `logo/metaflux-mark-animated.svg` | Self-contained climb-on animation (standalone use) |
 
-The on-page wordmark follows the brand spec: **`Meta`** in Geist 500, **`Flux`** in PT Serif *italic* (`.b-meta` / `.b-flux` in `styles.css`; PT Serif loaded via Google Fonts). `favicon.svg` is the square mark on a dark rounded chip; the entrance preloader inlines the mark and draws it on via CSS (`#preloader` in `index.html` + `styles.css`).
+The on-page wordmark sets **`Meta`** in the body face and **`Flux`** in the display face (`.b-meta` / `.b-flux` in `styles.css`). No italic on `Flux`: Caprasimo ships one weight and no italic, and a synthesised oblique on a display face looks broken.
+
+`favicon.svg` is the square mark on a **transparent** ground, byte-for-byte the same asset the app serves (`metaflux-web/src/lib/assets/favicon.svg`) — the mark's blue→rose gradient is mid-tone and stays legible on both light and dark tab strips. `apple-touch-icon.png` is the exception and must stay **opaque and full-bleed**: iOS composites transparent pixels onto black and applies its own corner mask, so the plate is baked in (`--seam` dark, `#0f1310`) and no radius is.
+
+The entrance preloader (`#preloader` in `index.html` + `styles.css`) stacks two SVG layers sharing the shipped lockup's `viewBox`: the mark climbs on via `stroke-dashoffset`, then the wordmark is uncovered left-to-right by a `clip-path` wipe, then an accent hairline draws out beneath. Stacked rather than laid out side by side so the wipe never touches layout.
 
 ## Open Graph image
 

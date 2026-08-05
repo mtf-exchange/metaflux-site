@@ -1,11 +1,16 @@
 // Light interactions.
 //
-// 1. Updates --scroll-y on scroll for any CSS that wants a parallax cue.
-// 2. Adds `scrolled` class to nav once the hero scrolls past, so the glass
-//    bar tightens slightly. Pure aesthetic.
+// 1. Preloader: draws the mark, lifts the overlay, then REMOVES it — the
+//    entrance animations are keyed off `#preloader.fade-out ~ …`, so the node
+//    going away is what ends them.
+// 2. Adds `scrolled` class to nav once the hero scrolls past, so the bar picks
+//    up a deeper shadow. Pure aesthetic.
 // 3. Typewriter effect on `.typewriter` elements. Cycles through a list of
 //    phrases sourced from `data-phrases` (pipe-separated). Respects
 //    prefers-reduced-motion (renders the first phrase static, no animation).
+//
+// There is no appearance code here any more: the site is light-only, so nothing
+// resolves a polarity, stamps an attribute or listens to prefers-color-scheme.
 
 (() => {
   const root = document.documentElement;
@@ -13,9 +18,28 @@
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // ── preloader (entrance) ─────────────────────────────────────────
-  // Full-screen mark climb-on, then fade the overlay. Holds long enough
-  // for the animation to read, but never traps the page (failsafe in head
-  // for no-JS). Reduced-motion users get a near-instant dismiss.
+  // Full-screen mark climb-on, then fade the overlay. Holds long enough for the
+  // animation to read, but never traps the page. Reduced-motion users get a
+  // near-instant dismiss.
+  //
+  // Three timings, and they are a contract with styles.css — do not drift:
+  //   hold 1500ms  the mark's three strokes finish at ~1.39s (0.34s delay +
+  //                1.05s draw), so the fade starts just after the mark lands.
+  //   fade  700ms  the #preloader opacity transition.
+  //   remove 800ms after .fade-out — clears the 700ms fade, and the entrance
+  //                animations (0.56s + up to 0.18s stagger = 0.74s) have
+  //                finished by then. They are written as
+  //                `#preloader.fade-out ~ .hero .wrap > *`, so removing the node
+  //                is what stops them matching — with the elements already at
+  //                their end state, which is also their natural state, so
+  //                nothing moves when the rule drops.
+  //
+  // Two failsafes, both load-bearing:
+  //   · the 4s ceiling, so a stalled load never leaves a visitor staring at a
+  //     blank overlay;
+  //   · REMOVAL being JS's job at all. index.html's <noscript> hides #preloader
+  //     with CSS when scripting is off; if the overlay's dismissal lived in CSS
+  //     instead, a no-JS visitor would be locked behind it forever.
   const preloader = document.getElementById('preloader');
   if (preloader) {
     const hold = reduce ? 150 : 1500;
@@ -24,7 +48,7 @@
       if (dismissed) return;
       dismissed = true;
       preloader.classList.add('fade-out');
-      setTimeout(() => preloader.remove(), 800);
+      setTimeout(() => preloader.remove(), reduce ? 60 : 800);
     };
     if (document.readyState === 'complete') {
       setTimeout(dismiss, hold);
@@ -50,19 +74,28 @@
   }
 
   // ── scroll signal ────────────────────────────────────────────────
+  // One job now. The old build also wrote --scroll-y to :root on every frame
+  // for a parallax cue that no stylesheet ever read; the aurora it was meant
+  // to drift is gone, so the write is gone with it — a custom-property set on
+  // <html> invalidates style for the whole document, which is a real cost for
+  // a value nobody consumes.
+  //
+  // `nav.scrolled` DOES have a job now: styles.css:794 deepens the bar's
+  // shadow to --shadow-lg once you are past the hero. On the old glass bar the
+  // class was toggled and styled by nothing.
   let ticking = false;
   const onScroll = () => {
     if (ticking) return;
     ticking = true;
     requestAnimationFrame(() => {
-      const y = window.scrollY;
-      if (!reduce) root.style.setProperty('--scroll-y', y + 'px');
-      if (nav) nav.classList.toggle('scrolled', y > 80);
+      if (nav) nav.classList.toggle('scrolled', window.scrollY > 80);
       ticking = false;
     });
   };
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
+  if (nav) {
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
 
   // ── typewriter ───────────────────────────────────────────────────
   // Each element:  <span class="typewriter" data-phrases="a|b|c">a</span>

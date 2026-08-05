@@ -1,170 +1,817 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   MetaFlux marketing site — "Organic / Perps Desktop v2".
+
+   Transcribed from the app's own theme file, metaflux-web/src/routes/layout.css
+   (itself derived from the Organic design system, "MetaFlux Perps Desktop v2").
+   The app builds that file through Tailwind v4's @theme, so every token there
+   carries a --color- prefix. This site has no build step, so the prefix is
+   dropped and the short names the old styles.css already used are kept; the
+   values are identical to the app's.
+
+     app (layout.css)             this file
+     ─────────────────────────    ─────────────────────────────────
+     --color-bg / -elev / -2   →  --bg / --bg-elev / --bg-elev-2
+     --color-seam              →  --seam
+     --color-line / -strong    →  --line / --line-strong
+     --color-content(-mid/dim) →  --content / --content-mid / --content-dim
+     --color-accent(-NNN)      →  --accent / --accent-100 … --accent-800
+     --color-accent-2(-NNN)    →  --accent-2 / --accent-2-100 … -800
+     --color-neutral-NNN       →  --neutral-100 … --neutral-900
+     --color-up / -down        →  --up / --down (+ -dim)
+
+   This replaces the pure-black / blue→pink / aurora / liquid-glass theme
+   wholesale. Two things survive on purpose: the trans-pride bar at the top
+   edge, and the logo SVGs' own #5BCEFA → #cfc0e8 → #F5A9B8 ink. Those are the
+   brand mark speaking, not the interface — they live in --pride-* and are the
+   only fixed hexes outside the token blocks. Every other gradient, accent and
+   highlight in the page chrome is teal → sage, the same .flux-fill / .flux-text
+   sweep the app draws.
+
+   The app has six appearance axes (theme / ground / accent / pnl / serif /
+   density); this site has none. Ground is baked to `mist`, accent to `teal` and
+   polarity to LIGHT — the app's own defaults — so a visitor who later opens the
+   terminal lands on the same paper. There is deliberately no dark theme and no
+   theme switch: the site is one surface, and a marketing page that follows the
+   OS is two surfaces to design, verify and keep honest.
+
+   Fonts are three Google voices, no @font-face. Every page's <head> carries:
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+     <link href="https://fonts.googleapis.com/css2?family=Caprasimo&family=Figtree:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+     <link rel="stylesheet" href="styles.css">
+   Caprasimo ships ONE weight (400), no italic, and covers Latin only. It is a
+   display face: headings and the wordmark, never running copy — not the legal
+   pages, not the whitepaper. Headings it would overpower opt out with .h-plain.
+
+   THE TWO CONTRAST RULES THIS FILE IS BUILT ON, because they decide most of it:
+     1. Running prose is var(--content) or var(--content-prose); every small
+        label is var(--content-label). The app's --content-mid (4.39:1 on the
+        light ground) and --content-dim (2.73:1) are transcribed for name
+        parity but never painted here. See the measured table at the token.
+     2. --accent is safe as text in both polarities (8.1:1 light). --accent-2 is
+        NOT (3.19:1 light): as text it is always var(--accent-2-800), which
+        inverts to a pale sage in dark. As a FILL — washes, swatch halves,
+        gradient borders, dots — bare --accent-2 is correct.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ─── tokens · light (the default) ──────────────────────────────────────── */
 :root {
-  --bg:          #06070b;
-  --bg-elev:     #0c0e14;
-  --bg-elev-2:   #12151d;
-  --line:        #1a1e29;
-  --line-strong: #262b39;
+  color-scheme: light;
 
-  --text:        #f0f3f7;
-  --text-mid:    #8b96a8;
-  --text-dim:    #5a6273;
+  /* Ground `mist`. --bg is the sheet content sits on; --seam is the desk that
+     sheet sits on, one step behind. See the note on html/body below. */
+  --bg:          #eaefe6;
+  --bg-elev:     #dde5d7;
+  --bg-elev-2:   #d0dbc9;
+  --seam:        #ccd6c5;
+  --line:        rgba(28, 36, 28, 0.16);
+  --line-strong: rgba(28, 36, 28, 0.34);
 
-  --blue:        #5BCEFA;
-  --blue-deep:   #2ba8e0;
-  --blue-glow:   rgba(91, 206, 250, 0.45);
-  --blue-wash:   rgba(91, 206, 250, 0.10);
+  /* The text ramp is written as mixes of --content, so the dark block only has
+     to restate --content and all of these follow. */
+  --content:       #201e1d;
+  --content-mid:   color-mix(in oklch, var(--content) 62%, transparent);
+  --content-dim:   color-mix(in oklch, var(--content) 45%, transparent);
+  /* Two site-local steps, and the only place this file departs from
+     layout.css's text ramp. The app's own -mid and -dim are transcribed above
+     unchanged so the names still mean the same thing next to the terminal, but
+     neither is usable here. Measured on canvas over --bg / --bg-elev /
+     --bg-elev-2, light then dark:
 
-  --pink:        #F5A9B8;
-  --pink-deep:   #ee7e95;
-  --pink-glow:   rgba(245, 169, 184, 0.45);
-  --pink-wash:   rgba(245, 169, 184, 0.10);
+       --content        14.22  12.86  11.62   ·  13.72  11.42   9.55
+       --content-prose   7.35   6.97   6.51   ·   8.69   7.68   6.71   ← copy
+       --content-label   5.32   5.07   4.80   ·   6.96   6.23   5.53   ← labels
+       --content-mid     4.39   4.24   4.08   ·   5.96   5.42   4.85
+       --content-dim     2.73   2.64   2.54   ·   3.82   3.48   3.11
 
-  --good:        #6ee7a3;
-  --bad:         #ff7a8c;
+     So -mid fails AA on every light ground — fine for the 12px column header of
+     a terminal at 13px body size, not for a marketing page whose smallest text
+     is 10px — and -dim is decorative only. Running copy takes --content or
+     --content-prose; every small chrome label takes --content-label, which is
+     the lowest step that clears 4.5:1 on all three grounds in both polarities.
+     Nothing in this file paints text with --content-mid or --content-dim. */
+  --content-prose: color-mix(in oklch, var(--content) 78%, transparent);
+  --content-label: color-mix(in oklch, var(--content) 68%, transparent);
 
-  --mono:           "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  --sans:           "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --serif:          "Cormorant Garamond", "Iowan Old Style", Cambria, Georgia, serif;
-  --serif-display:  "Cormorant Garamond", "Iowan Old Style", Cambria, Georgia, serif;
-  --serif-flux:     "PT Serif", "Iowan Old Style", Cambria, Georgia, serif;
+  /* Accent `teal` primary, `sage` second. Not a tint of the first — a genuine
+     second voice, which is why .flux-fill can sweep between them. */
+  --accent:       #24494f;
+  --accent-100:   #dfe9e9;
+  --accent-200:   #cddcdc;
+  --accent-300:   #a8c4c6;
+  --accent-600:   #1b393e;
+  --accent-700:   #142c30;
+  --accent-800:   #11282c;
+  --accent-2:     #6f8a5f;
+  --accent-2-100: #e9f0e0;
+  --accent-2-200: #d6e3c9;
+  --accent-2-300: #ccdbb2;
+  --accent-2-600: #5b7449;
+  --accent-2-700: #48603a;
+  --accent-2-800: #3a4e2f;
 
-  --scroll-y: 0px;
+  --neutral-100: #f9f4ed;
+  --neutral-200: #eee7db;
+  --neutral-300: #dcd3c4;
+  --neutral-400: #c0b6a5;
+  --neutral-500: #a19786;
+  --neutral-600: #82796a;
+  --neutral-700: #645c50;
+  --neutral-800: #474238;
+  --neutral-900: #2e2b25;
+
+  /* Text ON an accent fill. layout.css has no such token — the app's filled
+     controls are all small chips — but a landing page's primary CTA is a slab
+     of accent and needs a polarity-safe answer. Light: pale neutral on dark
+     teal (8.96:1). Dark: the ramp inverts, so dark teal on pale teal (8.12:1). */
+  --on-accent: var(--neutral-100);
+
+  /* Direction — the app's `standard` scheme. The site shows few signed numbers,
+     but any stat that leans should speak the terminal's language. Colour is
+     never the only cue: both solids fail AA as TEXT on the light ground
+     (--up 2.19:1, --down 3.11:1), so they are used as -dim fills behind
+     --content, never as the ink. */
+  --up:       #00b3cc;
+  --up-dim:   #d4f0f3;
+  --down:     #e0567a;
+  --down-dim: #fbdfe6;
+  --warn:     #b7791f;
+  --warn-dim: rgba(183, 121, 31, 0.14);
+
+  /* Brand ink — fixed in both themes. The three stops the logo SVGs carry; the
+     pride bar is a statement, not a surface. Only .pride-bar and
+     .pride-swatches may reference these. */
+  --pride-blue:     #5BCEFA;
+  --pride-lavender: #cfc0e8;
+  --pride-pink:     #F5A9B8;
+  --pride-white:    #ffffff;
+
+  /* Wordmark type, fixed by the brand spec and NOT part of the interface's type
+     system. mtf-exchange/brand's Rules section is explicit: "Keep `Meta` Geist
+     500 and `Flux` PT Serif italic — never swap or both-bold them." So these two
+     faces are loaded for the wordmark alone; nothing else on the site may use
+     them, and the interface's own three voices (--font-heading / --font-body /
+     --font-num) never apply to .b-meta / .b-flux. --brand-flux-ink is likewise
+     the lockup's own pink, not an accent — the shipped lockups all render Flux
+     in the flux gradient's warm end regardless of ground. */
+  --font-brand-sans:  'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-brand-serif: 'PT Serif', 'Iowan Old Style', Cambria, Georgia, serif;
+  --brand-flux-ink:   #F5A9B8;
+
+  --font-heading:        'Caprasimo', Georgia, serif;
+  --font-heading-weight: 400;
+  --font-body:           'Figtree', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-num:            'Inter', system-ui, sans-serif;
+  /* Two site-local voices the terminal never needed. --font-code is a REAL
+     monospace and is used in exactly three places, all of them places where
+     column alignment is the point: the home page code sample, the whitepaper's
+     inline identifiers, and the spec tables. --font-math sets the whitepaper's
+     display equations, and is deliberately the same stack whitepaper-print.html
+     uses, so screen and PDF equations finally agree. */
+  --font-code: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Cascadia Mono', monospace;
+  --font-math: Georgia, 'Times New Roman', 'Nimbus Roman', serif;
+  --font-mono: var(--font-code);
+
+  /* Real curves, not the flattened `linear` the old theme used. */
+  --ease-spring:   cubic-bezier(0.2, 0.9, 0.3, 1);
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Organic's 1.10× density scale. It tops out at 35.2px because it is a
+     terminal scale; page rhythm (section padding, hero) is its own thing. */
+  --space-1: 4.4px;
+  --space-2: 8.8px;
+  --space-3: 13.2px;
+  --space-4: 17.6px;
+  --space-6: 26.4px;
+  --space-8: 35.2px;
+  --radius-sm:    8px;
+  --radius-md:    16px;
+  --radius-lg:    28px;
+  --radius-panel: 14px;
+  --radius-pill:  999px;
+
+  /* Elevation is REAL here. The old site killed every shadow and leaned on the
+     aurora for depth; this system separates surfaces with light instead. */
+  --shadow-sm: 0 1px 2px color-mix(in srgb, #2e2b25 14%, transparent);
+  --shadow-md: 0 3px 10px color-mix(in srgb, #2e2b25 16%, transparent);
+  --shadow-lg: 0 12px 32px color-mix(in srgb, #2e2b25 22%, transparent);
+  --scrim: color-mix(in oklch, var(--neutral-900) 55%, transparent);
+
+  --touch-min: 44px;
+  --scroll-y: 0px;   /* main.js writes the scroll offset here every frame */
+
+  /* ── component values the ramps above cannot produce ───────────────────
+     Each of these has no derivation from the ramps. They stay tokens rather
+     than going inline so the palette is still decided in one place. */
+  --tag-neutral-bg: var(--neutral-100);
+  --tag-neutral-fg: var(--neutral-800);
+
+  /* Isometric diagram faces. Naively mixing --bg-elev toward --seam is
+     polarity-safe but, on the light ground, --seam is barely darker than
+     --bg-elev — the three faces collapse into one flat green and the solid
+     stops reading as a solid. So the two polarities get genuinely different
+     recipes: light shades with ink (the only direction with range to spare),
+     dark shades toward the seam (a dark ground has no headroom for more ink).
+     Top face is always the lit one. */
+  --slab-top:      var(--bg);
+  --slab-r:        color-mix(in oklch, var(--bg-elev-2) 82%, var(--content));
+  --slab-l:        color-mix(in oklch, var(--bg-elev-2) 62%, var(--content));
+  /* Contact shadow under the stack. #2e2b25 is exactly the warm ink
+     --shadow-md is built from, so the figure's shadow and the page's agree. */
+  --slab-shadow:   #2e2b25;
+  --slab-shadow-o: 0.18;
+
+  /* The backdrop's two voices, read by backdrop.js. Same relationship the share
+     card paints from: a saturated hue plus --color-accent-300 as the soft one. */
+  --backdrop-ink:  #6f8a5f;
+  --backdrop-soft: #a8c4c6;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+/* ─── legacy aliases ────────────────────────────────────────────────────────
+   Every rule in this file now uses the real token names. These survive for one
+   reason only: ten inline style="" attributes in the four HTML files still
+   spell them, and an inline declaration that references an UNDEFINED custom
+   property does not fall back — it becomes invalid at computed-value time and
+   silently drops to inherited or initial, with no console error. Keeping the
+   names alive means the restyle cannot break those attributes before the page
+   authors rewrite them.
+
+   Two aliases deliberately do NOT point where their name suggests:
+     --text-mid → --content-prose, not --content-mid. Every legacy call site is
+       running copy, and --content-mid is 4.39:1 on the light ground.
+     --text-dim → --content-label, not --content-dim. Every legacy call site is
+       an 11–12px label somebody is expected to read; --content-dim is 2.73:1.
+
+   And one alias must NOT be followed at all: --blue/--pink now paint teal and
+   sage, which is right for the FAQ link and the disputes notice but wrong for
+   the three pride swatches that also reference them. See .pride-swatches.
+   ─────────────────────────────────────────────────────────────────────────── */
+:root {
+  --text:      var(--content);
+  --text-mid:  var(--content-prose);
+  --text-dim:  var(--content-label);
+  --blue:      var(--accent);
+  --blue-deep: var(--accent-600);
+  --blue-wash: color-mix(in oklch, var(--accent) 10%, transparent);
+  --pink:      var(--accent-2-800);
+  --pink-deep: var(--accent-2-600);
+  --pink-wash: color-mix(in oklch, var(--accent-2) 10%, transparent);
+  --good:      var(--up);
+  --bad:       var(--down);
+  --mono:          var(--font-code);
+  --sans:          var(--font-body);
+  --serif:         var(--font-heading);
+  --serif-display: var(--font-heading);
+  --serif-flux:    var(--font-heading);
+  /* --blue-glow / --pink-glow are GONE, not remapped. Coloured glow is the
+     affordance of an object that emits light; nothing on paper emits. */
+}
+
+/* ─── base ──────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; padding: 0; }          /* carried over — page CSS assumes it */
+
+/* THE DESK AND THE SHEET.
+   html paints --seam: it is the canvas, so it is what shows in the overscroll
+   band above and below the document, and behind a page shorter than the
+   viewport. body paints --bg over it for exactly the height of the content —
+   that is the sheet. The one place the desk deliberately shows THROUGH the
+   sheet is the top band, where the pride bar and the floating nav pill live;
+   that is the gradient below, and it is why the pill reads as an object lying
+   on a desk rather than a bar welded to the page. Scroll down and the pill
+   floats over the sheet instead, exactly as the app's chrome does.
+
+   This is the Organic layering that replaces the aurora. It costs one
+   declaration and no markup, which is why it is here and not in a wrapper. */
+html {
+  background-color: var(--seam);
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* No desk band. --color-seam is the surface an app WINDOW sits on, and the
+   terminal earns it by actually having a window; a marketing page has no such
+   frame, so the band was a 97px strip of the darkest ground in the system laid
+   across the top of the page for nothing. It read as a dirty stripe with a hard
+   edge where it stopped, and it put the nav pill (--bg) at almost exactly the
+   value of the page below it, so the pill looked like a hole punched in the
+   strip rather than a surface floating over it. The page is one ground. */
 body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--sans);
-  font-feature-settings: "ss01", "cv11";
-  font-variant-numeric: lining-nums tabular-nums;
+  background-color: var(--bg);
+  color: var(--content);
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.55;
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: 'tnum' 1, 'lnum' 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  line-height: 1.5;
-  overflow-x: hidden;
-  position: relative;
+  text-rendering: optimizeLegibility;
+  /* `clip`, not `hidden`: hidden makes <body> a scroll container and the sticky
+     nav stops sticking. clip contains a stray wide child without that. */
+  overflow-x: clip;
 }
-::selection { background: var(--pink); color: var(--bg); }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  margin: 0;
+  text-wrap: balance;
+}
+/* Escape hatch for a heading small or deep enough that a one-weight display
+   face turns to mud — whitepaper h3/h4, FAQ questions, dense card titles — and
+   for any non-Latin string, which Caprasimo does not cover. */
+.h-plain {
+  font-family: var(--font-body);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* Chrome links inherit — nav, footer and cards carry their own colour. Prose
+   scopes (.legal, .paper) opt into the accent themselves, further down. */
 a { color: inherit; text-decoration: none; }
-a:hover { color: var(--blue); }
+a:hover { color: var(--accent); }
 
+img, video, canvas { max-width: 100%; height: auto; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button:not(:disabled), [role='button']:not([aria-disabled='true']), summary { cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+
+/* The old file had NO :focus-visible rule anywhere and actively stripped the
+   ring off focused chips. This pair is not a restyle, it is a fix. */
+:focus { outline: none; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+::selection { background: color-mix(in oklch, var(--accent) 30%, transparent); }
+
+/* Every number the app draws is Inter with tabular + lining figures; .num gives
+   the site the same texture on stats, labels and version strings. */
+.num {
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: 'tnum' 1, 'lnum' 1, 'ss01' 1;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+}
+.mono { font-family: var(--font-code); }
+
+* { scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklch, var(--content) 22%, transparent) transparent; }
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-track, ::-webkit-scrollbar-corner { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: color-mix(in oklch, var(--content) 18%, transparent);
+  border-radius: 999px;
+  border: 2.5px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in oklch, var(--content) 34%, transparent);
+  background-clip: content-box;
+}
+
+/* ─── layout ────────────────────────────────────────────────────────────── */
 .wrap { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
-.mono { font-family: var(--mono); }
 
-/* ─── ambient aurora backdrop (same treatment as the footer, full page) ── */
-.ambient {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: -1;
-  overflow: hidden;
-  isolation: isolate;
-  /* colored base mesh — never lets the canvas fall to muddy grey */
-  background:
-    linear-gradient(150deg, #122436 0%, #16213c 26%, #241f3c 50%, #36233c 72%, #241a2e 100%);
-}
-/* full-screen flowing blue / lavender / pink / white blooms over the base */
-.page-aurora {
+/* Paint the sheet on a region that needs it explicitly — a full-bleed band
+   inside an area the body gradient has already covered with desk, or a page
+   shell that wants the layering without relying on the body rule. */
+.sheet     { background-color: var(--bg); }
+.sheet-alt { background-color: var(--bg-elev); }
+
+/* Screen-reader-only, kept as a named utility because .arch-fallback needs the
+   exact same clip and it is worth having the idiom in one place. */
+.sr-only {
   position: absolute;
-  inset: -15%;
-  z-index: 0;
-  background:
-    radial-gradient(42% 40% at 16% 24%, rgba(91,206,250,0.85), transparent 64%),
-    radial-gradient(46% 44% at 84% 30%, rgba(245,169,184,0.78), transparent 66%),
-    radial-gradient(50% 48% at 50% 56%, rgba(186,166,238,0.62), transparent 60%),
-    radial-gradient(40% 44% at 12% 80%, rgba(91,206,250,0.66), transparent 66%),
-    radial-gradient(48% 50% at 88% 84%, rgba(245,169,184,0.80), transparent 66%),
-    radial-gradient(34% 38% at 60% 90%, rgba(255,255,255,0.55), transparent 58%),
-    radial-gradient(30% 34% at 38% 40%, rgba(255,255,255,0.40), transparent 60%);
-  filter: blur(64px) saturate(1.2);
-  animation: foot-aurora 26s ease-in-out infinite alternate;
-  will-change: transform;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
-/* readability vignette so body copy + glass cards stay legible over the bloom */
-.ambient::after {
+
+/* ─── surfaces ──────────────────────────────────────────────────────────────
+   Flat and crisp. Glass is for TRANSIENT chrome only — modals, popovers,
+   drawers. Everything that is always on screen is opaque material.
+   ─────────────────────────────────────────────────────────────────────────── */
+.panel {
+  background-color: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-panel);
+}
+.card-surface { background-color: var(--bg-elev); border-radius: var(--radius-md); }
+
+.elev-sm { box-shadow: var(--shadow-sm); }
+.elev-md { box-shadow: var(--shadow-md); }
+.elev-lg { box-shadow: var(--shadow-lg); }
+
+/* The design's ONLY sanctioned glass recipe: an 82% mix of the ground, blur 28,
+   saturate 108. Not the old liquid-glass stack, which pushed saturate to 180%
+   and layered five shadows to fake a bevel. */
+.surface-glass {
+  background-color: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: blur(28px) saturate(108%);
+  -webkit-backdrop-filter: blur(28px) saturate(108%);
+}
+@media (pointer: coarse) {
+  /* A large backdrop-filter is the most expensive paint a phone GPU does;
+     halve the radius where nobody will see the difference. */
+  .surface-glass {
+    backdrop-filter: blur(16px) saturate(108%);
+    -webkit-backdrop-filter: blur(16px) saturate(108%);
+  }
+}
+
+/* ─── tags ──────────────────────────────────────────────────────────────── */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+}
+.tag-accent   { background: var(--accent-100);   color: var(--accent-800); }
+.tag-accent-2 { background: var(--accent-2-100); color: var(--accent-2-800); }
+.tag-neutral  { background: var(--tag-neutral-bg); color: var(--tag-neutral-fg); }
+.tag-outline  { border: 1px solid var(--accent); color: var(--accent); }
+
+/* ─── brand sweep ───────────────────────────────────────────────────────────
+   The "flux" gradient, re-cut as accent → accent-2. Every gradient in the page
+   chrome is one of these two; blue→pink stays inside the logo files.
+   background-clip:text needs a solid colour declared FIRST, or the emphasis
+   span disappears on an engine that does not support it — hence the @supports.
+   ─────────────────────────────────────────────────────────────────────────── */
+.flux-fill { background-image: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%); }
+.flux-text { color: var(--accent); }
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .flux-text {
+    background-image: linear-gradient(110deg, var(--accent) 0%, var(--accent-2) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+/* ─── press feedback ────────────────────────────────────────────────────── */
+.tactile {
+  transition:
+    transform 0.22s var(--ease-spring),
+    filter 0.15s var(--ease-spring),
+    background-color 0.18s var(--ease-spring),
+    border-color 0.18s ease,
+    color 0.18s var(--ease-spring),
+    box-shadow 0.18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.tactile:active { transform: translateY(0.5px) scale(0.985); transition-duration: 0.07s; }
+.tactile:disabled:active { transform: none; filter: none; }
+
+/* ─── motion library ────────────────────────────────────────────────────────
+   The app's named animations, transcribed so the site speaks the same motion
+   language. Every one of these is a one-shot that ends at the element's
+   natural resting state, so a missing trigger can never leave content hidden.
+   ─────────────────────────────────────────────────────────────────────────── */
+@keyframes mfrise   { from { transform: translateY(6px) scale(0.985); opacity: 0; }
+                      to   { transform: translateY(0) scale(1);       opacity: 1; } }
+@keyframes mffade   { from { opacity: 0; } to { opacity: 1; } }
+@keyframes mfpop    { from { transform: translateY(-4px) scale(0.97); opacity: 0; }
+                      to   { transform: translateY(0) scale(1);       opacity: 1; } }
+@keyframes mfslide  { from { transform: translateX(100%); }  to { transform: translateX(0); } }
+@keyframes mfslideL { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+@keyframes mfspin   { to { transform: rotate(360deg); } }
+@keyframes mfpulse  { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+@keyframes shimmer  { to { transform: translateX(100%); } }
+
+.mf-pop     { animation: mfpop 0.15s var(--ease-spring); transform-origin: top; }
+.mf-fade    { animation: mffade 0.16s ease; }
+.mf-rise    { animation: mfrise 0.2s ease; }
+.mf-slide-r { animation: mfslide 0.26s var(--ease-out-soft); }
+.mf-slide-l { animation: mfslideL 0.24s var(--ease-out-soft); }
+.mf-spin    { animation: mfspin 0.7s linear infinite; }
+.pulse-dot  { animation: mfpulse 2.4s ease-in-out infinite; }
+
+.data-shimmer { position: relative; overflow: hidden; }
+.data-shimmer::after {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background:
-    linear-gradient(180deg, rgba(6,7,11,0.66) 0%, rgba(6,7,11,0.34) 15%, rgba(6,7,11,0.34) 85%, rgba(6,7,11,0.60) 100%),
-    radial-gradient(120% 86% at 50% 40%, transparent 36%, rgba(6,7,11,0.62) 100%);
-}
-/* film-grain for the dreamy texture */
-.page-grain {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  opacity: 0.20;
-  mix-blend-mode: soft-light;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 150px 150px;
-}
-@media (prefers-reduced-motion: reduce) {
-  .page-aurora { animation: none; }
+  background: linear-gradient(90deg,
+    transparent,
+    color-mix(in oklch, var(--accent) 10%, transparent),
+    transparent);
+  transform: translateX(-100%);
+  animation: shimmer 2.4s linear infinite;
 }
 
-/* ─── preloader (entrance) ──────────────────────────────────────── */
+/* ─── retired: the ambient layer ────────────────────────────────────────────
+   The old site's signature was a fixed full-viewport aurora — an indigo mesh,
+   seven blooms blurred 64px on a 26s drift, a black readability vignette and a
+   soft-light film-grain tile — plus a second copy in the footer.
+
+   None of it survives, and the reason is worth stating once: an aurora is
+   EMITTED light, which is a dark-ground affordance. Objects on paper do not
+   glow. Over #eaefe6 a bloom is either invisible or, at any strength you can
+   actually see, it tints the ground unpredictably and drags body copy under its
+   contrast floor. The vignette existed only to protect legibility over the
+   bloom, so with the bloom gone it has no job; a near-black scrim on a light
+   page is a bruise. And soft-light grain over a pale ground reads as sensor
+   noise or dirty paper while costing a full-viewport composited layer.
+
+   The Organic replacement is not another wash — it is structure: the desk and
+   the sheet, real --shadow-sm/md/lg, and hairline --line seams.
+
+   These rules exist so the site is already correct with the markup as it
+   stands. Delete them once the .ambient / .page-aurora / .page-grain /
+   .foot-aurora / .foot-grain divs come out of the four HTML files.
+   ─────────────────────────────────────────────────────────────────────────── */
+/* ─── ambient ───────────────────────────────────────────────────────────────
+   The Organic system is flat on purpose — it is a trading terminal, and a
+   terminal that textures its own surfaces is lying about which pixels are data.
+   A landing page is the opposite case: nothing here is data, and flat reads as
+   unfinished rather than disciplined. So the ambience lives entirely in a fixed
+   layer behind the content, and never touches a surface that holds text.
+
+   Two materials, and the idea is that they are different KINDS of thing:
+
+   1. The contour field is the ground. It is not a texture and it is not a
+      watermark of the logo — it is the mark's own curve resolved into level
+      sets. The mark already ships as three stacked curves, and measuring them
+      shows they are contour lines of one peak: as the depth goes 20.95 → 29.66
+      → 34.00 the width at half depth goes 36 → 29 → 23. Tighter ring higher up
+      the hill. contour-field.svg extends that family in both directions, so the
+      background is a survey of the logo. It does not move. Ground doesn't.
+
+   2. The aurora is the light falling on it, and it is the only thing that
+      moves — slowly enough that you never catch it, which is the point. It is
+      the accent pair, not the brand's blue→rose: this is interface light, and
+      the blue→rose is reserved for the mark itself.
+
+   Kept honest against the brief: PRODUCT.md's anti-references rule out
+   "neon-casino glow" and "flashy motion for its own sake", and its fifth design
+   principle is that spectacle reads as compensation. So the alphas below are
+   single digits, the drift is 54s, and nothing here glows.
+   ─────────────────────────────────────────────────────────────────────────── */
+.ambient {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  /* Its own stacking context: the blurred aurora must not be composited
+     against the page, only against this layer. */
+  isolation: isolate;
+}
+
+/* One canvas, painted once by backdrop.js. See that file: the field is the share
+   card's `contour` + `aurora` presets, not a new piece of art. It is decoration,
+   so it is aria-hidden and a no-JS visitor simply gets the plain ground. */
+.page-backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.foot-aurora, .foot-grain { display: none; }
+
+
+
+/* ─── preloader (entrance) ──────────────────────────────────────────────────
+   The mechanism is unchanged: the mark draws stroke-by-stroke, then the
+   overlay fades. `background: var(--bg)` now resolves per polarity with no
+   edit, which is why the pre-paint theme stamp has to run before this
+   stylesheet — otherwise a dark-OS visitor gets a light preloader then a dark
+   page. The pl-flux gradient inside the inline SVG keeps its blue → lavender →
+   pink stops: that is the brand mark's own ink, the same exemption as
+   logo/*.svg.
+   ─────────────────────────────────────────────────────────────────────────── */
 #preloader {
   position: fixed;
   inset: 0;
   z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
   background: var(--bg);
-  transition: opacity 0.7s cubic-bezier(0.65, 0, 0.35, 1), visibility 0.7s;
+  transition: opacity 0.7s var(--ease-out-soft), visibility 0.7s;
 }
-#preloader .pl-mark {
-  width: 124px;
-  height: auto;
+#preloader.fade-out { opacity: 0; visibility: hidden; }
+
+/* The pride strip continues across the overlay. Without it the page's own
+   .pride-bar reads as switching on the moment the preloader lifts; same
+   colours and same 3px means the two are indistinguishable through the
+   crossfade and the edge simply stays put. */
+.pl-pride {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(
+    to right,
+    var(--pride-blue)  0%,  var(--pride-blue)  25%,
+    var(--pride-pink)  25%, var(--pride-pink)  50%,
+    var(--pride-white) 50%, var(--pride-white) 62%,
+    var(--pride-pink)  62%, var(--pride-pink)  80%,
+    var(--pride-blue)  80%, var(--pride-blue)  100%
+  );
+}
+
+/* The lockup is two SVG layers STACKED on one another, both carrying the
+   shipped lockup's viewBox (-2 8 415 84) and its translate. Stacked rather
+   than laid out side by side so the wordmark can be uncovered by a clip with
+   no layout involved: nothing reflows, nothing shifts, and the mark and the
+   wordmark keep exactly the spacing metaflux-lockup-color-*.svg gives them.
+   ─────────────────────────────────────────────────────────────────────────── */
+.pl-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  width: min(420px, 72vw);
+  transition: transform 0.7s var(--ease-out-soft);
+}
+#preloader.fade-out .pl-stage { transform: translateY(-6px); }
+/* Beat 2's carrier. The whole lockup starts shifted RIGHT by 40.5% of its own
+   width and slides back to 0.
+   That number is geometry, not taste: inside the shipped viewBox (-2 8 415 84)
+   the mark spans user-x 3.3…71.8, so its centre sits at ((3.3+71.8)/2 + 2)/415
+   = 9.5% of the box. Parking the lockup at +40.5% puts 9.5% onto the container's
+   50% — the mark starts optically centred in the viewport, alone, exactly as if
+   it were the only thing here. Sliding to 0 lands the mark/wordmark pair in its
+   natural centred position.
+   Because the wordmark's clip lives in this same transformed space, the reveal
+   front is glued to the mark: the text unspools from immediately behind it as it
+   travels, instead of appearing at some fixed point on the screen. */
+.pl-lockup {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 415 / 84;
+  transform: translateX(40.5%);
+  animation: mfx-travel 0.58s var(--ease-out-soft) 0.56s forwards;
+}
+@keyframes mfx-travel { to { transform: translateX(0); } }
+.pl-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   overflow: visible;
   pointer-events: none;
 }
-#preloader.fade-out {
-  opacity: 0;
-  visibility: hidden;
-}
 
-/* climb-on: each curve draws in, faint shoulders first, bold peak last */
+/* Beat 1 — the mark climbs on, faint shoulders first, bold peak last. */
 #preloader .pl-p {
   stroke-dasharray: 1 1.001;
   stroke-dashoffset: 1;
-  animation: mfx-climb 1.05s cubic-bezier(0.65, 0, 0.2, 1) forwards;
+  animation: mfx-climb 0.52s cubic-bezier(0.65, 0, 0.2, 1) forwards;
 }
-#preloader .pl-e2 { animation-duration: 0.95s; animation-delay: 0.05s; }
-#preloader .pl-e1 { animation-duration: 1s;    animation-delay: 0.18s; }
-#preloader .pl-pm { animation-delay: 0.34s; }
+#preloader .pl-e2 { animation-duration: 0.44s; animation-delay: 0s;     }
+#preloader .pl-e1 { animation-duration: 0.48s; animation-delay: 0.08s;  }
+#preloader .pl-pm { animation-duration: 0.52s; animation-delay: 0.16s;  }
 @keyframes mfx-climb { to { stroke-dashoffset: 0; } }
+
+/* The two faint shoulders are authored for a dark canvas — at .2 and .42 they
+   disappear into a pale ground. Lift them in light, leave them alone in dark. */
+#preloader .pl-e2 { opacity: 0.34; }
+#preloader .pl-e1 { opacity: 0.58; }
+
+/* Beat 2, the other half — the wordmark is uncovered left to right, on exactly
+   the same clock and curve as the travel above. The two together are the whole
+   gesture: the mark moves off to the left and the letters come out behind it.
+   The clip starts fully closed and opens from the lockup's left edge, which is
+   where the mark is, so the text has a source rather than just fading up.
+   `color` only inks `Meta` — `Flux` carries the lockup's own flux gradient, per
+   the brand spec, so it does NOT follow the theme. */
+.pl-word {
+  position: absolute;
+  inset: 0;
+  color: var(--content);
+  clip-path: inset(0 100% 0 0);
+  animation: mfx-wipe 0.58s var(--ease-out-soft) 0.56s forwards;
+}
+@keyframes mfx-wipe { to { clip-path: inset(0 0 0 0); } }
+
+/* Beat 3 — a hairline draws out from the centre under the lockup, in the
+   interface's own accent sweep rather than the mark's brand ink. It is the one
+   moment the entrance says "teal/sage" instead of "blue/rose", which is the
+   handoff the page itself then makes. */
+.pl-rule {
+  width: 100%;
+  height: 1.5px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
+  transform: scaleX(0);
+  animation: mfx-rule 0.36s var(--ease-out-soft) 1.02s forwards;
+}
+@keyframes mfx-rule { to { transform: scaleX(1); } }
+
+/* The global reduced-motion clamp collapses time but cannot choose a resting
+   appearance; the fully-drawn lockup is the one this wants. Note the wipe in
+   particular — clamped to 0.001ms it would still start from a 75.4% clip, so
+   the resting state has to be stated or the wordmark never appears at all. */
 @media (prefers-reduced-motion: reduce) {
-  #preloader .pl-p { stroke-dashoffset: 0; animation: none; }
+  #preloader .pl-p    { stroke-dashoffset: 0; animation: none; }
+  #preloader .pl-word   { clip-path: inset(0 0 0 0); animation: none; }
+  #preloader .pl-lockup { transform: translateX(0); animation: none; }
+  #preloader .pl-rule { transform: scaleX(1); animation: none; }
+  #preloader .pl-stage { transition: none; transform: none; }
 }
 
-/* ─── pride bar (top edge) ──────────────────────────────────────── */
+/* ─── entrance ──────────────────────────────────────────────────────────────
+   The page arrives as the preloader lifts. main.js adds .fade-out at 1.5s and
+   removes the node 800ms later, so the general-sibling selector below holds for
+   exactly as long as the animation needs and then stops matching — with the
+   elements already at their end state, which is also their natural state, so
+   nothing moves when the rule drops.
+
+   Written this way on purpose rather than as a plain on-load animation with a
+   1.5s delay: pages without a preloader (privacy, terms, whitepaper) and
+   visitors without JavaScript (index.html's <noscript> hides #preloader, which
+   then never gains .fade-out) simply never match, and get their content
+   immediately instead of staring at a blank hero waiting out a delay.
+   ─────────────────────────────────────────────────────────────────────────── */
+@keyframes mfx-enter      { from { opacity: 0; transform: translateY(14px); }
+                            to   { opacity: 1; transform: translateY(0); } }
+@keyframes mfx-enter-down { from { opacity: 0; transform: translateY(-10px); }
+                            to   { opacity: 1; transform: translateY(0); } }
+
+#preloader.fade-out ~ .pride-bar { animation: mffade 0.5s var(--ease-out-soft) both; }
+#preloader.fade-out ~ nav        { animation: mfx-enter-down 0.52s var(--ease-out-soft) both; }
+#preloader.fade-out ~ .hero .wrap > * {
+  animation: mfx-enter 0.56s var(--ease-out-soft) both;
+}
+#preloader.fade-out ~ .hero .wrap > *:nth-child(2) { animation-delay: 0.06s; }
+#preloader.fade-out ~ .hero .wrap > *:nth-child(3) { animation-delay: 0.12s; }
+#preloader.fade-out ~ .hero .wrap > *:nth-child(4) { animation-delay: 0.18s; }
+
+/* ─── pride bar (top edge) ──────────────────────────────────────────────────
+   Stays, and keeps the flag's own three colours — the same brand-ink exemption
+   as logo/*.svg. Two things had to change for the pale ground: the bar was 2px
+   at 0.9 opacity, and a diluted pure-white segment on #ccd6c5 reads as a GAP in
+   the bar rather than a stripe. So: 3px, full opacity (never dilute the flag),
+   and an inset hairline ring that gives the white band a top and bottom edge.
+   The ring is a faint line in dark and a soft ink line in light — both
+   polarities are built identically, out of --content.
+   ─────────────────────────────────────────────────────────────────────────── */
 .pride-bar {
-  height: 2px;
+  height: 3px;
   background: linear-gradient(
     to right,
-    var(--blue) 0%, var(--blue) 25%,
-    var(--pink) 25%, var(--pink) 50%,
-    #fff        50%, #fff        62%,
-    var(--pink) 62%, var(--pink) 80%,
-    var(--blue) 80%, var(--blue) 100%
+    var(--pride-blue)  0%,  var(--pride-blue)  25%,
+    var(--pride-pink)  25%, var(--pride-pink)  50%,
+    var(--pride-white) 50%, var(--pride-white) 62%,
+    var(--pride-pink)  62%, var(--pride-pink)  80%,
+    var(--pride-blue)  80%, var(--pride-blue)  100%
   );
-  opacity: 0.9;
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--content) 22%, transparent);
   position: relative;
   z-index: 1;
 }
 
-/* ─── nav (iOS Liquid Glass) ────────────────────────────────────── */
+/* The three footer swatches. They were zero-size spans that rendered nothing —
+   there has never been a `.sw` rule outside .arch-legend — so this makes the
+   existing intent work. The inset ring is what lets the white one exist on a
+   pale footer, the same trick as the bar.
+
+   The !important is a GUARD, not a style: the markup still carries
+   `style="background: var(--blue)"`, and --blue now paints teal. The one thing
+   this restyle is explicitly not allowed to do is turn the pride swatches into
+   the accent palette, and an inline declaration beats everything else. Once the
+   three inline styles say var(--pride-blue) / var(--pride-pink) /
+   var(--pride-white), these three lines paint exactly the same colours and can
+   be dropped. */
+.pride-swatches .sw {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  vertical-align: -1px;
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--content) 20%, transparent);
+}
+.pride-swatches .sw:nth-child(1) { background: var(--pride-blue)  !important; }
+.pride-swatches .sw:nth-child(2) { background: var(--pride-pink)  !important; }
+.pride-swatches .sw:nth-child(3) { background: var(--pride-white) !important; }
+
+/* ─── nav ───────────────────────────────────────────────────────────────────
+   Was an iOS liquid-glass pill: a white-film gradient over rgba(8,10,16,.42),
+   backdrop-filter blur(28px) saturate(180%), a five-layer box-shadow faking a
+   bevel, and a radial sheen pseudo-element. The Organic system reserves glass
+   for transient chrome, and a marketing nav is the least transient thing on the
+   page — so it becomes real material: opaque --bg, one hairline, one real
+   shadow. Fully opaque matters: with the blur gone, any alpha would let scrolled
+   content read through. The pill radius is kept — that is brand shape, not a
+   dark-UI idiom.
+   ─────────────────────────────────────────────────────────────────────────── */
 nav {
   position: sticky;
   top: 16px;
   z-index: 100;
-  margin: 16px 24px 0;
+  margin: 16px 24px 20px;   /* the bottom gap is the desk showing under the pill */
 }
 nav .bar {
   display: flex; align-items: center; justify-content: space-between;
@@ -172,125 +819,140 @@ nav .bar {
   padding: 0 12px 0 24px;
   max-width: 1280px;
   margin: 0 auto;
-  border-radius: 999px;
-  background:
-    linear-gradient(180deg,
-      rgba(255,255,255,0.10) 0%,
-      rgba(255,255,255,0.04) 45%,
-      rgba(255,255,255,0.02) 100%),
-    rgba(8,10,16,0.42);
-  backdrop-filter: blur(28px) saturate(180%);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,0.06),
-    inset 0 1px 0 rgba(255,255,255,0.18),
-    inset 0 -1px 0 rgba(255,255,255,0.03),
-    0 20px 60px -10px rgba(0,0,0,0.55),
-    0 4px 16px -4px rgba(0,0,0,0.30);
-  position: relative;
-  overflow: hidden;
+  /* --bg-elev, not --bg: the pill has to be a step ABOVE the page or it has no
+     reason to be a pill. Glass would be the terminal's answer for transient
+     chrome, but this bar is always on, and the system reserves backdrop-filter
+     for things that come and go. A raised opaque surface + hairline + shadow is
+     the always-on material. */
+  background-color: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-md);
+  transition: box-shadow 0.24s var(--ease-out-soft), background-color 0.24s var(--ease-out-soft);
 }
-nav .bar::before {
-  content: "";
-  position: absolute; inset: 0;
-  background: radial-gradient(120% 60% at 50% 0%, rgba(255,255,255,0.08), transparent 60%);
-  pointer-events: none;
-}
-nav .bar > * { position: relative; z-index: 1; }
+/* main.js has always toggled this class past 80px and nothing has ever styled
+   it. Give it the one job it was named for: the pill lifts off the sheet. */
+nav.scrolled .bar { box-shadow: var(--shadow-lg); }
+
+/* ─── brand lockup ────────────────────────────────────────────────────────── */
 .brand {
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  font-family: var(--sans);
+  font-family: var(--font-body);
   font-weight: 500;
   font-size: 18px;
   letter-spacing: -0.02em;
-  color: var(--text);
+  color: var(--content);
   line-height: 1;
 }
-.brand-mark {
-  height: 22px;
-  width: auto;
-  flex: none;
-  display: block;
+.brand-mark { height: 22px; width: auto; flex: none; display: block; }
+.brand .b-word { display: inline-flex; align-items: baseline; }
+/* Per the brand spec, verbatim. This is the logo, not interface type — it does
+   not follow the theme's faces and it does not follow the theme's accents. */
+.brand .b-meta {
+  font-family: var(--font-brand-sans);
+  font-weight: 500;
+  color: var(--content);
 }
-.brand .b-meta { color: var(--text); }
 .brand .b-flux {
-  font-family: var(--serif-flux);
+  font-family: var(--font-brand-serif);
   font-style: italic;
   font-weight: 400;
   font-size: 1.05em;
   letter-spacing: 0;
-  color: var(--pink);
+  color: var(--brand-flux-ink);
 }
+
 nav ul { display: flex; gap: 32px; list-style: none; }
 nav ul a {
-  font-family: var(--sans);
+  font-family: var(--font-body);
   font-size: 13px;
-  font-weight: 450;
-  color: var(--text-mid);
-  transition: color 0.15s;
+  font-weight: 500;
+  color: var(--content-label);
+  transition: color 0.18s var(--ease-spring);
   letter-spacing: 0;
 }
-nav ul a:hover { color: var(--text); }
+nav ul a:hover { color: var(--content); }
+/* The CTA is layout.css's .tag-accent, sized up to a control. Polarity-proof by
+   construction: the accent ramp inverts, so this is a pale teal chip with deep
+   ink in light and a deep teal chip with pale ink in dark. */
 nav .nav-cta {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 10px 18px;
-  font-family: var(--sans); font-size: 13px; font-weight: 500;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
   letter-spacing: 0;
-  color: var(--text);
-  border-radius: 999px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.14);
-  backdrop-filter: blur(20px) saturate(150%);
-  -webkit-backdrop-filter: blur(20px) saturate(150%);
-  transition: background 0.2s ease, border-color 0.2s ease;
+  color: var(--accent-800);
+  background-color: var(--accent-100);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  transition:
+    background-color 0.18s var(--ease-spring),
+    color 0.18s var(--ease-spring),
+    transform 0.22s var(--ease-spring);
+  -webkit-tap-highlight-color: transparent;
 }
-nav .nav-cta:hover {
-  color: var(--text);
-  background: rgba(255,255,255,0.12);
-  border-color: rgba(255,255,255,0.28);
-}
+nav .nav-cta:hover { background-color: var(--accent-200); color: var(--accent-800); }
+nav .nav-cta:active { transform: translateY(0.5px) scale(0.985); transition-duration: 0.07s; }
+
 @media (max-width: 720px) {
   nav ul { display: none; }
-  nav { margin: 12px 12px 0; top: 12px; }
-  nav .bar { padding: 0 10px 0 18px; }
+  nav { margin: 12px 12px 16px; top: 12px; }
+  nav .bar { padding: 0 10px 0 18px; height: 52px; }
 }
 
-/* ─── hero ──────────────────────────────────────────────────────── */
-.hero {
-  padding: 160px 0 120px;
-  position: relative;
-}
+/* ─── hero ──────────────────────────────────────────────────────────────────
+   Caprasimo is a far heavier face on the body than Cormorant Garamond, so the
+   display metrics could not survive the swap: line-height 0.92 collided lines
+   and clipped descenders, and clamp(64px, 9vw, 144px) was sized for a light
+   old-style serif. Everything comes down one step and the system's own heading
+   metrics (1.12 / -0.015em) take over.
+   ─────────────────────────────────────────────────────────────────────────── */
+.hero { padding: 152px 0 120px; position: relative; }
 .hero .wrap { position: relative; z-index: 1; }
 h1 {
-  font-family: var(--serif-display);
-  font-size: clamp(64px, 9vw, 144px);
-  line-height: 0.92;
-  font-weight: 400;
-  letter-spacing: -0.022em;
-  max-width: 16ch;
+  font-family: var(--font-heading);
+  font-size: clamp(44px, 6.4vw, 96px);
+  line-height: 1.12;
+  font-weight: var(--font-heading-weight);
+  letter-spacing: -0.015em;
+  max-width: 15ch;
   margin-bottom: 40px;
 }
-h1 .accent {
-  color: var(--pink);
-  font-style: italic;
-  font-weight: 400;
+/* Was a rose italic span. Italic is impossible here, so the emphasis becomes
+   the system's own .flux-text sweep, teal → sage, with a solid fallback.
+   (DESIGN.md's "don't use gradient text" rule belongs to the system this
+   replaces; layout.css ships .flux-text as a first-class component.) */
+h1 .accent, h2 .accent { color: var(--accent); font-weight: var(--font-heading-weight); }
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  h1 .accent, h2 .accent {
+    background-image: linear-gradient(110deg, var(--accent) 0%, var(--accent-2) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
 }
 .hero p.lede {
   font-size: 21px;
-  color: var(--text-mid);
+  color: var(--content-prose);
   max-width: 60ch;
   margin-bottom: 48px;
   line-height: 1.55;
 }
-.hero p.lede strong { color: var(--text); font-weight: 500; }
+.hero p.lede strong { color: var(--content); font-weight: 600; }
 
-/* ─── typewriter ─────────────────────────────────────────────────── */
+/* ─── typewriter ────────────────────────────────────────────────────────────
+   The instrument-readout register survives the face change: Organic has no
+   monospace voice, so the line moves to Inter with tabular + lining figures,
+   and the uppercase label keeps its 0.08em tracking to hold the register.
+   ─────────────────────────────────────────────────────────────────────────── */
 .typed-line {
-  font-family: var(--mono);
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums lining-nums;
   font-size: 15px;
-  color: var(--text-mid);
+  color: var(--content-label);
   margin: -16px 0 36px;
   letter-spacing: 0.01em;
   display: inline-flex;
@@ -298,14 +960,14 @@ h1 .accent {
   gap: 6px;
 }
 .typed-line .label {
-  color: var(--text-dim);
+  color: var(--content-label);
   text-transform: uppercase;
   font-size: 12px;
   letter-spacing: 0.08em;
 }
 .typed-line .typewriter {
-  color: var(--blue);
-  font-weight: 500;
+  color: var(--accent);
+  font-weight: 600;
   min-width: 22ch;
   display: inline-block;
 }
@@ -313,93 +975,93 @@ h1 .accent {
   display: inline-block;
   width: 8px;
   height: 1.05em;
-  background: var(--pink);
+  background: var(--accent-2);   /* a fill, so bare accent-2 is correct */
   vertical-align: text-bottom;
   margin-left: 2px;
   animation: blink 1.1s steps(1) infinite;
 }
 @keyframes blink {
-  0%, 50%   { opacity: 1; }
+  0%, 50%      { opacity: 1; }
   50.01%, 100% { opacity: 0; }
 }
+/* End state, not a duration — the global clamp cannot pick one. */
 @media (prefers-reduced-motion: reduce) {
   .typed-line .cursor { animation: none; opacity: 0.6; }
 }
 
-/* ─── buttons (Liquid Glass) ────────────────────────────────────── */
+/* ─── buttons ───────────────────────────────────────────────────────────────
+   The glass, the radial top sheen, the overflow:hidden and the z-index hack
+   that only existed to sit above that sheen are all gone. What is left is solid
+   material with a real shadow and the system's press feel. Height goes to
+   --touch-min: the app's chips are 28px, but a landing-page CTA is a target.
+   ─────────────────────────────────────────────────────────────────────────── */
 .cta-row { display: flex; gap: 14px; flex-wrap: wrap; }
 .btn {
-  display: inline-flex; align-items: center; gap: 10px;
-  padding: 13px 22px;
-  font-family: var(--sans);
-  font-size: 14px;
-  font-weight: 500;
-  border-radius: 999px;
-  border: none;
-  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: var(--touch-min);
+  padding: 0 var(--space-6);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  line-height: 1;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  background: none;
   cursor: pointer;
-  letter-spacing: 0.01em;
-  position: relative;
-  overflow: hidden;
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 0.22s var(--ease-spring),
+    background-color 0.18s var(--ease-spring),
+    border-color 0.18s ease,
+    color 0.18s var(--ease-spring),
+    box-shadow 0.18s ease;
 }
-.btn::before {
-  content: "";
-  position: absolute; inset: 0;
-  border-radius: inherit;
-  background: radial-gradient(120% 80% at 50% 0%, rgba(255,255,255,0.10), transparent 60%);
-  pointer-events: none;
-}
-.btn > * { position: relative; z-index: 1; }
-.btn .arrow { transition: transform 0.2s; }
+.btn .arrow { transition: transform 0.2s var(--ease-spring); }
 .btn:hover .arrow { transform: translateX(4px); }
+.btn:active { transform: translateY(0.5px) scale(0.985); transition-duration: 0.07s; }
+.btn:disabled, .btn[aria-disabled='true'] { opacity: 0.5; pointer-events: none; }
+
+/* Polarity-proof: deep teal with pale ink in light, pale teal with deep ink in
+   dark, and --accent-600 moves toward MORE contrast in both directions. */
 .btn-primary {
-  color: var(--bg);
-  background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(240,243,247,0.92) 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.9),
-    inset 0 -1px 0 rgba(0,0,0,0.06),
-    0 0 0 1px rgba(255,255,255,0.18),
-    0 10px 32px -8px rgba(91,206,250,0.25),
-    0 4px 12px -4px rgba(0,0,0,0.4);
+  background-color: var(--accent);
+  color: var(--on-accent);
+  box-shadow: var(--shadow-sm);
 }
 .btn-primary:hover {
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,1),
-    inset 0 -1px 0 rgba(0,0,0,0.08),
-    0 0 0 1px rgba(255,255,255,0.24),
-    0 14px 40px -8px var(--blue-glow),
-    0 6px 16px -4px rgba(0,0,0,0.5);
+  background-color: var(--accent-600);
+  color: var(--on-accent);
+  box-shadow: var(--shadow-md);
   transform: translateY(-1px);
 }
+.btn-primary:active { transform: translateY(0.5px) scale(0.985); }
+
+/* Deliberately accent on hover, not accent-2: bare --accent-2 is 3.19:1 as
+   text on --bg in light and fails AA. The old rose hover does not survive. */
 .btn-secondary {
-  color: var(--text);
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%),
-    rgba(10,12,18,0.40);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.16),
-    inset 0 -1px 0 rgba(255,255,255,0.02),
-    0 0 0 1px rgba(255,255,255,0.08),
-    0 10px 30px -10px rgba(0,0,0,0.55),
-    0 4px 12px -4px rgba(0,0,0,0.3);
+  background-color: var(--bg);
+  color: var(--content);
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-sm);
 }
 .btn-secondary:hover {
-  color: var(--pink);
-  background:
-    linear-gradient(180deg, rgba(245,169,184,0.12) 0%, rgba(245,169,184,0.04) 100%),
-    rgba(10,12,18,0.40);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.20),
-    inset 0 -1px 0 rgba(255,255,255,0.02),
-    0 0 0 1px rgba(245,169,184,0.25),
-    0 14px 40px -8px var(--pink-glow),
-    0 4px 12px -4px rgba(0,0,0,0.3);
+  border-color: var(--accent);
+  color: var(--accent);
+  background-color: color-mix(in oklch, var(--accent) 8%, var(--bg));
+  box-shadow: var(--shadow-md);
   transform: translateY(-1px);
 }
+.btn-secondary:active { transform: translateY(0.5px) scale(0.985); }
 
-/* ─── section primitives ────────────────────────────────────────── */
+/* ─── section primitives ────────────────────────────────────────────────────
+   The 140px page rhythm is kept: Organic's --space scale tops out at 35.2px
+   because it is a terminal density scale, and page rhythm is not that.
+   ─────────────────────────────────────────────────────────────────────────── */
 section { padding: 140px 0; position: relative; z-index: 1; }
 .section-head {
   display: grid;
@@ -409,23 +1071,25 @@ section { padding: 140px 0; position: relative; z-index: 1; }
   align-items: end;
 }
 .section-tag {
-  font-family: var(--mono); font-size: 12px;
-  color: var(--blue);
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums lining-nums;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-bottom: 16px;
 }
 h2 {
-  font-family: var(--serif);
-  font-size: clamp(40px, 5.5vw, 76px);
-  line-height: 1.0;
-  font-weight: 400;
-  letter-spacing: -0.02em;
+  font-family: var(--font-heading);
+  font-size: clamp(30px, 4.4vw, 60px);
+  line-height: 1.12;
+  font-weight: var(--font-heading-weight);
+  letter-spacing: -0.015em;
 }
-h2 .accent { color: var(--pink); font-style: italic; font-weight: 400; }
 .section-head p {
   font-size: 18px;
-  color: var(--text-mid);
+  color: var(--content-prose);
   line-height: 1.55;
   max-width: 56ch;
 }
@@ -433,159 +1097,138 @@ h2 .accent { color: var(--pink); font-style: italic; font-weight: 400; }
   .section-head { grid-template-columns: 1fr; gap: 24px; align-items: start; }
 }
 
-/* ─── pillars (Liquid Glass cards) ──────────────────────────────── */
-.pillars {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
+/* ─── pillars ───────────────────────────────────────────────────────────────
+   Three liquid-glass cards become three .card-surface tiles: --bg-elev fill,
+   one hairline, one real shadow that deepens on hover. The backdrop-filter,
+   the white-film gradient, the four-layer stack and the ::after sheen are gone.
+   ─────────────────────────────────────────────────────────────────────────── */
+.pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 .pillar {
   padding: 48px 40px;
   position: relative;
-  overflow: hidden;
-  border-radius: 24px;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.015) 60%, rgba(255,255,255,0) 100%),
-    rgba(10,12,18,0.50);
-  backdrop-filter: blur(24px) saturate(170%);
-  -webkit-backdrop-filter: blur(24px) saturate(170%);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.10),
-    inset 0 -1px 0 rgba(255,255,255,0.02),
-    0 0 0 1px rgba(255,255,255,0.05),
-    0 24px 60px -16px rgba(0,0,0,0.50);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  border-radius: var(--radius-md);
+  background-color: var(--bg-elev);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform 0.25s var(--ease-spring),
+    box-shadow 0.25s var(--ease-spring);
 }
-.pillar::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: radial-gradient(80% 50% at 50% 0%, rgba(255,255,255,0.06), transparent 60%);
-  pointer-events: none;
-}
-.pillar:hover {
-  transform: translateY(-4px);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.14),
-    inset 0 -1px 0 rgba(255,255,255,0.02),
-    0 0 0 1px rgba(255,255,255,0.08),
-    0 32px 80px -16px rgba(0,0,0,0.60);
-}
+.pillar:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+/* `.num` here is the site's own label meaning, not the global numeral class —
+   the more specific selector wins, and Inter is right for it either way. */
 .pillar .num {
-  font-family: var(--mono); font-size: 11px;
+  font-family: var(--font-num);
+  font-size: 11px;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-bottom: 32px;
 }
-.pillar:nth-child(1) .num { color: var(--blue); }
-.pillar:nth-child(2) .num { color: var(--pink); }
-.pillar:nth-child(3) .num { color: var(--blue); }
+/* The two-voice alternation survives the palette change. As TEXT the second
+   voice is always --accent-2-800; see the contrast rule in the banner. */
+.pillar:nth-child(1) .num { color: var(--accent); }
+.pillar:nth-child(2) .num { color: var(--accent-2-800); }
+.pillar:nth-child(3) .num { color: var(--accent); }
 .pillar h3 {
-  font-family: var(--serif);
-  font-size: 32px;
-  font-weight: 400;
+  font-family: var(--font-heading);
+  font-size: clamp(22px, 2.1vw, 27px);
+  font-weight: var(--font-heading-weight);
   letter-spacing: -0.015em;
   margin-bottom: 16px;
-  line-height: 1.05;
+  line-height: 1.12;
 }
 .pillar p {
-  color: var(--text-mid);
+  color: var(--content-prose);
   font-size: 15px;
   margin-bottom: 32px;
   line-height: 1.55;
 }
-.pillar ul { list-style: none; position: relative; z-index: 1; }
+.pillar ul { list-style: none; }
 .pillar li {
-  font-family: var(--mono); font-size: 12.5px;
-  color: var(--text);
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums lining-nums;
+  font-size: 12.5px;
+  color: var(--content);
   padding: 10px 0;
-  border-top: 1px solid rgba(255,255,255,0.06);
+  border-top: 1px solid var(--line);
   display: flex; align-items: center; gap: 10px;
   letter-spacing: 0.01em;
 }
-.pillar .num, .pillar h3, .pillar p { position: relative; z-index: 1; }
-.pillar li::before { content: "+"; font-weight: 700; opacity: 0.8; }
-.pillar:nth-child(1) li::before { color: var(--blue); }
-.pillar:nth-child(2) li::before { color: var(--pink); }
-.pillar:nth-child(3) li::before { color: var(--blue); }
+.pillar li::before { content: "+"; font-weight: 700; }
+.pillar:nth-child(1) li::before { color: var(--accent); }
+.pillar:nth-child(2) li::before { color: var(--accent-2-800); }
+.pillar:nth-child(3) li::before { color: var(--accent); }
 @media (max-width: 900px) { .pillars { grid-template-columns: 1fr; } }
 
-/* ─── feature blocks (Liquid Glass cards) ───────────────────────── */
-.features {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
+/* ─── feature blocks ────────────────────────────────────────────────────────
+   Same card migration as .pillar. The odd/even corner wash SURVIVES — it is the
+   two-voice rule expressed as a fill, and a fill is where bare --accent-2 is
+   correct — but re-derived from the accents at a weight that reads on paper.
+   The ::after white sheen does not survive.
+   ─────────────────────────────────────────────────────────────────────────── */
+.features { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .feature {
   padding: 44px;
   position: relative;
   overflow: hidden;
-  border-radius: 24px;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.015) 60%, rgba(255,255,255,0) 100%),
-    rgba(10,12,18,0.50);
-  backdrop-filter: blur(24px) saturate(170%);
-  -webkit-backdrop-filter: blur(24px) saturate(170%);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.10),
-    inset 0 -1px 0 rgba(255,255,255,0.02),
-    0 0 0 1px rgba(255,255,255,0.05),
-    0 24px 60px -16px rgba(0,0,0,0.50);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  border-radius: var(--radius-md);
+  background-color: var(--bg-elev);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform 0.25s var(--ease-spring),
+    box-shadow 0.25s var(--ease-spring);
 }
-.feature:hover {
-  transform: translateY(-4px);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.14),
-    inset 0 -1px 0 rgba(255,255,255,0.02),
-    0 0 0 1px rgba(255,255,255,0.08),
-    0 32px 80px -16px rgba(0,0,0,0.60);
-}
+.feature:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
 .feature::before {
   content: "";
   position: absolute; top: 0; right: 0;
   width: 300px; height: 300px;
   pointer-events: none;
-  opacity: 0.7;
   border-radius: inherit;
 }
 .feature:nth-child(odd)::before {
-  background: radial-gradient(circle at top right, var(--blue-wash), transparent 70%);
+  background: radial-gradient(circle at top right,
+    color-mix(in oklch, var(--accent) 7%, transparent), transparent 70%);
 }
 .feature:nth-child(even)::before {
-  background: radial-gradient(circle at top right, var(--pink-wash), transparent 70%);
+  background: radial-gradient(circle at top right,
+    color-mix(in oklch, var(--accent-2) 9%, transparent), transparent 70%);
 }
-.feature::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: radial-gradient(80% 40% at 50% 0%, rgba(255,255,255,0.05), transparent 60%);
-  pointer-events: none;
-}
+/* Promoted from bare coloured caps to the system's real chip. This is
+   .tag-accent / .tag-accent-2, and it is correct in both polarities because the
+   accent ramps invert together. */
 .feature .tag {
-  font-family: var(--mono); font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  width: fit-content;
+  font-family: var(--font-num);
+  font-size: 11px;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  padding: 4px 11px;
+  border-radius: var(--radius-pill);
   margin-bottom: 24px;
   position: relative;
   z-index: 1;
 }
-.feature:nth-child(odd) .tag { color: var(--blue); }
-.feature:nth-child(even) .tag { color: var(--pink); }
+.feature:nth-child(odd) .tag  { background: var(--accent-100);   color: var(--accent-800); }
+.feature:nth-child(even) .tag { background: var(--accent-2-100); color: var(--accent-2-800); }
 .feature h4 {
-  font-family: var(--serif);
-  font-size: 34px;
-  font-weight: 400;
-  letter-spacing: -0.018em;
+  font-family: var(--font-heading);
+  font-size: clamp(24px, 2.5vw, 30px);
+  font-weight: var(--font-heading-weight);
+  letter-spacing: -0.015em;
   margin-bottom: 16px;
-  line-height: 1.05;
+  line-height: 1.12;
   position: relative;
   z-index: 1;
 }
 .feature p {
-  color: var(--text-mid);
+  color: var(--content-prose);
   margin-bottom: 28px;
   font-size: 15px;
   line-height: 1.55;
@@ -594,330 +1237,329 @@ h2 .accent { color: var(--pink); font-style: italic; font-weight: 400; }
   z-index: 1;
 }
 .feature .link {
-  font-family: var(--mono); font-size: 13px;
+  font-family: var(--font-num);
+  font-size: 13px;
+  font-weight: 600;
   display: inline-flex; align-items: center; gap: 8px;
-  transition: gap 0.2s;
+  transition: gap 0.2s var(--ease-spring);
   position: relative;
   z-index: 1;
 }
-.feature:nth-child(odd) .link { color: var(--blue); }
-.feature:nth-child(even) .link { color: var(--pink); }
+.feature:nth-child(odd) .link  { color: var(--accent); }
+.feature:nth-child(even) .link { color: var(--accent-2-800); }
 .feature .link:hover { gap: 14px; }
 @media (max-width: 720px) { .features { grid-template-columns: 1fr; } }
 
-/* ─── code block (Liquid Glass) ─────────────────────────────────── */
+/* ─── code block ────────────────────────────────────────────────────────────
+   One of exactly three places that keeps a REAL monospace, because column
+   alignment is the whole point. The frame sits on --bg-elev-2 so code reads as
+   its own surface inside a card-bearing section.
+
+   The syntax palette had to be re-derived rather than remapped: three of the
+   four old roles (comment, keyword, number) fail AA on a light ground. These
+   four are legible, mutually distinguishable, and invert correctly.
+   ─────────────────────────────────────────────────────────────────────────── */
 .code-frame {
   margin-top: 40px;
-  border-radius: 20px;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 60%, rgba(255,255,255,0) 100%),
-    rgba(10,12,18,0.55);
-  backdrop-filter: blur(24px) saturate(170%);
-  -webkit-backdrop-filter: blur(24px) saturate(170%);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.10),
-    inset 0 -1px 0 rgba(255,255,255,0.02),
-    0 0 0 1px rgba(255,255,255,0.05),
-    0 24px 60px -16px rgba(0,0,0,0.55);
+  background-color: var(--bg-elev-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
 }
 .code-bar {
   display: flex; align-items: center; justify-content: space-between;
   padding: 12px 18px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-  font-family: var(--mono);
+  border-bottom: 1px solid var(--line);
+  font-family: var(--font-num);
   font-size: 11px;
-  color: var(--text-dim);
+  font-weight: 600;
+  color: var(--content-label);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
 .code-bar .dots { display: flex; gap: 6px; }
 .code-bar .dots span { width: 9px; height: 9px; border-radius: 50%; }
-.code-bar .dots span:nth-child(1) { background: var(--pink); }
-.code-bar .dots span:nth-child(2) { background: var(--blue); }
-.code-bar .dots span:nth-child(3) { background: #fff; }
+.code-bar .dots span:nth-child(1) { background: var(--accent-2); }
+.code-bar .dots span:nth-child(2) { background: var(--accent); }
+/* the third was a literal #fff, which vanishes on a light bar */
+.code-bar .dots span:nth-child(3) { background: color-mix(in oklch, var(--content) 25%, transparent); }
 .code-block {
   padding: 24px;
-  font-family: var(--mono);
+  font-family: var(--font-code);
   font-size: 13px;
   line-height: 1.7;
-  color: var(--text);
+  color: var(--content);
   overflow-x: auto;
 }
-.code-block .c { color: var(--text-dim); }
-.code-block .k { color: var(--pink); }
-.code-block .s { color: var(--blue); }
-.code-block .n { color: var(--good); }
+.code-block .c { color: var(--content-label); }
+.code-block .k { color: var(--accent-2-800); font-weight: 500; }
+.code-block .s { color: var(--accent); }
+.code-block .n { color: var(--content); font-weight: 600; }
 
-/* ─── FAQ ───────────────────────────────────────────────────────── */
+/* ─── FAQ ───────────────────────────────────────────────────────────────────
+   Summaries deliberately do NOT go to Caprasimo. Seven repeated display-face
+   questions is too much display voice and breaks the "one display voice, used
+   sparingly" discipline the system runs on; Figtree 600 is the right register
+   for a question you are meant to scan.
+   ─────────────────────────────────────────────────────────────────────────── */
 .faq-list { border-top: 1px solid var(--line); }
-details {
-  border-bottom: 1px solid var(--line);
-  padding: 28px 0;
-}
+details { border-bottom: 1px solid var(--line); padding: 28px 0; }
 details summary {
   cursor: pointer;
   list-style: none;
   display: flex; align-items: center; justify-content: space-between;
-  font-family: var(--serif);
-  font-size: 26px;
-  font-weight: 400;
+  font-family: var(--font-body);
+  font-size: clamp(18px, 2vw, 21px);
+  font-weight: 600;
   letter-spacing: -0.01em;
+  line-height: 1.35;
+  color: var(--content);
   gap: 32px;
 }
 details summary::-webkit-details-marker { display: none; }
 details summary::after {
   content: "+";
-  font-family: var(--mono);
+  font-family: var(--font-num);
   font-size: 22px;
-  color: var(--blue);
-  transition: transform 0.2s, color 0.2s;
+  line-height: 1;
+  color: var(--accent);
+  transition: transform 0.2s var(--ease-spring), color 0.2s ease;
   flex-shrink: 0;
 }
-details[open] summary::after {
-  transform: rotate(45deg);
-  color: var(--pink);
-}
+details[open] summary::after { transform: rotate(45deg); color: var(--accent-2-800); }
 details p {
-  color: var(--text-mid);
+  color: var(--content);
   margin-top: 16px;
   font-size: 16px;
   line-height: 1.65;
   max-width: 72ch;
 }
 
-/* ─── comparison block (Liquid Glass) ───────────────────────────── */
+/* ─── comparison table ──────────────────────────────────────────────────────
+   Frame becomes .panel. Inter's tabular figures are exactly right for a
+   comparison grid, so the table takes the numeric voice.
+
+   Two fixes made while the file was open, neither of them a restyle:
+   the six columns at 13px already overflowed a 375px viewport with no scroll
+   container, so the frame becomes one; and td.no was --text-dim (2.65:1) while
+   carrying meaning-bearing words like "L2" and "n/a".
+   ─────────────────────────────────────────────────────────────────────────── */
 .compare {
   margin-top: 32px;
-  border-radius: 20px;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 60%, rgba(255,255,255,0) 100%),
-    rgba(10,12,18,0.55);
-  backdrop-filter: blur(24px) saturate(170%);
-  -webkit-backdrop-filter: blur(24px) saturate(170%);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.10),
-    inset 0 -1px 0 rgba(255,255,255,0.02),
-    0 0 0 1px rgba(255,255,255,0.05),
-    0 24px 60px -16px rgba(0,0,0,0.55);
-  overflow: hidden;
+  background-color: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--shadow-sm);
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 .compare table {
   width: 100%;
+  min-width: 720px;
   border-collapse: collapse;
-  font-family: var(--mono);
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums lining-nums;
   font-size: 13px;
 }
 .compare th, .compare td {
   text-align: left;
   padding: 14px 18px;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-  color: var(--text-mid);
+  border-bottom: 1px solid color-mix(in oklch, var(--content) 8%, transparent);
+  color: var(--content);
 }
 .compare th {
-  font-weight: 500;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   font-size: 11px;
-  color: var(--text-dim);
-  background: rgba(255,255,255,0.025);
+  color: var(--content-label);
+  background-color: var(--bg-elev);
+  border-bottom: 1px solid var(--line);
 }
-.compare td.feature-name {
-  color: var(--text);
-  font-family: var(--sans);
-}
+.compare td.feature-name { color: var(--content); font-family: var(--font-body); }
 .compare td.us {
-  color: var(--text);
-  background: rgba(91,206,250,0.04);
+  color: var(--content);
+  background-color: color-mix(in oklch, var(--accent) 6%, transparent);
 }
-.compare td.us::before {
-  content: "✓ ";
-  color: var(--blue);
-  font-weight: 700;
-}
-.compare td.maybe { color: var(--text-mid); }
-.compare td.no { color: var(--text-dim); }
-.compare td.no::before {
-  content: "— ";
-  color: var(--text-dim);
-}
+.compare td.us::before { content: "✓ "; color: var(--accent); font-weight: 700; }
+.compare td.maybe { color: var(--content-label); }
+.compare td.no    { color: var(--content-label); }
+.compare td.no::before { content: "— "; color: var(--content-label); }
 .compare tr:last-child td { border-bottom: none; }
 
-/* ─── testnet CTA section ───────────────────────────────────────── */
-.testnet-section {
-  border-bottom: none;
-  padding: 160px 0 120px;
+/* ─── testnet CTA ───────────────────────────────────────────────────────────
+   The closing band is the one place the deleted aurora was doing real work: it
+   was what made this section read as a distinct final movement. The Organic
+   answer is not another wash but a surface — the wrap becomes a raised plate on
+   the sheet, so the CTA has object-hood without any ambience at all.
+   ─────────────────────────────────────────────────────────────────────────── */
+.testnet-section { padding: clamp(80px, 9vw, 128px) 0; overflow: hidden; }
+.testnet-section .wrap {
   position: relative;
-  overflow: hidden;
+  z-index: 1;
+  text-align: center;
+  max-width: 1216px;              /* 1280 − the 32px gutter .wrap usually pads */
+  width: calc(100% - 64px);
+  margin-inline: auto;
+  padding: clamp(56px, 7vw, 104px) clamp(24px, 5vw, 72px);
+  background-color: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
 }
-.testnet-section .wrap { position: relative; z-index: 1; text-align: center; }
-.testnet-section h2 {
-  max-width: 18ch;
-  margin: 0 auto 28px;
-}
+.testnet-section h2 { max-width: 18ch; margin: 0 auto 28px; }
 .testnet-section p {
   font-size: 20px;
-  color: var(--text-mid);
+  color: var(--content-prose);
   max-width: 58ch;
   margin: 0 auto 40px;
   line-height: 1.55;
 }
 .testnet-section .cta-row { justify-content: center; }
+/* The plate is already --bg-elev, so a --bg-elev button would disappear. */
+.testnet-section .btn-secondary { background-color: var(--bg); }
 
-/* ─── footer ────────────────────────────────────────────────────── */
+/* ─── footer ────────────────────────────────────────────────────────────────
+   The footer used to be transparent with `min-height: 100vh`, so the page-wide
+   aurora showed through it as one continuous sheet, and every colour in it was
+   a raw rgba(255,255,255,·) — the idiom that only ever worked on a dark ground.
+   With the aurora gone, 100vh would be a full screen of empty pale field, so
+   the footer sizes to its content and gets a real surface instead: --bg-elev
+   with a hairline seam. The text-shadow that protected copy over the bloom is
+   deleted; on a light ground it is a smudge.
+   ─────────────────────────────────────────────────────────────────────────── */
 footer {
-  border-bottom: none;
-  /* no own background / border — share the page-wide aurora so there is no seam */
-  background: transparent;
-  border-top: none;
+  background-color: var(--bg-elev);
+  border-top: 1px solid var(--line);
   position: relative;
   z-index: 1;
   overflow: hidden;
-  isolation: isolate;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  padding: 84px 0 48px;
+  padding: 80px 0 40px;
 }
-/* footer no longer paints its own bloom — the page-wide .page-aurora shows
-   through the now-transparent footer, so the backdrop is one continuous sheet */
-.foot-aurora { display: none; }
-@keyframes foot-aurora {
-  0%   { transform: translate3d(-4%, -2%, 0) scale(1.08) rotate(-1.5deg); }
-  50%  { transform: translate3d(4%, 2%, 0) scale(1.2) rotate(1.5deg); }
-  100% { transform: translate3d(-2%, 3%, 0) scale(1.12) rotate(-0.5deg); }
-}
-/* footer's own top-seam + vignette removed — the page-wide vignette
-   (.ambient::after) and grain (.page-grain) already cover this region */
-footer::before { display: none; }
-/* grain / film-noise overlay for the dreamy texture */
-.foot-grain {
-  display: none;
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  opacity: 0.26;
-  mix-blend-mode: soft-light;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 150px 150px;
-}
-footer .wrap {
-  position: relative;
-  z-index: 3;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  text-shadow: 0 1px 22px rgba(6,7,11,0.5);
-}
-/* link columns at the top, over the gradient */
+footer .wrap { position: relative; z-index: 3; }
+
 .foot-grid {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1.2fr;
   gap: 48px;
 }
 .foot-grid h5 {
-  font-family: var(--mono); font-size: 11px;
-  color: rgba(255,255,255,0.55);
-  text-transform: uppercase; letter-spacing: 0.08em;
-  margin-bottom: 18px; font-weight: 500;
+  font-family: var(--font-num);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--content-label);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 18px;
+  line-height: 1.2;
 }
 .foot-grid ul { list-style: none; }
 .foot-grid li { padding: 6px 0; }
 .foot-grid li a {
   font-size: 14px;
-  color: rgba(255,255,255,0.78);
-  transition: color 0.15s;
+  color: var(--content-prose);
+  transition: color 0.18s var(--ease-spring);
 }
-.foot-grid li a:hover { color: #fff; }
+.foot-grid li a:hover { color: var(--accent); }
 .foot-about {
-  color: rgba(255,255,255,0.72);
-  font-size: 14px; max-width: 34ch;
-  margin-top: 22px; line-height: 1.55;
+  color: var(--content-prose);
+  font-size: 14px;
+  max-width: 34ch;
+  margin-top: 22px;
+  line-height: 1.55;
 }
 .foot-attr {
-  font-family: var(--mono); font-size: 11px;
-  color: rgba(255,255,255,0.5);
-  margin-top: 18px; letter-spacing: 0.05em; text-transform: uppercase;
+  font-family: var(--font-num);
+  font-size: 11px;
+  color: var(--content-label);
+  margin-top: 18px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
-/* giant edge-to-edge wordmark hero (Ondo-style) */
+/* Edge-to-edge wordmark. A literal #fff at 280px is invisible on a pale ground,
+   so it becomes what it always wanted to be — a watermark, in ink rather than
+   light. The clamp also comes down: it was tuned to Geist's metrics and Figtree
+   sets wider, and this line is nowrap inside an overflow:hidden box. */
 .foot-hero {
-  flex: 1;
   display: flex;
   align-items: flex-end;
   justify-content: center;
   padding: 64px 0 0;
   overflow: hidden;
 }
-.foot-hero .foot-word { margin-bottom: -0.08em; }
+/* The oversized footer wordmark is the logo at display size — same spec as the
+   navbar's, just set as a watermark. Both halves are knocked back to a tint of
+   their real ink rather than recoloured. */
 .foot-hero .foot-word {
-  font-family: var(--sans);
+  font-family: var(--font-brand-sans);
   font-weight: 500;
   letter-spacing: -0.02em;
   line-height: 0.9;
-  font-size: clamp(40px, 21vw, 280px);
+  font-size: clamp(40px, 18vw, 232px);
   white-space: nowrap;
-  color: #fff;
-  text-shadow: none;
+  margin-bottom: -0.08em;
+  color: color-mix(in oklch, var(--content) 12%, transparent);
 }
 .foot-hero .foot-word .b-flux {
-  font-family: var(--serif-flux);
+  font-family: var(--font-brand-serif);
   font-style: italic;
   font-weight: 400;
   letter-spacing: 0;
   margin-left: 0.06em;
-  color: var(--pink);
+  color: color-mix(in srgb, var(--brand-flux-ink) 34%, transparent);
 }
-/* plain, minimal social glyphs */
-.socials {
-  display: inline-flex;
-  align-items: center;
-  gap: 18px;
-  flex: none;
-}
+
+/* The glyphs are inline SVG with fill="currentColor", so they follow. */
+.socials { display: inline-flex; align-items: center; gap: 18px; flex: none; }
 .socials a {
   display: inline-flex;
-  color: rgba(255,255,255,0.66);
-  transition: color 0.15s, transform 0.15s;
+  color: var(--content-label);
+  transition: color 0.18s var(--ease-spring), transform 0.18s var(--ease-spring);
 }
-.socials a:hover { color: #fff; transform: translateY(-1px); }
-/* minimal bottom bar: legal left, social right */
+.socials a:hover { color: var(--accent); transform: translateY(-1px); }
+
 .foot-bottom {
-  border-top: 1px solid rgba(255,255,255,0.14);
+  border-top: 1px solid var(--line);
+  margin-top: 40px;
   padding-top: 26px;
   display: flex; align-items: center; justify-content: space-between;
-  font-family: var(--mono); font-size: 12px; letter-spacing: 0.01em;
-  color: rgba(255,255,255,0.66);
+  gap: 16px;
+  font-family: var(--font-num);
+  font-size: 12px;
+  letter-spacing: 0.01em;
+  color: var(--content-label);
 }
-.foot-bottom a { color: rgba(255,255,255,0.82); }
-.foot-bottom a:hover { color: #fff; }
-@media (prefers-reduced-motion: reduce) { .foot-aurora { animation: none; } }
+.foot-bottom a { color: var(--content-prose); }
+.foot-bottom a:hover { color: var(--accent); }
+
 @media (max-width: 720px) {
-  footer { min-height: 72vh; padding-top: 56px; }
+  footer { padding: 56px 0 36px; }
   .foot-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
   .foot-hero { padding: 40px 0 0; }
   .foot-bottom { flex-direction: column; gap: 16px; align-items: flex-start; }
 }
 
-/* ─── architecture stack ────────────────────────────────────────── */
-.arch {
-  margin-top: 56px;
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-}
+/* ─── architecture · chip stack ─────────────────────────────────────────────
+   The mobile representation of the diagram, and the canonical AT-readable one
+   at every width. Each layer was a gradient falling to rgba(10,12,18,.35);
+   it is literally .panel, so it becomes .panel — flat, no gradient.
+   Chips sit one surface above their layer so they read as separate objects.
+   ─────────────────────────────────────────────────────────────────────────── */
+.arch { margin-top: 56px; display: flex; flex-direction: column; gap: 30px; }
 .arch-layer {
   position: relative;
   display: grid;
   grid-template-columns: 156px 1fr;
   gap: 28px;
   padding: 22px 24px;
+  background-color: var(--bg);
   border: 1px solid var(--line);
-  border-radius: 16px;
-  background: linear-gradient(180deg, var(--bg-elev) 0%, rgba(10,12,18,0.35) 100%);
+  border-radius: var(--radius-panel);
 }
-/* down-flow cue between layers */
+/* down-flow cue between layers — already token-driven, unchanged */
 .arch-layer:not(:last-child)::after {
   content: "";
   position: absolute;
@@ -929,81 +1571,91 @@ footer .wrap {
 }
 .lyr-head { padding-top: 2px; }
 .lyr-head .k {
-  font-family: var(--mono);
+  font-family: var(--font-num);
   font-size: 11px;
+  font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--text-dim);
+  color: var(--content-label);
 }
 .lyr-head .n {
   display: block;
   margin-top: 6px;
+  font-family: var(--font-body);
   font-size: 15px;
   font-weight: 600;
   letter-spacing: -0.01em;
-  color: var(--text);
+  color: var(--content);
 }
 .arch-chips { display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; }
 .arch-groups { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
 .arch-group .g {
-  font-family: var(--mono);
+  font-family: var(--font-num);
   font-size: 10.5px;
+  font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--blue);
+  color: var(--accent);
   margin-bottom: 11px;
 }
-.arch-group:nth-child(2) .g { color: var(--pink); }
-.arch-group:nth-child(3) .g { color: var(--text-dim); }
+.arch-group:nth-child(2) .g { color: var(--accent-2-800); }
+.arch-group:nth-child(3) .g { color: var(--content-label); }
+
 .chip {
-  font-family: var(--mono);
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums lining-nums;
   font-size: 12px;
   line-height: 1;
-  color: var(--text-mid);
+  color: var(--content-prose);
   padding: 8px 11px;
-  border: 1px solid var(--line-strong);
-  border-radius: 8px;
-  background: var(--bg);
+  background-color: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
   white-space: nowrap;
-  /* lit top edge so each chip reads as a tooled key on the diagram face */
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  transition: color 0.2s ease, border-color 0.2s ease,
-    transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    color 0.2s var(--ease-spring),
+    border-color 0.2s ease,
+    transform 0.2s var(--ease-spring),
+    box-shadow 0.2s ease;
 }
-/* Glow-On-Touch: colored glow is interaction-only, never a resting state */
+/* The old rule added a coloured glow AND `outline: none` on :focus-visible,
+   which stripped the focus ring from keyboard-focusable chips. Both are gone:
+   glow belongs to the deleted system, and the outline removal was a bug. */
 .chip:hover, .chip:focus-visible {
-  color: var(--text);
-  border-color: var(--blue);
+  color: var(--content);
+  border-color: var(--accent);
   transform: translateY(-1px);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 6px 16px -8px var(--blue-glow);
-  outline: none;
+  box-shadow: var(--shadow-sm);
 }
-.chip.key:hover, .chip.key:focus-visible {
-  transform: translateY(-1px);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 6px 16px -8px var(--pink-glow);
-  outline: none;
-}
-/* mobile sub-cluster divider inside the dense settlement group;
-   hidden on desktop where the chip stack is sr-only */
-.arch-subdiv { display: none; }
 .chip.key {
-  color: var(--text);
+  color: var(--content);
   border: 1px solid transparent;
   background:
     linear-gradient(var(--bg-elev), var(--bg-elev)) padding-box,
-    linear-gradient(105deg, var(--blue), var(--pink)) border-box;
+    linear-gradient(105deg, var(--accent), var(--accent-2)) border-box;
 }
 .chip.key::before {
   content: "✦";
   margin-right: 7px;
   font-size: 9px;
   vertical-align: 1px;
-  color: var(--blue);
+  color: var(--accent);
 }
-/* legend as a contained figure-key plate: a top hairline (the layers' own
-   border language) ties the key to the diagram; rows stack on one rhythm */
+.chip.key:hover, .chip.key:focus-visible { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+/* mobile sub-cluster divider inside the dense settlement group; hidden on
+   desktop where the chip stack is sr-only */
+.arch-subdiv { display: none; }
+
+/* ─── architecture · legend ─────────────────────────────────────────────────
+   A contained figure-key plate: the top hairline (the layers' own border
+   language) ties the key to the diagram.
+
+   NOTE FOR THE PAGE AUTHOR: the caption next to .sw-color currently reads
+   "Blue = matching / execution · Rose = risk". After this change that sentence
+   is factually false about the swatch beside it and must become
+   "Teal = matching / execution · Sage = risk". It is the one place the
+   keep-all-copy constraint has to yield.
+   ─────────────────────────────────────────────────────────────────────────── */
 .arch-legend {
   margin-top: clamp(28px, 3.2vw, 40px);
   padding-top: 22px;
@@ -1012,7 +1664,7 @@ footer .wrap {
   flex-direction: column;
   gap: 14px;
   font-size: 13px;
-  color: var(--text-mid);
+  color: var(--content-label);
 }
 .arch-legend .lg-keys { display: flex; flex-direction: column; gap: 9px; }
 .arch-legend .lg {
@@ -1020,9 +1672,9 @@ footer .wrap {
   grid-template-columns: 18px 1fr;
   align-items: center;
   gap: 10px;
-  font-family: var(--mono);
+  font-family: var(--font-num);
   font-size: 12px;
-  color: var(--text-mid);
+  color: var(--content-label);
 }
 .arch-legend .sw {
   display: inline-flex;
@@ -1030,36 +1682,44 @@ footer .wrap {
   justify-content: center;
   width: 18px;
 }
-.arch-legend .sw-spec { font-weight: 400; font-size: 11px; color: var(--blue); }
+.arch-legend .sw-spec { font-weight: 400; font-size: 11px; color: var(--accent); }
+/* the one sanctioned two-accent adjacency, now teal → sage (same rule as
+   .chip.key) — a fill, so bare --accent-2 is correct */
 .arch-legend .sw-color {
   width: 14px; height: 14px; border-radius: 4px;
-  /* the one sanctioned blue+rose adjacency (same rule as .chip.key) */
-  background: linear-gradient(105deg, var(--blue) 0 50%, var(--pink) 50% 100%);
+  background: linear-gradient(105deg, var(--accent) 0 50%, var(--accent-2) 50% 100%);
 }
-/* the honest milestones note reads as a trailing caption, not a third key */
 .arch-legend .note {
   display: block;
   margin-top: 4px;
   font-size: 11.5px;
   letter-spacing: 0.01em;
 }
-.arch-legend .note .link:hover { color: var(--blue); }
-@media (max-width: 900px) {
-  .arch-groups { grid-template-columns: 1fr; gap: 18px; }
-}
+.arch-legend .note .link { color: var(--content-prose); }
+.arch-legend .note .link:hover { color: var(--accent); }
+
+@media (max-width: 900px) { .arch-groups { grid-template-columns: 1fr; gap: 18px; } }
 @media (max-width: 720px) {
   .arch-layer { grid-template-columns: 1fr; gap: 14px; padding: 18px; }
   .arch-layer:not(:last-child)::after { left: 24px; }
 }
 
-/* isometric figure (desktop) — chip stack (.arch-fallback) is the mobile view */
-/* head→figure and figure→legend breathe on one clamped section step */
+/* ─── architecture · isometric figure (desktop) ─────────────────────────────
+   The chip stack above is the mobile view AND the accessible view; this SVG is
+   decorative and aria-hidden.
+   ─────────────────────────────────────────────────────────────────────────── */
 #architecture .section-head { margin-bottom: clamp(40px, 4.5vw, 64px); }
 .arch-figure { margin: clamp(28px, 3.2vw, 40px) 0 0; }
-.arch-svg { display: block; width: 100%; height: auto; }
-/* desktop: the chip stack is the canonical AT-readable representation —
-   kept in the a11y tree (sr-only clip), not display:none, so screen-reader
-   users get the full architecture at every width; the SVG is decorative. */
+.arch-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  font-family: var(--font-body);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+/* desktop: the chip stack is the canonical AT-readable representation — kept in
+   the a11y tree (sr-only clip), not display:none, so screen-reader users get
+   the full architecture at every width. */
 .arch-fallback {
   position: absolute;
   width: 1px;
@@ -1072,20 +1732,108 @@ footer .wrap {
   white-space: nowrap;
   border: 0;
 }
-/* assemble bottom-up when scrolled into view */
+/* assemble bottom-up when scrolled into view (main.js adds .anim / .in) */
 .arch-figure.anim .slab,
 .arch-figure.anim .albl { opacity: 0; transform: translateY(26px); }
 .arch-figure.anim.in .slab,
 .arch-figure.anim.in .albl {
   opacity: 1;
   transform: translateY(0);
-  /* slabs settle with a touch more calm authority + stagger headroom */
-  transition: opacity 0.6s ease, transform 0.78s cubic-bezier(0.16, 0.84, 0.24, 1);
+  transition: opacity 0.6s ease, transform 0.78s var(--ease-out-soft);
   transition-delay: calc(var(--i) * 0.095s);
 }
+
+/* ── the figure's paint ─────────────────────────────────────────────────────
+   Twenty-odd fills, strokes and gradient stops are baked into index.html as
+   presentation attributes in the old dark palette. They are NOT hand-edited to
+   new hexes, because a hex cannot answer both polarities. Instead every one of
+   them is driven from here.
+
+   Two mechanisms, both zero-markup:
+     · presentation attributes have specificity 0, so ANY rule beats them, and
+       an attribute selector can address them by the value they already carry;
+     · `stop-color`, `stop-opacity`, `fill`, `stroke` and `opacity` are all real
+       CSS properties, so the <defs> gradients are restyled in place by id.
+   The original attributes stay put as a no-CSS fallback.
+
+   If the page author later adds semantic classes (.face-l / .face-r / .face-t /
+   .edge / .edge-hi / .leader / .leader-dot / .node / .node-2 / .contact), the
+   class rules below take over and the attribute selectors can be deleted. Both
+   sets are listed together so they cannot drift apart. */
+
+/* the brand sweep inside the figure is diagram chrome, not the logo — it takes
+   the migration, and becomes .flux-fill's own gradient */
+#arch-flux stop:nth-child(1) { stop-color: var(--accent); }
+#arch-flux stop:nth-child(2) { stop-color: color-mix(in oklch, var(--accent) 50%, var(--accent-2)); }
+#arch-flux stop:nth-child(3) { stop-color: var(--accent-2); }
+/* the slab top face: a shallow tonal step, not a dark-to-darker fall */
+#arch-top stop:nth-child(1) { stop-color: var(--slab-top); }
+/* srgb for the same reason as --slab-r / --slab-l above: in dark both inputs
+   are near-neutral greens and the oklch mix loses its hue to `none`. */
+#arch-top stop:nth-child(2) { stop-color: color-mix(in srgb, var(--slab-top) 88%, var(--seam)); }
+/* the clearing-core wash. The original .55/.4/.55 opacities were tuned against
+   near-black; on a pale ground they make the hero slab read as near-solid teal
+   and destroy its relationship to the four neighbours. */
+#arch-herotop stop:nth-child(1) { stop-color: var(--accent);   stop-opacity: 0.16; }
+#arch-herotop stop:nth-child(2) { stop-color: color-mix(in oklch, var(--accent) 50%, var(--accent-2)); stop-opacity: 0.12; }
+#arch-herotop stop:nth-child(3) { stop-color: var(--accent-2); stop-opacity: 0.20; }
+
+/* slab faces */
+.arch-svg .face-l, .arch-svg polygon[fill="#0a0d14"] { fill: var(--slab-l); }
+.arch-svg .face-r, .arch-svg polygon[fill="#141925"] { fill: var(--slab-r); }
+.arch-svg .face-t { fill: var(--slab-top); }
+/* edges: the outline and the vertical corners are structure … */
+.arch-svg .edge,
+.arch-svg path[stroke="#3a435c"],
+.arch-svg polygon[stroke="#3a435c"] { stroke: var(--line-strong); }
+/* … the old #5a6479 top rim was a LIT edge; it survives as a rim, in ink */
+.arch-svg .edge-hi,
+.arch-svg path[stroke="#5a6479"] { stroke: color-mix(in oklch, var(--content) 30%, transparent); }
+/* leader lines out to the label column */
+.arch-svg .leader,
+.arch-svg path[stroke="#262d3e"] { stroke: var(--line-strong); }
+.arch-svg .leader-dot,
+.arch-svg circle[fill="#3a435c"] { fill: color-mix(in oklch, var(--content) 30%, transparent); }
+/* origin dots: 2.7px graphics, not text, so bare --accent-2 clears the 3:1
+   non-text threshold and is correct */
+.arch-svg .node,   .arch-svg circle[fill="#5BCEFA"] { fill: var(--accent); }
+.arch-svg .node-2, .arch-svg circle[fill="#F5A9B8"] { fill: var(--accent-2); }
+
+/* THE GLOW DOES NOT SURVIVE. A 26px Gaussian bloom of a saturated gradient at
+   22% over #eaefe6 is a printing smudge, not light. The contact shadow does
+   survive — that is the Organic depth vocabulary — re-tinted per polarity. */
+.arch-svg .glow, .arch-svg ellipse[filter="url(#arch-glow)"] { display: none; }
+.arch-svg .contact, .arch-svg ellipse[fill="#000"] {
+  fill: var(--slab-shadow);
+  opacity: var(--slab-shadow-o);
+}
+
+/* the label column. Nothing in here may use --content-dim: the smallest text
+   is 10px. ✦-marked specs take --accent so the figure and its legend agree. */
+.arch-svg [font-family] { font-family: var(--font-num); }
+.arch-svg .albl-i, .arch-svg .albl-cap,
+.arch-svg [fill="#8b96a8"] { fill: var(--content-label); }
+.arch-svg .albl-title,
+.arch-svg [fill="#f0f3f7"] { fill: var(--content); }
+.arch-svg .albl-spec,
+.arch-svg [fill="#7c8698"] { fill: var(--content-label); }
+.arch-svg .albl-spec-key,
+.arch-svg [fill="#d4dbe8"] { fill: var(--accent); }
+.arch-svg .albl-g-1,
+.arch-svg tspan[fill="#5BCEFA"] { fill: var(--accent); }
+/* text, so the second voice takes its -800 step */
+.arch-svg .albl-g-2,
+.arch-svg tspan[fill="#F5A9B8"] { fill: var(--accent-2-800); }
+/* Settlement was #7a8497 against the specs' #7c8698 — near-identical, a latent
+   bug: it was meant to read as a peer of Matching and Risk, so it gets the same
+   weight as they do rather than dissolving into its own spec list. */
+.arch-svg .albl-g-3,
+.arch-svg tspan[fill="#7a8497"] { fill: var(--content-label); font-weight: 600; }
+
+/* ─── responsive ────────────────────────────────────────────────────────── */
 @media (max-width: 720px) {
   .arch-figure { display: none; }
-  /* mobile: SVG is hidden, so the fallback becomes the visible diagram —
+  /* mobile: the SVG is hidden, so the fallback becomes the visible diagram —
      undo the desktop sr-only clip and lay it out normally. */
   .arch-fallback {
     display: flex;
@@ -1099,7 +1847,6 @@ footer .wrap {
     white-space: normal;
     border: 0;
   }
-  /* mobile: chips are the visible diagram — slightly more air between keys */
   .arch-chips { gap: 10px; }
   /* relieve the dense settlement group: a short left-bright→transparent
      hairline (the layer-connector language) splits state from settlement */
@@ -1126,40 +1873,174 @@ footer .wrap {
     padding: 96px 0 72px; /* top clears the sticky nav */
   }
   .cta-row .btn { flex: 1 1 auto; justify-content: center; }
+  .testnet-section .wrap { padding: 44px 24px; border-radius: var(--radius-md); }
 }
 
-/* phones: caps placed at end of file so they win over the base hero rules
-   (stops the big h1 / typewriter line forcing document width > viewport) */
+/* phones: caps placed at end of the page rules so they win over the base hero
+   sizing (stops the big h1 / typewriter line forcing document width > viewport) */
 @media (max-width: 600px) {
   .wrap { padding-left: 20px; padding-right: 20px; }
-  .hero { padding: 88px 0 64px; } /* min-height + vertical centering inherited from the 720px rule */
+  .hero { padding: 88px 0 64px; } /* min-height + centring inherited from 720px */
   section { padding: 68px 0; }
-  .hero h1, .paper-hero h1 { font-size: clamp(38px, 10vw, 58px); max-width: 100%; }
-  h2, .testnet-section h2 { font-size: clamp(27px, 7vw, 40px); }
+  .hero h1, .paper-hero h1 { font-size: clamp(32px, 8.6vw, 46px); max-width: 100%; }
+  h2, .testnet-section h2 { font-size: clamp(25px, 6.4vw, 34px); }
   .hero p.lede { font-size: 18px; }
   .typed-line { display: flex; flex-wrap: wrap; }
   .typed-line .typewriter { min-width: 0; max-width: 100%; }
+  .testnet-section .wrap { width: calc(100% - 40px); }
+  .pillar { padding: 32px 24px; }
+  .feature { padding: 30px 24px; }
 }
 
-/* ─── legal pages (terms / privacy) ─────────────────────────────── */
+/* ─── legal pages (terms / privacy) ─────────────────────────────────────────
+   The densest running text on the site, which is why every prose declaration
+   here is --content and not --content-mid: 15.5px at 4.39:1 is a site-wide AA
+   failure, and the old file set all of it in --text-mid.
+   ─────────────────────────────────────────────────────────────────────────── */
 .legal { max-width: 760px; margin: 0 auto; padding: 140px 32px 90px; }
-.legal .kicker { font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); }
-.legal h1 { font-family: var(--serif-display); font-size: clamp(40px, 7vw, 72px); font-weight: 400; letter-spacing: -0.02em; line-height: 1; margin: 14px 0 10px; }
-.legal .updated { font-family: var(--mono); font-size: 12px; color: var(--text-dim); margin-bottom: 26px; }
-.legal .disclaimer { border: 1px solid var(--line-strong); border-radius: 14px; background: var(--bg-elev); padding: 18px 20px; font-size: 14px; color: var(--text-mid); line-height: 1.6; margin-bottom: 46px; }
-.legal .disclaimer b { color: var(--text); }
-.legal h2 { font-family: var(--sans); font-size: 21px; font-weight: 600; letter-spacing: -0.01em; margin: 44px 0 14px; color: var(--text); scroll-margin-top: 100px; }
-.legal h2 .n { font-family: var(--mono); font-size: 13px; color: var(--blue); margin-right: 10px; font-weight: 400; }
-.legal p { color: var(--text-mid); line-height: 1.72; margin-bottom: 14px; font-size: 15.5px; }
-.legal ul { margin: 0 0 14px; padding-left: 20px; color: var(--text-mid); }
+.legal .kicker {
+  font-family: var(--font-num);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--content-label);
+}
+/* Caprasimo is much louder than the Cormorant this replaces, so the clamp comes
+   down hard — same size on the page, far more presence. */
+.legal h1 {
+  font-family: var(--font-heading);
+  font-size: clamp(32px, 5.6vw, 56px);
+  font-weight: var(--font-heading-weight);
+  letter-spacing: -0.015em;
+  line-height: 1.12;
+  margin: 14px 0 10px;
+}
+.legal .updated {
+  font-family: var(--font-num);
+  font-size: 12px;
+  color: var(--content-label);
+  margin-bottom: 26px;
+}
+.legal .disclaimer {
+  background-color: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  font-size: 14px;
+  color: var(--content);
+  line-height: 1.6;
+  margin-bottom: 46px;
+}
+.legal .disclaimer b { color: var(--content); font-weight: 600; }
+/* section heads stay in the body face — a display face on every clause head
+   across a 40-section legal document is exactly the case Caprasimo is not for */
+.legal h2 {
+  font-family: var(--font-body);
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 44px 0 14px;
+  color: var(--content);
+  scroll-margin-top: 100px;
+  line-height: 1.3;
+}
+.legal h2 .n {
+  font-family: var(--font-num);
+  font-size: 13px;
+  color: var(--accent);
+  margin-right: 10px;
+  font-weight: 600;
+}
+.legal p  { color: var(--content); line-height: 1.72; margin-bottom: 14px; font-size: 15.5px; }
+.legal ul { margin: 0 0 14px; padding-left: 20px; color: var(--content); }
 .legal li { line-height: 1.72; margin-bottom: 7px; font-size: 15.5px; }
-.legal a { color: var(--blue); }
-.legal strong { color: var(--text); font-weight: 600; }
-.legal .view { border-left: 1px solid var(--pink); background: var(--pink-wash); border-radius: 0 10px 10px 0; padding: 13px 18px; margin: 18px 0; font-size: 14.5px; color: var(--text-mid); line-height: 1.7; }
-.legal .view .vl { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--pink); display: block; margin-bottom: 6px; }
+.legal a  { color: var(--accent); text-decoration: underline; text-underline-offset: 2px;
+            text-decoration-thickness: 1px;
+            text-decoration-color: color-mix(in oklch, var(--accent) 40%, transparent); }
+.legal a:hover { text-decoration-color: currentColor; }
+.legal strong { color: var(--content); font-weight: 600; }
+/* the author's-note callout. A 2px accent-2 stripe over an 8% wash — the wash
+   is a fill so bare --accent-2 is right there, while the label is text and
+   takes the -800 step. */
+.legal .view {
+  border-left: 2px solid var(--accent-2);
+  background: color-mix(in oklch, var(--accent-2) 8%, transparent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 13px 18px;
+  margin: 18px 0;
+  font-size: 14.5px;
+  color: var(--content);
+  line-height: 1.7;
+}
+.legal .view .vl {
+  font-family: var(--font-num);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-2-800);
+  display: block;
+  margin-bottom: 6px;
+}
 .legal-foot { border-top: 1px solid var(--line); margin-top: 30px; }
 .legal-foot .wrap { padding-top: 34px; padding-bottom: 46px; }
 .legal-links { display: flex; flex-wrap: wrap; gap: 22px; margin: 18px 0 22px; }
-.legal-links a { font-size: 14px; color: var(--text-mid); }
-.legal-links a:hover { color: var(--text); }
+.legal-links a { font-size: 14px; color: var(--content-prose); }
+.legal-links a:hover { color: var(--accent); }
 @media (max-width: 600px) { .legal { padding: 112px 20px 72px; } }
+
+/* ─── motion preference ─────────────────────────────────────────────────────
+   The single global clamp layout.css closes with, replacing four scattered
+   per-feature blocks — plus two things that clamp does not cover on its own:
+   smooth scrolling is neither an animation nor a transition, so it survives and
+   has to be named; and animation-DELAY survives too, which would leave any
+   fill-mode:both entrance holding its invisible `from` state for the length of
+   the delay. The two rules that choose a resting APPEARANCE rather than a
+   duration (#preloader .pl-p, .typed-line .cursor) stay where they are.
+   ─────────────────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .tactile, .tactile:active { transition: none; transform: none; }
+}
+
+/* ─── print ─────────────────────────────────────────────────────────────────
+   whitepaper-print.html is GENERATED by tools/build-print.py, ships its own
+   plain black-on-white stylesheet and does not load this file — do not
+   colourise it and do not touch its own
+   local --serif/--mono, which are unrelated to anything here.
+
+   This block is for the other four pages, which a reader may still print. The
+   screen theme is already light, so this is not about polarity; it is that
+   --seam desk would print as a grey field.
+   ─────────────────────────────────────────────────────────────────────────── */
+@media print {
+  :root {
+    color-scheme: light;
+    --bg: #ffffff;
+    --bg-elev: #ffffff;
+    --bg-elev-2: #ffffff;
+    --seam: #ffffff;
+    --content: #000000;
+    --line: #cccccc;
+    --line-strong: #999999;
+    --accent: #000000;
+    --accent-2: #000000;
+    --accent-2-800: #000000;
+    --shadow-sm: none;
+    --shadow-md: none;
+    --shadow-lg: none;
+  }
+  html, body { background: #fff !important; }
+  #preloader, nav, .pride-bar, .foot-hero, .socials { display: none !important; }
+  .pillar, .feature, .compare, .code-frame, .testnet-section .wrap,
+  .arch-layer, .legal .disclaimer { box-shadow: none !important; }
+  a { text-decoration: underline; }
+  details { break-inside: avoid; }
+}
