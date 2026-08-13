@@ -1438,6 +1438,12 @@ h2 {
   font-size: 13px;
   line-height: 1.7;
   color: var(--content);
+  /* pre, and it is load-bearing: the markup is a <div> carrying literal
+     newlines, and without it HTML collapses them and the sample renders as one
+     wrapped paragraph — `chain id const client = new` soup. The frame scrolls
+     sideways on narrow screens instead of wrapping; code that wraps mid-token
+     is worse than code you have to pan. */
+  white-space: pre;
   overflow-x: auto;
 }
 .code-block .c { color: var(--content-label); }
@@ -2103,7 +2109,6 @@ footer .wrap { position: relative; z-index: 3; }
                     right. The workhorse.
      .stage-lede    a wide left-aligned heading with the copy in a second
                     column beside it. For a fold that argues rather than lists.
-     .stage-band    a full-bleed measurement strip — four numbers, no prose.
 
    The artefacts stay full-width and centred in their own well, because a
    product surface is a picture and pictures centre. That is not the same
@@ -2194,19 +2199,6 @@ footer .wrap { position: relative; z-index: 3; }
   max-width: 74ch;
 }
 .stage-figure > .stage-caption { margin-inline: auto; text-align: center; }
-
-/* the measurement band — four numbers, no argument */
-.stage-band { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-.stage-band > div { padding: 26px 0 0; border-top: 2px solid var(--accent-300); }
-.stage-band .n {
-  font-family: var(--font-body);
-  font-size: clamp(30px, 3.4vw, 46px);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1;
-}
-.stage-band .k { margin-top: 10px; font-family: var(--font-num); font-size: 12.5px; color: var(--content-label); }
-.stage-band .k b { color: var(--content-prose); font-weight: 600; }
 
 /* the flat spec list. A card grid asks the reader to compare three things they
    have not read yet; a list lets them read one, agree, and move on. */
@@ -2399,12 +2391,35 @@ footer .wrap { position: relative; z-index: 3; }
   .stage-split { grid-template-columns: 1fr; gap: 32px; }
   .stage-split > .col-head { position: static; }
   .stage-lede { grid-template-columns: 1fr; gap: 20px; align-items: start; }
-  .stage-band { grid-template-columns: 1fr 1fr; gap: 28px 20px; }
   .summaries { grid-template-columns: 1fr; }
 }
 @media (max-width: 720px) {
   .stage-figure { padding: 0 20px; }
   .tiers, .briefs { grid-template-columns: 1fr; }
+
+  /* The desk photograph. Scaled to a phone column it is 350px wide and every
+     numeral in it is under 3px — an illegible picture is furniture, not
+     evidence. So on narrow screens the figure becomes a pan: full-bleed,
+     horizontally scrollable, with the image held at 880px where the blotter's
+     rows can actually be read. The scroll affordance is the cropped right
+     edge itself — the ticket visibly continues past the viewport. */
+  .hero .stage-figure {
+    padding: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    /* the hero is a flex column at this width and a flex item's min-width is
+       `auto` — without this the 880px image widens the ITEM instead of
+       scrolling inside it, and the whole page grows a sideways scroll */
+    width: 100%;
+    min-width: 0;
+  }
+  .hero .stage-figure .shot {
+    min-width: 880px;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+  }
+  .hero .stage-figure > .stage-caption { padding: 0 20px; }
 }
 
 /* ─── print ─────────────────────────────────────────────────────────────────
