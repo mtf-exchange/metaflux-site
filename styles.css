@@ -1065,7 +1065,7 @@ nav .nav-cta:active { transform: translateY(0.5px) scale(0.985); transition-dura
    old-style serif. Everything comes down one step and the system's own heading
    metrics (1.12 / -0.015em) take over.
    ─────────────────────────────────────────────────────────────────────────── */
-.hero { padding: clamp(96px, 11vw, 152px) 0 clamp(56px, 6vw, 84px); position: relative; }
+.hero { padding: clamp(72px, 8vw, 116px) 0 clamp(40px, 4.5vw, 64px); position: relative; }
 .hero .wrap { position: relative; z-index: 1; }
 h1 {
   font-family: var(--font-heading);
@@ -2109,7 +2109,7 @@ footer .wrap { position: relative; z-index: 3; }
    product surface is a picture and pictures centre. That is not the same
    thing as centring the argument.
    ─────────────────────────────────────────────────────────────────────────── */
-.stage { padding: clamp(88px, 11vw, 156px) 0; position: relative; z-index: 1; }
+.stage { padding: clamp(56px, 6.5vw, 96px) 0; position: relative; z-index: 1; }
 .stage + .stage { padding-top: 0; }
 
 /* the hero — the one centred fold */
@@ -2132,7 +2132,6 @@ footer .wrap { position: relative; z-index: 3; }
   color: var(--content-prose);
   text-wrap: pretty;
 }
-.hero-cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 34px; }
 
 /* the left-hung folds */
 .stage-split {
@@ -2179,13 +2178,12 @@ footer .wrap { position: relative; z-index: 3; }
 .stage-links a::after { content: "›"; font-size: 18px; line-height: 1; transition: transform 0.22s var(--ease-spring); }
 .stage-links a:hover { color: var(--accent-600); }
 .stage-links a:hover::after { transform: translateX(3px); }
-.hero-cta .stage-links { justify-content: center; }
 
 /* the artefact well */
 .stage-figure { max-width: 1240px; margin: 0 auto; padding: 0 32px; }
 /* The hero's own figure needs air under the CTA row — without it the product
    shot butts straight into the buttons and the two read as one object. */
-.hero .stage-figure { margin-top: clamp(56px, 7vw, 104px); }
+.hero .stage-figure { margin-top: clamp(40px, 5vw, 72px); }
 .stage-figure.narrow { max-width: 900px; }
 .stage-caption {
   margin: 20px 0 0;
@@ -2282,7 +2280,10 @@ footer .wrap { position: relative; z-index: 3; }
 
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) and (min-width: 900px) {
-    .slide-well { padding-bottom: 62vh; }
+    /* How long a slide holds before the next covers it. This was 62vh, which
+       is most of a screen of nothing between every fold; 22vh still reads as a
+       hold and takes ~2,800px off the page. */
+    .slide-well { padding-bottom: 22vh; }
     .slide {
       position: sticky;
       top: 0;
