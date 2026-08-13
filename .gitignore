@@ -18,6 +18,3 @@ out/
 # loads. Keeping a 1 MB PNG in history for a fallback no browser has needed
 # since 2020 is not worth it — re-run the two scripts instead.
 shots/desk.png
-
-# playwright MCP screenshots (local verification artefacts)
-.playwright-mcp/
