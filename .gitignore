@@ -12,3 +12,9 @@ out/
 .impeccable/config.local.json
 .impeccable/critique/
 .impeccable/live/sessions/
+
+# The desk photograph's master. tools/shoot-desk.mjs writes it at DPR 2 and
+# tools/webp-desk.py derives shots/desk.webp, which is the only one the page
+# loads. Keeping a 1 MB PNG in history for a fallback no browser has needed
+# since 2020 is not worth it — re-run the two scripts instead.
+shots/desk.png
