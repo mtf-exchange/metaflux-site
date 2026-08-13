@@ -1,9 +1,16 @@
 # mtf.exchange — official site
 
-Single-file static landing page. No build step, no framework.
+Static site, no build step, no framework. Four pages sharing one stylesheet:
 
 ```
-./index.html   # the entire site
+index.html        # the landing page — loads no JavaScript at all
+whitepaper.html   # the protocol paper, with a scroll-spy TOC
+terms.html        # legal
+privacy.html      # legal
+redesign.css      # the one stylesheet all four pages load
+main.js           # one job: the whitepaper's TOC scroll-spy (no-op elsewhere)
+arch.svg          # the architecture figure, referenced by index.html
+shots/desk.webp   # the hero photograph — the devnet desk, actually running
 ```
 
 ## Run locally
@@ -25,43 +32,53 @@ The repo serves directly via any static host. Recommended:
 
 DNS points `mtf.exchange` apex + `www` at the host's IP / CNAME per their docs.
 
-## Edit
+## The design, in brief
 
-`index.html` carries all markup + CSS inline. The color palette is in `:root { … }` near the top of the `<style>` block. Edit there.
+A spec sheet, not a brochure: a warm paper ground (`#faf9f5`), ink hairline
+rules, and small tint accents. Type is **Schibsted Grotesk** for text with
+**Geist Mono** carrying the uppercase chrome — labels, nav, numbers. The deep
+blue `#0a5f86` and rose `#cd5870` are the two accent voices; the flag's own
+hexes (`#5BCEFA` / `#F5A9B8` / `#FFFFFF`) appear at full saturation only in
+the brand mark and the preloader's pride strip.
 
-## Palette
-
-Trans-pride flag drawn directly:
-
-- `#5BCEFA` light blue
-- `#F5A9B8` pink
-- `#FFFFFF` white
-
-Plus a neutral text grayscale.
+All of it lives in `redesign.css` (tokens in `:root` at the top). The home
+page's entrance preloader is pure CSS — a `plhide` keyframe animation that
+draws the lockup and auto-hides at ~2.7s, with `pointer-events: none` so it
+can never trap a visitor, script or no script.
 
 ## Logo & brand assets
 
-Vendored from [`mtf-exchange/brand`](https://github.com/mtf-exchange/brand) into `logo/` (byte-identical copies — update there, then re-copy):
+Vendored from [`mtf-exchange/brand`](https://github.com/mtf-exchange/brand)
+into `logo/` (byte-identical copies — update there, then re-copy):
 
 | File | Used for |
 |---|---|
 | `logo/metaflux-mark.svg` | The mark (flux-gradient curve) — navbar + footer lockup |
-| `logo/metaflux-mark-mono.svg` | Single-ink mark (`currentColor`) |
-| `logo/metaflux-mark-square.svg` | 64×64 mark, centred — source for `favicon.svg` |
-| `logo/metaflux-mark-square-mono.svg` | 64×64 mono mark — Safari pinned-tab `mask-icon` |
 | `logo/metaflux-mark-animated.svg` | Self-contained climb-on animation (standalone use) |
 
-The on-page wordmark sets **`Meta`** in the body face and **`Flux`** in the display face (`.b-meta` / `.b-flux` in `styles.css`). No italic on `Flux`: Caprasimo ships one weight and no italic, and a synthesised oblique on a display face looks broken.
+The on-page wordmark sets **`Meta`** in Geist 500 and **`Flux`** in PT Serif
+italic (`.b-meta` / `.b-flux` in `redesign.css`), per the brand spec — never
+swap or both-bold them.
 
-`favicon.svg` is the square mark on a **transparent** ground, byte-for-byte the same asset the app serves (`metaflux-web/src/lib/assets/favicon.svg`) — the mark's blue→rose gradient is mid-tone and stays legible on both light and dark tab strips. `apple-touch-icon.png` is the exception and must stay **opaque and full-bleed**: iOS composites transparent pixels onto black and applies its own corner mask, so the plate is baked in (`--seam` dark, `#0f1310`) and no radius is.
-
-The entrance preloader (`#preloader` in `index.html` + `styles.css`) stacks two SVG layers sharing the shipped lockup's `viewBox`: the mark climbs on via `stroke-dashoffset`, then the wordmark is uncovered left-to-right by a `clip-path` wipe, then an accent hairline draws out beneath. Stacked rather than laid out side by side so the wipe never touches layout.
+`favicon.svg` is the square mark on a **transparent** ground, the same asset
+the app serves — the mark's blue→rose gradient is mid-tone and stays legible
+on both light and dark tab strips. `apple-touch-icon.png` is the exception
+and must stay **opaque and full-bleed**: iOS composites transparent pixels
+onto black and applies its own corner mask, so the plate is baked into the
+PNG and no radius is.
 
 ## Open Graph image
 
-`og.svg` is the source; **`og.png` (1200×630) is generated locally and committed to the repo.** Do **not** generate it at deploy time — the card uses Geist + PT Serif + Cormorant Garamond, and those fonts aren't guaranteed on a build host, so deploy-time rasterisers (rsvg etc.) silently fall back to the wrong fonts.
+`og.svg` is the source; **`og.png` (1200×630) is generated locally and
+committed to the repo.** Do **not** generate it at deploy time — the card
+uses Geist + PT Serif + Cormorant Garamond, and those fonts aren't guaranteed
+on a build host, so deploy-time rasterisers (rsvg etc.) silently fall back to
+the wrong fonts.
 
-Regenerate after editing `og.svg` by rendering it through a browser that actually loads the webfonts: wrap `og.svg` in an HTML file that `<link>`s the Google Fonts, then screenshot at 1200×630 with headless Chrome (render at 2× and downscale for crisp text):
+Regenerate after editing `og.svg` by rendering it through a browser that
+actually loads the webfonts: wrap `og.svg` in an HTML file that `<link>`s the
+Google Fonts, then screenshot at 1200×630 with headless Chrome (render at 2×
+and downscale for crisp text):
 
 ```bash
 # _og.html = the Google-Fonts <link>s + inline og.svg, on a 1200×630 page
@@ -71,6 +88,24 @@ sips -z 630 1200 og@2x.png --out og.png      # macOS; or any image tool
 ```
 
 Then commit `og.png`. The HTML references `/og.png`.
+
+## Generated artefacts (tools/)
+
+Two pipelines, both run locally with their outputs committed:
+
+- **The whitepaper PDF.** `tools/build-print.py` extracts the canonical
+  article from `whitepaper.html` into `whitepaper-print.html` (a plain
+  black-on-white academic layout with its own self-contained stylesheet),
+  then `tools/render-pdf.mjs` renders that to `whitepaper.pdf`. Because the
+  extraction is verbatim, markup changes inside
+  `<article class="paper-content">` desync the checked-in PDF — re-run the
+  pipeline after editing the paper.
+
+- **The desk photograph.** `tools/shoot-desk.mjs` re-shoots the running
+  devnet desk to `shots/desk.png` (git-ignored master), and
+  `tools/webp-desk.py` derives the `shots/desk.webp` the page actually
+  loads. Nothing in the image is drawn by this site — it is a screenshot of
+  the real app.
 
 ## License
 
