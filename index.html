@@ -4,9 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light">
-<meta name="theme-color" content="#ffffff">
-
-
+<meta name="theme-color" content="#faf9f5">
 <title>MetaFlux — Derivatives, on first principles.</title>
 <meta name="description" content="An independent L1 derivatives exchange. Parallel EVM, cross-asset portfolio margin, MEV-resistant matching, permissionless market deploy.">
 <link rel="canonical" href="https://mtf.exchange/">
@@ -37,68 +35,108 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="alternate icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="mask-icon" href="logo/metaflux-mark-square-mono.svg" color="#0a5f86">
-
+<meta name="theme-color" content="#faf9f5">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Geist:wght@500&family=Inter:wght@400;500;600;700;800&family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
-<noscript><style>#preloader{display:none!important}</style></noscript>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,500;0,600;0,700;0,800;1,500&family=Geist:wght@500&family=Geist+Mono:wght@400;500&family=PT+Serif:ital@1&display=swap" rel="stylesheet">
+<style>
+  html{background:#faf9f5}
+  body{margin:0;background:#faf9f5;color:#15181d;font-family:'Schibsted Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:#0a5f86;text-decoration:none} a:hover{color:#cd5870}
+  @keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes drawline{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+  @keyframes wipe{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+  @keyframes plhide{0%,73%{opacity:1;visibility:visible}100%{opacity:0;visibility:hidden}}
+  @keyframes plstage{0%,73%{transform:none}100%{transform:translateY(-6px)}}
+  #preloader{position:fixed;inset:0;z-index:99;overflow:hidden;display:grid;place-items:center;background:#faf9f5;animation:plhide 2.7s cubic-bezier(0.16,1,0.3,1) .1s both;pointer-events:none}
+  #preloader .pl-pride{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(to right,#5BCEFA 0% 25%,#F5A9B8 25% 50%,#ffffff 50% 62%,#F5A9B8 62% 80%,#5BCEFA 80% 100%)}
+  #preloader .pl-stage{display:flex;flex-direction:column;align-items:center;gap:20px;width:min(420px,72vw);animation:plstage 2.7s cubic-bezier(0.16,1,0.3,1) .1s both}
+  #preloader .pl-lockup{position:relative;width:100%;aspect-ratio:415/84;transform:translateX(40.5%);animation:mfx-travel 0.58s cubic-bezier(0.16,1,0.3,1) 0.56s forwards}
+  @keyframes mfx-travel{to{transform:translateX(0)}}
+  #preloader .pl-layer{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+  #preloader .pl-p{stroke-dasharray:1 1.001;stroke-dashoffset:1;animation:mfx-climb 0.52s cubic-bezier(0.65,0,0.2,1) forwards}
+  #preloader .pl-e2{animation-duration:0.44s;animation-delay:0s;opacity:0.34}
+  #preloader .pl-e1{animation-duration:0.48s;animation-delay:0.08s;opacity:0.58}
+  #preloader .pl-pm{animation-duration:0.52s;animation-delay:0.16s}
+  @keyframes mfx-climb{to{stroke-dashoffset:0}}
+  #preloader .pl-word{position:absolute;inset:0;color:#15181d;clip-path:inset(0 100% 0 0);animation:mfx-wipe 0.58s cubic-bezier(0.16,1,0.3,1) 0.56s forwards}
+  @keyframes mfx-wipe{to{clip-path:inset(0 0 0 0)}}
+  #preloader .pl-rule{width:100%;height:1.5px;border-radius:999px;background:linear-gradient(90deg,#0a5f86 0%,#cd5870 100%);transform:scaleX(0);animation:mfx-rule 0.36s cubic-bezier(0.16,1,0.3,1) 1.02s forwards}
+  @keyframes mfx-rule{to{scale:none;transform:scaleX(1)}}
+  details summary::-webkit-details-marker{display:none}
+  details[open] .faq-x{transform:rotate(45deg);color:#cd5870}
 
-<!-- Structured data (JSON-LD) -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": "https://mtf.exchange/#organization",
-      "name": "MetaFlux",
-      "url": "https://mtf.exchange/",
-      "logo": "https://mtf.exchange/apple-touch-icon.png",
-      "description": "MetaFlux is an independent Layer 1 derivatives exchange with a parallel EVM, cross-asset portfolio margin, MEV-resistant matching, and permissionless market deployment.",
-      "sameAs": [
-        "https://x.com/MetaFluxDex",
-        "https://github.com/mtf-exchange"
-      ]
-    },
-    {
-      "@type": "WebSite",
-      "@id": "https://mtf.exchange/#website",
-      "url": "https://mtf.exchange/",
-      "name": "MetaFlux",
-      "description": "An independent L1 derivatives exchange. Parallel EVM, cross-asset portfolio margin, MEV-resistant matching, permissionless market deploy.",
-      "publisher": { "@id": "https://mtf.exchange/#organization" },
-      "inLanguage": "en"
-    },
-    {
-      "@type": "SoftwareApplication",
-      "name": "MetaFlux",
-      "url": "https://mtf.exchange/",
-      "applicationCategory": "FinanceApplication",
-      "operatingSystem": "Web",
-      "description": "On-chain derivatives exchange: a Layer 1 perpetuals DEX with parallel EVM execution, cross-asset portfolio margin, tiered liquidation grace, RFQ and frequent batch auctions, MEV-resistant matching, and permissionless market deploy via MIP-3.",
-      "publisher": { "@id": "https://mtf.exchange/#organization" },
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD",
-        "description": "Devnet is open — no application, no allow-list."
-      }
-    }
-  ]
-}
-</script>
+  @media (max-width:900px){
+    .m-tiers{grid-template-columns:1fr 1fr!important}
+    .m-tiers>div{border-right:none!important;border-bottom:1.5px solid #15181d}
+    .m-tiers>div:nth-child(odd){border-right:1.5px solid #15181d!important}
+    .m-tiers>div:nth-child(n+3){border-bottom:none}
+    .m-risk{grid-template-columns:1fr!important}
+    .m-risk>div:first-child{border-right:none!important;border-bottom:1.5px solid #15181d}
+    .m-trade{grid-template-columns:1fr!important}
+    .m-build{grid-template-columns:1fr!important}
+    .m-build>div{border-right:none!important;border-bottom:1.5px solid #15181d}
+    .m-build>div:last-child{border-bottom:none}
+    .m-hero{grid-template-columns:1fr!important;gap:26px!important}
+    .m-cta{justify-content:flex-start!important;flex-wrap:wrap}
+    .m-foot{grid-template-columns:1fr 1fr!important}
+  }
+  @media (max-width:760px){
+    .m-links{display:none!important}
+    .m-nav{padding:14px 20px!important}
+    .m-pad{padding-left:20px!important;padding-right:20px!important}
+    .m-sec{padding-top:72px!important}
+    .m-exec{grid-template-columns:1fr!important}
+    .m-exec>div{border-right:none!important;border-bottom:1.5px solid #e5e2d9!important}
+    .m-exec>div:last-child{border-bottom:none!important}
+  }
+  @media (max-width:620px){
+    .m-sums{grid-template-columns:1fr!important}
+    .m-sums>div:first-child{border-right:none!important;border-bottom:1.5px solid #e5e2d9}
+    .m-briefs{grid-template-columns:1fr!important}
+    .m-briefs>div{border-right:none!important}
+    .m-tiers{grid-template-columns:1fr!important}
+    .m-tiers>div{border-right:none!important;border-bottom:1.5px solid #15181d!important}
+    .m-tiers>div:nth-child(odd){border-right:none!important}
+    .m-tiers>div:last-child{border-bottom:none!important}
+    .m-foot{grid-template-columns:1fr!important}
+  }
+  @media (prefers-reduced-motion: reduce){*{animation:none!important} #pl{display:none!important}}
+</style>
+<style>
+.hv1:hover{color:#15181d}
+.hv2:hover{color:#15181d}
+.hv3:hover{color:#15181d}
+.hv4:hover{background:#0a5f86}
+.hv5:hover{background:#0a5f86;color:#ffffff}
+.hv6:hover{border-color:#cd5870;color:#cd5870}
+.hv7:hover{background:#0a5f86;color:#ffffff}
+.hv8:hover{border-color:#cd5870;color:#cd5870}
+.hv9:hover{border-color:#cd5870;color:#cd5870}
+.hv10:hover{color:#cd5870}
+.hv11:hover{color:#cd5870}
+.hv12:hover{color:#cd5870}
+.hv13:hover{color:#cd5870}
+.hv14:hover{color:#cd5870}
+.hv15:hover{color:#cd5870}
+.hv16:hover{color:#cd5870}
+.hv17:hover{color:#cd5870}
+.hv18:hover{color:#cd5870}
+.hv19:hover{color:#cd5870}
+.hv20:hover{color:#cd5870}
+.hv21:hover{color:#cd5870}
+.hv22:hover{color:#15181d}
+.hv23:hover{color:#15181d}
+.hv24:hover{color:#15181d}
+.hv25:hover{color:#15181d}
+a:hover{color:#cd5870}
+</style>
 </head>
 <body>
-
 <div id="preloader" aria-hidden="true">
-  <div class="pl-pride"></div>
-  <div class="pl-stage">
-    <div class="pl-lockup">
-
-      <!-- the mark: brand blue→rose ink, verbatim from metaflux-lockup-color-*.svg -->
-      <svg class="pl-layer" viewBox="-2 8 415 84" fill="none" focusable="false" aria-hidden="true">
+    <div class="pl-pride"></div>
+    <div class="pl-stage">
+      <div class="pl-lockup"><svg class="pl-layer" viewBox="-2 8 415 84" fill="none" focusable="false" aria-hidden="true">
         <defs><linearGradient id="pl-flux" x1="0" y1="74" x2="75" y2="22.88" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#5BCEFA"></stop><stop offset=".55" stop-color="#cfc0e8"></stop><stop offset="1" stop-color="#F5A9B8"></stop></linearGradient></defs>
         <g transform="translate(-1.590,6.615) scale(1.2230)" fill="none" stroke="url(#pl-flux)">
           <path class="pl-p pl-e2" pathLength="1" d="M4.00 50.95 L4.50 50.60 L5.00 50.22 L5.50 49.82 L6.00 49.39 L6.50 48.94 L7.00 48.47 L7.50 47.97 L8.00 47.45 L8.50 46.91 L9.00 46.34 L9.50 45.77 L10.00 45.17 L10.50 44.56 L11.00 43.94 L11.50 43.31 L12.00 42.68 L12.50 42.04 L13.00 41.40 L13.50 40.76 L14.00 40.12 L14.50 39.49 L15.00 38.87 L15.50 38.26 L16.00 37.66 L16.50 37.08 L17.00 36.52 L17.50 35.98 L18.00 35.45 L18.50 34.95 L19.00 34.47 L19.50 34.02 L20.00 33.60 L20.50 33.19 L21.00 32.82 L21.50 32.47 L22.00 32.15 L22.50 31.86 L23.00 31.59 L23.50 31.35 L24.00 31.13 L24.50 30.93 L25.00 30.76 L25.50 30.61 L26.00 30.48 L26.50 30.37 L27.00 30.28 L27.50 30.20 L28.00 30.14 L28.50 30.10 L29.00 30.06 L29.50 30.04 L30.00 30.02 L30.50 30.01 L31.00 30.00 L31.50 30.00 L32.00 30.00 L32.50 30.00 L33.00 30.00 L33.50 30.01 L34.00 30.02 L34.50 30.04 L35.00 30.06 L35.50 30.10 L36.00 30.14 L36.50 30.20 L37.00 30.28 L37.50 30.37 L38.00 30.48 L38.50 30.61 L39.00 30.76 L39.50 30.93 L40.00 31.13 L40.50 31.35 L41.00 31.59 L41.50 31.86 L42.00 32.15 L42.50 32.47 L43.00 32.82 L43.50 33.19 L44.00 33.60 L44.50 34.02 L45.00 34.47 L45.50 34.95 L46.00 35.45 L46.50 35.98 L47.00 36.52 L47.50 37.08 L48.00 37.66 L48.50 38.26 L49.00 38.87 L49.50 39.49 L50.00 40.12 L50.50 40.76 L51.00 41.40 L51.50 42.04 L52.00 42.68 L52.50 43.31 L53.00 43.94 L53.50 44.56 L54.00 45.17 L54.50 45.77 L55.00 46.34 L55.50 46.91 L56.00 47.45 L56.50 47.97 L57.00 48.47 L57.50 48.94 L58.00 49.39 L58.50 49.82 L59.00 50.22 L59.50 50.60 L60.00 50.95" stroke-width="2.2" stroke-linecap="round" opacity=".2"></path>
@@ -117,505 +155,466 @@
             <path fill="url(#pl-flux-word)" d="M273.15 49.66L268.94 69.87Q272.21 70.33 275.18 71.74L275.18 71.74L274.79 74L254.98 74L255.37 71.74Q256.77 71.11 258.33 70.65Q259.89 70.18 261.45 69.87L261.45 69.87L271.20 23.61Q269.64 23.14 268.31 22.68Q266.99 22.21 265.97 21.66L265.97 21.66L266.52 19.40L303.10 19.40Q302.40 22.44 301.54 25.64Q300.68 28.84 299.51 32.04L299.51 32.04L297.49 32.04L296.16 23.46L278.69 23.46L274.01 45.69L287.66 45.69L291.87 39.91L293.82 39.91Q293.43 43.42 292.53 47.75Q291.64 52.08 290.54 55.67L290.54 55.67L288.59 55.67L286.88 49.66L273.15 49.66Z M302.71 64.80L311.84 20.80L306.30 20.10L306.30 18.15Q307.39 17.68 308.83 17.22Q310.28 16.75 311.88 16.32Q313.48 15.89 315.04 15.62Q316.60 15.34 317.84 15.34L317.84 15.34L319.40 16.20L308.64 69.63L314.33 69.63L314.33 71.66Q312.77 72.91 310.55 73.69Q308.33 74.47 306.22 74.47L306.22 74.47Q303.96 74.47 302.91 73.45Q301.85 72.44 301.85 71.11L301.85 71.11Q301.85 69.55 302.09 68.07Q302.32 66.59 302.71 64.80L302.71 64.80Z M352.16 69.71L357.94 69.71L357.94 71.66Q356.38 72.91 354.15 73.69Q351.93 74.47 349.82 74.47L349.82 74.47Q347.56 74.47 346.59 73.53Q345.61 72.60 345.61 71.50L345.61 71.50Q345.61 70.10 346.00 66.78Q346.39 63.47 347.72 58.71L347.72 58.71L347.41 58.71Q346.39 60.90 344.87 63.70Q343.35 66.51 341.24 69.01Q339.14 71.50 336.45 73.22Q333.76 74.94 330.48 74.94L330.48 74.94Q327.75 74.94 325.88 73.03Q324.01 71.11 324.01 67.60L324.01 67.60Q324.01 65.89 324.55 62.53Q325.10 59.18 325.88 55.20Q326.66 51.22 327.55 47.05Q328.45 42.88 329.15 39.52L329.15 39.52L324.40 38.82L324.40 36.87Q325.64 36.40 327.09 35.94Q328.53 35.47 329.97 35.08Q331.42 34.69 332.74 34.41Q334.07 34.14 335.16 34.06L335.16 34.06L336.88 35Q335.63 40.85 334.34 46.11Q333.05 51.38 331.96 57.23L331.96 57.23Q331.57 59.10 331.14 61.40Q330.71 63.70 330.71 66.43L330.71 66.43Q330.71 68.07 331.61 69.09Q332.51 70.10 333.68 70.10L333.68 70.10Q335.39 70.10 337.11 69.09Q338.83 68.07 340.35 66.43Q341.87 64.80 343.23 62.81Q344.60 60.82 345.69 58.87Q346.78 56.92 347.52 55.24Q348.26 53.56 348.65 52.55L348.65 52.55L352.09 35L358.56 35L352.16 69.71Z M382.12 71.50L377.83 57.39Q376.97 58.32 375.84 59.41Q374.71 60.51 373.61 61.68Q372.52 62.85 371.59 64.02Q370.65 65.19 370.10 66.20L370.10 66.20Q369.95 66.75 369.91 67.76Q369.87 68.77 369.83 69.91Q369.79 71.04 369.79 72.01Q369.79 72.99 369.87 73.45L369.87 73.45Q368.54 74 367.18 74.23Q365.81 74.47 364.57 74.47L364.57 74.47Q361.99 74.47 360.28 73.45L360.28 73.45Q360.98 71.11 363.16 68.23Q365.35 65.34 368.00 62.61Q370.65 59.88 373.15 57.66Q375.64 55.44 376.89 54.34L376.89 54.34L371.59 39.99L366.59 39.37L366.59 37.42Q367.06 37.11 367.96 36.60Q368.86 36.09 369.99 35.62Q371.12 35.16 372.29 34.84Q373.46 34.53 374.55 34.53L374.55 34.53Q376.27 34.53 377.05 35.43Q377.83 36.33 378.29 37.50L378.29 37.50L382.12 51.07Q383.91 49.27 386.05 47.01Q388.20 44.75 389.29 42.72L389.29 42.72Q389.37 42.18 389.37 41.16Q389.37 40.15 389.29 39.02Q389.21 37.89 389.14 36.91Q389.06 35.94 388.98 35.47L388.98 35.47Q390.31 35 391.59 34.73Q392.88 34.45 394.21 34.45L394.21 34.45Q396.70 34.45 398.57 35.47L398.57 35.47Q398.11 37.03 397.01 38.82Q395.92 40.62 394.44 42.41Q392.96 44.20 391.28 45.96Q389.60 47.71 388.04 49.23Q386.48 50.76 385.12 51.97Q383.75 53.17 382.97 53.88L382.97 53.88L388.59 69.09L393.66 69.71L393.66 71.66Q393.19 71.97 392.29 72.44Q391.40 72.91 390.34 73.38Q389.29 73.84 388.08 74.16Q386.87 74.47 385.86 74.47L385.86 74.47Q384.22 74.47 383.36 73.61Q382.51 72.75 382.12 71.50L382.12 71.50Z"></path>
           </g>
         </svg>
-      </div>
-
-    </div>
-    <span class="pl-rule"></span>
-  </div>
-</div>
-
-
-<div class="ambient" aria-hidden="true">
-  <canvas class="page-backdrop"></canvas>
-</div>
-
-<nav>
-  <div class="bar">
-    <a class="brand" href="/"><img class="brand-mark" src="logo/metaflux-mark.svg" alt="MetaFlux — L1 derivatives exchange"><span class="b-word"><span class="b-meta">Meta</span><span class="b-flux">Flux</span></span></a>
-    <ul>
-      <li><a href="#protocol">Protocol</a></li>
-      <li><a href="#builders">Builders</a></li>
-      <li><a href="#traders">Traders</a></li>
-      <li><a href="whitepaper.html">Whitepaper</a></li>
-      <li><a href="https://docs.mtf.exchange/" target="_blank">Docs ↗</a></li>
-    </ul>
-    <a class="nav-cta" href="https://app.mtf.exchange/" target="_blank" rel="noopener">Devnet →</a>
-  </div>
-</nav>
-
-<div class="deck">
-<div class="slide-well"><header class="hero slide">
-  <div class="wrap">
-    <div class="layer hero-head" style="--i:0">
-      <h1>Derivatives, on <span class="accent">first principles</span>.</h1>
-      <p>The clearing engine is the chain. Matching, cross-asset margin, liquidation and settlement all run native on MetaFluxBFT consensus.</p>
+      </div></div>
+      <span class="pl-rule"></span>
     </div>
   </div>
 
-  <div class="stage-figure">
-    <img class="shot" src="shots/desk.webp" width="1860" height="1196" loading="eager" decoding="async" fetchpriority="high"
-         alt="The MetaFlux devnet trading desk: a BTC-USDC perpetual with its candle chart, live order book, order ticket, a four-position blotter and the account summary.">
-    <p class="stage-caption">The devnet desk, running. Market data is live off the devnet; the four positions are illustrative, rendered by the app’s own blotter.</p>
-  </div>
-</header></div>
+<div style="min-height:100vh;background:#faf9f5;position:relative">
+  
+    <div style="position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(#edebe3 1px, transparent 1px);background-size:100% 96px"></div>
+  
+  <nav class="m-nav" style="position:sticky;top:0;z-index:50;display:flex;align-items:center;padding:18px 48px;border-bottom:1.5px solid #15181d;background:rgba(250,249,245,.92);backdrop-filter:blur(10px)">
+    <a href="#" style="display:flex;align-items:center;gap:10px;color:#15181d;margin-right:auto">
+      <img src="logo/metaflux-mark.svg" alt="MetaFlux — L1 derivatives exchange" style="height:22px;width:auto;display:block">
+      <span style="display:inline-flex;align-items:baseline;font-family:Geist,-apple-system,sans-serif;font-size:18px;font-weight:500;letter-spacing:-.02em;line-height:1">Meta<em style="font-family:'PT Serif',serif;font-style:italic;font-weight:400;font-size:1.05em;letter-spacing:0;color:#F5A9B8">Flux</em></span>
+    </a>
+    <div class="m-links" style="display:flex;gap:30px;font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.08em;margin-right:34px">
+      <a class="hv1" href="whitepaper.html" style="color:#5c636e">WHITEPAPER</a>
+      <a class="hv2" href="https://docs.mtf.exchange/" target="_blank" style="color:#5c636e">DOCS ↗</a>
+      <a class="hv3" href="https://docs.mtf.exchange/evm" target="_blank" style="color:#5c636e">ECOSYSTEM ↗</a>
+    </div>
+    <a class="hv4" href="https://app.mtf.exchange/" target="_blank" rel="noopener" style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.08em;color:#faf9f5;background:#15181d;padding:11px 20px;border-radius:999px">DEVNET →</a>
+  </nav>
 
-<div class="slide-well"><section class="stage slide tinted" id="margin">
-  <div class="wrap">
-    <div class="stage-split">
-      <div class="col-head">
-        <div class="layer eyebrow" style="--i:0">Risk</div>
-        <h2 class="layer" style="--i:1">One number, not three.</h2>
-        <p>A SPAN-style scenario engine values your whole book at once, so a hedge stops paying margin twice. Same three positions, same equity — only the maintenance margin moves.</p>
-        <div class="stage-links"><a href="whitepaper.html">How the engine values a book</a></div>
-      </div>
-      <div>
-        <div class="layer layer-figure summaries" style="--i:2">
-          <div class="summary">
-            <h4>Account summary</h4>
-            <div class="mode">Isolated — every market posts its own</div>
-            <div class="rule"></div>
-            <dl>
-              <div><dt>Margin ratio</dt><dd class="hot"><span class="ring"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="var(--line)" stroke-width="4"/><circle cx="12" cy="12" r="9" stroke="var(--accent-2)" stroke-width="4" stroke-linecap="round" stroke-dasharray="40 57" transform="rotate(-90 12 12)"/></svg>71.24%</span></dd></div>
-              <div><dt>Portfolio value</dt><dd>528,018</dd></div>
-              <div><dt>USDC available</dt><dd class="hot">58,214</dd></div>
-              <div><dt>In use</dt><dd>26,401</dd></div>
-              <div><dt>Unrealised</dt><dd>+1,020</dd></div>
-              <div><dt>Equity</dt><dd>529,038</dd></div>
-              <div><dt>Maint. margin</dt><dd>26,401</dd></div>
-              <div><dt>Leverage</dt><dd>20.0×</dd></div>
-              <div><dt>Liquidation risk</dt><dd class="hot">T0 · Warning</dd></div>
-            </dl>
-          </div>
-          <div class="summary lead">
-            <h4>Account summary</h4>
-            <div class="mode">Cross-asset portfolio margin</div>
-            <div class="rule"></div>
-            <dl>
-              <div><dt>Margin ratio</dt><dd class="key"><span class="ring"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="var(--line)" stroke-width="4"/><circle cx="12" cy="12" r="9" stroke="var(--accent-300)" stroke-width="4" stroke-linecap="round" stroke-dasharray="16 81" transform="rotate(-90 12 12)"/></svg>27.58%</span></dd></div>
-              <div><dt>Portfolio value</dt><dd>528,018</dd></div>
-              <div><dt>USDC available</dt><dd class="key">74,393</dd></div>
-              <div><dt>In use</dt><dd>10,222</dd></div>
-              <div><dt>Unrealised</dt><dd>+1,020</dd></div>
-              <div><dt>Equity</dt><dd>529,038</dd></div>
-              <div><dt>Maint. margin</dt><dd class="key">10,222</dd></div>
-              <div><dt>Leverage</dt><dd>20.0×</dd></div>
-              <div><dt>Liquidation risk</dt><dd class="key">Safe</dd></div>
-            </dl>
-          </div>
-        </div>
-        <p class="stage-caption">AccountSummary as the desk draws it — the ratio ring in its risk colour, then the readings, then the band the engine reports.</p>
+  <header class="m-pad" style="position:relative;max-width:1280px;margin:0 auto;padding:88px 48px 0">
+    <h1 style="margin:0;font-size:clamp(56px,7vw,110px);font-weight:800;line-height:.98;letter-spacing:-.045em;animation:rise .7s 2s both">Derivatives, on<br><span style="position:relative;display:inline-block;font-family:'PT Serif',serif;font-style:italic;font-weight:400;letter-spacing:-.02em;color:#cd5870">first principles<span style="position:absolute;left:0;right:0;bottom:6px;height:3px;background:linear-gradient(90deg,#5BCEFA,#F5A9B8);transform-origin:left;animation:drawline .8s 2.7s ease both"></span></span><span style="color:#15181d">.</span></h1>
+    <div class="m-hero" style="display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:38px;animation:rise .7s 2.15s both">
+      <p style="margin:0;font-size:18px;line-height:1.55;color:#454b55;max-width:52ch">The clearing engine <em style="font-family:'PT Serif',serif;font-style:italic">is</em> the chain. Matching, cross-asset margin, liquidation and settlement run native on MetaFluxBFT consensus — not as a contract on someone else's L1.</p>
+      <div class="m-cta" style="display:flex;gap:14px;justify-content:flex-end;align-items:flex-start">
+        <a class="hv5" href="https://app.mtf.exchange/" target="_blank" rel="noopener" style="background:#15181d;color:#faf9f5;padding:14px 26px;border-radius:999px;font-weight:600;font-size:14px">Open the devnet →</a>
+        <a class="hv6" href="whitepaper.html" style="border:1.5px solid #15181d;color:#15181d;padding:14px 26px;border-radius:999px;font-weight:600;font-size:14px">Whitepaper</a>
       </div>
     </div>
-  </div>
-</section></div>
-
-<div class="slide-well"><section class="stage slide" id="liquidation">
-  <div class="wrap">
-    <div class="stage-lede">
-      <div>
-        <div class="layer eyebrow" style="--i:0">Liquidation</div>
-        <h2 class="layer" style="--i:1">A warning before a liquidation.</h2>
+    <figure style="margin:60px 0 0;position:relative;animation:rise .8s 2.3s both">
+      <div style="position:absolute;top:-11px;left:32px;z-index:1;font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.12em;background:#faf9f5;padding:0 10px;color:#0a5f86">FIG. 01 — THE DEVNET DESK, RUNNING</div>
+      <div style="border:1.5px solid #15181d;border-radius:4px;overflow:hidden;background:#ffffff;box-shadow:8px 8px 0 #e5e2d9">
+        <img src="shots/desk.webp" alt="The MetaFlux devnet trading desk: a BTC-USDC perpetual with its candle chart, live order book, order ticket, a four-position blotter and the account summary." style="display:block;width:100%;height:auto">
       </div>
-      <p class="layer" style="--i:2">The engine reports a band, not a verdict. T0 cancels your resting orders and touches no position — a block to react, not a tick. Above 1.1× it takes no action at all.</p>
-    </div>
-  </div>
-  <div class="stage-figure">
-    <div class="layer layer-figure tiers" style="--i:2">
-      <div class="tier lead">
-        <div class="code">T0 <em>· Warning</em></div>
-        <h4>Resting orders cancelled</h4>
-        <p>Post-only orders are pulled. Positions are untouched. Add margin or reduce — nothing else happens.</p>
-        <span class="ratio">equity ÷ maint. margin · 1.0–1.1×</span>
-      </div>
-      <div class="tier">
-        <div class="code">T1 <em>· Partial close</em></div>
-        <h4>Half at market</h4>
-        <p>Half the position is closed at market.</p>
-        <span class="ratio">0.8–1.0×</span>
-      </div>
-      <div class="tier">
-        <div class="code">T2 <em>· Full close</em></div>
-        <h4>Closed in full</h4>
-        <p>The position is closed at market.</p>
-        <span class="ratio">0.667–0.8×</span>
-      </div>
-      <div class="tier">
-        <div class="code">T3 <em>· Backstop</em></div>
-        <h4>Taken over</h4>
-        <p>The backstop assumes the position.</p>
-        <span class="ratio">below 0.667×</span>
-      </div>
-    </div>
-  </div>
-</section></div>
-
-<div class="slide-well"><section class="stage slide tinted" id="protocol">
-  <div class="wrap">
-    <div class="stage-split">
-      <div class="col-head">
-        <div class="layer eyebrow" style="--i:0">Execution</div>
-        <h2 class="layer" style="--i:1">The EVM, made parallel.</h2>
-        <p>Transactions execute optimistically, side by side. Conflicts re-run; everything else commits.</p>
-        <div class="stage-links"><a href="https://docs.mtf.exchange/">Read the docs</a></div>
-      </div>
-      <dl class="layer specs" style="--i:2">
-        <div>
-          <dt>revm on Block-STM</dt>
-          <dd>Your contract call does not queue behind a market it never touches. Derivatives precompiles — <b>portfolio margin, ADL pricing, RFQ depth, vault NAV</b> — run native rather than as 80,000-gas Solidity.</dd>
-        </div>
-        <div>
-          <dt>Matching other chains haven't shipped</dt>
-          <dd>A central limit order book with self-trade prevention, plus <b>RFQ</b> for size that shouldn't advertise and <b>frequent batch auctions</b> where fairness beats latency. Intent is encrypted at intake and revealed at settlement.</dd>
-          <span class="meta">CLOB + STP · RFQ · FBA · MEV-resistant intake</span>
-        </div>
-        <div>
-          <dt>MetaFluxBFT consensus</dt>
-          <dd>A <b>2-chain BFT</b> protocol with a stake-weighted leader, optimistic execution, and quorum and timeout certificates at two-thirds stake.</dd>
-        </div>
-        <div>
-          <dt>Settlement in the block</dt>
-          <dd>Sixteen begin-block effects, a weighted-median oracle mark, funding, and an <b>LtHash16</b> state commitment folded into the app hash every block.</dd>
-        </div>
-      </dl>
-    </div>
-  </div>
-</section></div>
-
-<div class="slide-well"><section class="stage slide" id="architecture">
-  <div class="wrap">
-    <div class="stage-lede">
-      <div>
-        <div class="layer eyebrow" style="--i:0">Architecture</div>
-        <h2 class="layer" style="--i:1">The clearing engine <span class="accent">is</span> the chain.</h2>
-      </div>
-      <p>Not a contract on someone else's L1. Here is the stack a signed order falls through, from the gateway down to consensus.</p>
-    </div>
-
-    <figure class="layer layer-figure arch-figure" style="--i:2">
-      <svg class="arch-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" role="presentation" aria-hidden="true" font-family="Figtree, system-ui, -apple-system, sans-serif">
-      <!-- Every fill, stroke and gradient stop below carries a class hook that
-           styles.css paints from tokens, so one SVG serves both polarities. The
-           literals left on the attributes are the no-CSS fallback only, and are
-           the LIGHT resolution of the same tokens — never a second palette.
-           The blue→pink glow filter and its bloom ellipse are gone: glow is an
-           emitted-light affordance and nothing on a paper ground emits. Depth
-           here is the contact shadow, in the page's own warm shadow ink. -->
-      <defs>
-        <linearGradient id="arch-flux" x1="0" y1="1" x2="1" y2="0">
-          <stop offset="0" stop-color="#0a5f86"/><stop offset=".55" stop-color="#7d5aa8"/><stop offset="1" stop-color="#cd5870"/></linearGradient>
-        <linearGradient id="arch-top" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#fafdfe"/></linearGradient>
-        <linearGradient id="arch-herotop" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#0a5f86" stop-opacity=".16"/><stop offset=".5" stop-color="#7d5aa8" stop-opacity=".12"/><stop offset="1" stop-color="#cd5870" stop-opacity=".2"/></linearGradient>
-        <filter id="arch-shadow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="16"/></filter>
-      </defs>
-      <ellipse class="contact" cx="308.0" cy="435.2" rx="190" ry="40" fill="#292c2f" opacity=".18" filter="url(#arch-shadow)"/>
-      <g class="slab" style="--i:0"><polygon class="face-l" points="161.64,399.32 308.00,483.82 308.00,505.66 161.64,421.16" fill="#828d95"/><polygon class="face-r" points="454.36,399.32 308.00,483.82 308.00,505.66 454.36,421.16" fill="#a7b5be"/><path class="edge" d="M454.4,399.3 L454.4,421.2 M308.0,483.8 L308.0,505.7 M161.6,399.3 L161.6,421.2" stroke="#b3cfd7" stroke-width="1" opacity=".55"/><polygon class="edge" points="308.00,314.82 454.36,399.32 308.00,483.82 161.64,399.32" fill="url(#arch-top)" stroke="#b3cfd7" stroke-width="1" stroke-linejoin="round"/><path class="edge-hi" d="M454.4,399.3 L308.0,314.8 L161.6,399.3" fill="none" stroke="#bbbcbd" stroke-width="1" opacity=".55"/><path class="leader" d="M457.4,399.3 L540.0,451.0" stroke="#b3cfd7" stroke-width="1" fill="none"/><circle class="node" cx="457.4" cy="399.3" r="2.7" fill="#0a5f86"/><circle class="leader-dot" cx="540.0" cy="451.0" r="1.8" fill="#bbbcbd"/></g>
-      <g class="slab" style="--i:1"><polygon class="face-l" points="161.64,350.96 308.00,435.46 308.00,455.22 161.64,370.72" fill="#828d95"/><polygon class="face-r" points="454.36,350.96 308.00,435.46 308.00,455.22 454.36,370.72" fill="#a7b5be"/><path class="edge" d="M454.4,351.0 L454.4,370.7 M308.0,435.5 L308.0,455.2 M161.6,351.0 L161.6,370.7" stroke="#b3cfd7" stroke-width="1" opacity=".55"/><polygon class="edge" points="308.00,266.46 454.36,350.96 308.00,435.46 161.64,350.96" fill="url(#arch-top)" stroke="#b3cfd7" stroke-width="1" stroke-linejoin="round"/><path class="edge-hi" d="M454.4,351.0 L308.0,266.5 L161.6,351.0" fill="none" stroke="#bbbcbd" stroke-width="1" opacity=".55"/><path class="leader" d="M457.4,351.0 L540.0,387.0" stroke="#b3cfd7" stroke-width="1" fill="none"/><circle class="node" cx="457.4" cy="351.0" r="2.7" fill="#0a5f86"/><circle class="leader-dot" cx="540.0" cy="387.0" r="1.8" fill="#bbbcbd"/></g>
-      <g class="slab" style="--i:2"><polygon class="face-l" points="161.64,277.64 308.00,362.14 308.00,406.86 161.64,322.36" fill="#828d95"/><polygon class="face-r" points="454.36,277.64 308.00,362.14 308.00,406.86 454.36,322.36" fill="#a7b5be"/><path class="edge-flux" d="M454.4,277.6 L454.4,322.4 M308.0,362.1 L308.0,406.9 M161.6,277.6 L161.6,322.4" stroke="url(#arch-flux)" stroke-width="1.6" opacity=".55"/><polygon class="edge-flux" points="308.00,193.14 454.36,277.64 308.00,362.14 161.64,277.64" fill="url(#arch-top)" stroke="url(#arch-flux)" stroke-width="1.6" stroke-linejoin="round"/><polygon class="hero-wash" points="308.00,193.14 454.36,277.64 308.00,362.14 161.64,277.64" fill="url(#arch-herotop)"/><path class="edge-hi" d="M454.4,277.6 L308.0,193.1 L161.6,277.6" fill="none" stroke="#bbbcbd" stroke-width="1" opacity=".55"/><path class="leader" d="M457.4,277.6 L540.0,300.0" stroke="#b3cfd7" stroke-width="1" fill="none"/><circle class="node-2" cx="457.4" cy="277.6" r="2.7" fill="#cd5870"/><circle class="leader-dot" cx="540.0" cy="300.0" r="1.8" fill="#bbbcbd"/></g>
-      <g class="slab" style="--i:3"><polygon class="face-l" points="161.64,228.24 308.00,312.74 308.00,333.54 161.64,249.04" fill="#828d95"/><polygon class="face-r" points="454.36,228.24 308.00,312.74 308.00,333.54 454.36,249.04" fill="#a7b5be"/><path class="edge" d="M454.4,228.2 L454.4,249.0 M308.0,312.7 L308.0,333.5 M161.6,228.2 L161.6,249.0" stroke="#b3cfd7" stroke-width="1" opacity=".55"/><polygon class="edge" points="308.00,143.74 454.36,228.24 308.00,312.74 161.64,228.24" fill="url(#arch-top)" stroke="#b3cfd7" stroke-width="1" stroke-linejoin="round"/><path class="edge-hi" d="M454.4,228.2 L308.0,143.7 L161.6,228.2" fill="none" stroke="#bbbcbd" stroke-width="1" opacity=".55"/><path class="leader" d="M457.4,228.2 L540.0,213.0" stroke="#b3cfd7" stroke-width="1" fill="none"/><circle class="node" cx="457.4" cy="228.2" r="2.7" fill="#0a5f86"/><circle class="leader-dot" cx="540.0" cy="213.0" r="1.8" fill="#bbbcbd"/></g>
-      <g class="slab" style="--i:4"><polygon class="face-l" points="161.64,178.84 308.00,263.34 308.00,284.14 161.64,199.64" fill="#828d95"/><polygon class="face-r" points="454.36,178.84 308.00,263.34 308.00,284.14 454.36,199.64" fill="#a7b5be"/><path class="edge" d="M454.4,178.8 L454.4,199.6 M308.0,263.3 L308.0,284.1 M161.6,178.8 L161.6,199.6" stroke="#b3cfd7" stroke-width="1" opacity=".55"/><polygon class="edge" points="308.00,94.34 454.36,178.84 308.00,263.34 161.64,178.84" fill="url(#arch-top)" stroke="#b3cfd7" stroke-width="1" stroke-linejoin="round"/><path class="edge-hi" d="M454.4,178.8 L308.0,94.3 L161.6,178.8" fill="none" stroke="#bbbcbd" stroke-width="1" opacity=".55"/><path class="leader" d="M457.4,178.8 L540.0,149.0" stroke="#b3cfd7" stroke-width="1" fill="none"/><circle class="node" cx="457.4" cy="178.8" r="2.7" fill="#0a5f86"/><circle class="leader-dot" cx="540.0" cy="149.0" r="1.8" fill="#bbbcbd"/></g>
-      <g class="albl" style="--i:4"><text class="albl-i" x="556" y="130.0" font-size="10" letter-spacing="1.6" fill="#646769" font-family="Inter, system-ui, sans-serif">05</text><text class="albl-title" x="556" y="148.0" font-size="18" font-weight="600" letter-spacing="-.3" fill="#1b1f23">Clients</text><text x="556" y="167.0" font-size="11" font-family="Inter, system-ui, sans-serif"><tspan class="albl-spec" fill="#646769">wallets&#160;&#160;</tspan><tspan class="albl-spec" fill="#646769">quant desks&#160;&#160;</tspan><tspan class="albl-spec" fill="#646769">trading bots&#160;&#160;</tspan><tspan class="albl-spec" fill="#646769">EVM contracts&#160;&#160;</tspan></text></g>
-      <g class="albl" style="--i:3"><text class="albl-i" x="556" y="194.0" font-size="10" letter-spacing="1.6" fill="#646769" font-family="Inter, system-ui, sans-serif">04</text><text class="albl-title" x="556" y="212.0" font-size="18" font-weight="600" letter-spacing="-.3" fill="#1b1f23">Access</text><text x="556" y="231.0" font-size="11" font-family="Inter, system-ui, sans-serif"><tspan class="albl-spec-key" fill="#0a5f86">✦gateway front door&#160;&#160;</tspan><tspan class="albl-spec" fill="#646769">/info · /exchange&#160;&#160;</tspan><tspan class="albl-spec" fill="#646769">WS&#160;&#160;</tspan><tspan class="albl-spec" fill="#646769">EVM RPC&#160;&#160;</tspan></text></g>
-      <g class="albl" style="--i:2"><text class="albl-i" x="556" y="281.0" font-size="10" letter-spacing="1.6" fill="#646769" font-family="Inter, system-ui, sans-serif">03</text><text class="albl-title" x="556" y="299.0" font-size="18" font-weight="600" letter-spacing="-.3" fill="#1b1f23">Clearing core</text><text x="556" y="319.0" font-size="10.5" font-family="Inter, system-ui, sans-serif"><tspan class="albl-g-1" fill="#0a5f86" letter-spacing=".4">Matching&#160;&#160;</tspan><tspan class="albl-spec" fill="#646769">CLOB+STP&#160;&#160;</tspan><tspan class="albl-spec-key" fill="#0a5f86">✦RFQ&#160;&#160;</tspan><tspan class="albl-spec-key" fill="#0a5f86">✦batch auction&#160;&#160;</tspan><tspan class="albl-spec-key" fill="#0a5f86">✦MEV-resist&#160;&#160;</tspan></text><text x="556" y="338.0" font-size="10.5" font-family="Inter, system-ui, sans-serif"><tspan class="albl-g-2" fill="#812a3e" letter-spacing=".4">Risk&#160;&#160;</tspan><tspan class="albl-spec-key" fill="#0a5f86">✦SPAN margin&#160;&#160;</tspan><tspan class="albl-spec-key" fill="#0a5f86">✦grace T0–T4&#160;&#160;</tspan><tspan class="albl-spec" fill="#646769">ADL&#160;&#160;</tspan></text><text x="556" y="357.0" font-size="10.5" font-family="Inter, system-ui, sans-serif"><tspan class="albl-g-3" fill="#646769" font-weight="600" letter-spacing=".4">Settlement&#160;&#160;</tspan><tspan class="albl-spec" fill="#646769">funding · mark&#160;&#160;</tspan><tspan class="albl-spec" fill="#646769">LtHash16 → AppHash&#160;&#160;</tspan></text></g>
-      <g class="albl" style="--i:1"><text class="albl-i" x="556" y="368.0" font-size="10" letter-spacing="1.6" fill="#646769" font-family="Inter, system-ui, sans-serif">02</text><text class="albl-title" x="556" y="386.0" font-size="18" font-weight="600" letter-spacing="-.3" fill="#1b1f23">Execution</text><text x="556" y="405.0" font-size="11" font-family="Inter, system-ui, sans-serif"><tspan class="albl-spec" fill="#646769">parallel EVM&#160;&#160;</tspan><tspan class="albl-spec" fill="#646769">revm&#160;&#160;</tspan><tspan class="albl-spec-key" fill="#0a5f86">✦derivatives precompiles&#160;&#160;</tspan><tspan class="albl-spec-key" fill="#0a5f86">✦MIP-3&#160;&#160;</tspan></text></g>
-      <g class="albl" style="--i:0"><text class="albl-i" x="556" y="432.0" font-size="10" letter-spacing="1.6" fill="#646769" font-family="Inter, system-ui, sans-serif">01</text><text class="albl-title" x="556" y="450.0" font-size="18" font-weight="600" letter-spacing="-.3" fill="#1b1f23">MetaFluxBFT</text><text x="556" y="469.0" font-size="11" font-family="Inter, system-ui, sans-serif"><tspan class="albl-spec-key" fill="#0a5f86">✦2-chain BFT consensus&#160;&#160;</tspan><tspan class="albl-spec" fill="#646769">optimistic exec&#160;&#160;</tspan><tspan class="albl-spec" fill="#646769">QC/TC ⅔&#160;&#160;</tspan></text></g>
-      <text class="albl-cap" x="132" y="104" font-size="9.5" letter-spacing="2" fill="#646769" font-family="Inter, system-ui, sans-serif" transform="rotate(-90 132 104)">ORDER  IN  &#8595;</text>
-      </svg>
+      <figcaption style="display:flex;justify-content:space-between;margin-top:10px;font-family:'Geist Mono',monospace;font-size:11px;color:#8a8f98">
+        <span>BTC-USDC PERP · LIVE ORDER BOOK · FOUR-POSITION BLOTTER — MARKET DATA LIVE OFF THE DEVNET</span><span>SCALE 1:1</span>
+      </figcaption>
     </figure>
+  </header>
 
-    <div class="arch arch-fallback">
-      <div class="arch-layer">
-        <div class="lyr-head"><span class="k">Edge</span><span class="n">Clients</span></div>
-        <div class="arch-chips">
-          <span class="chip">Wallets</span>
-          <span class="chip">Quant desks</span>
-          <span class="chip">Trading bots</span>
-          <span class="chip">EVM contracts</span>
-          <span class="chip">EIP-712 signed</span>
-        </div>
+  <section id="risk" data-screen-label="Risk" class="m-pad m-sec" style="position:relative;max-width:1280px;margin:0 auto;padding:110px 48px 0">
+    <div style="animation:rise linear both;animation-timeline:view();animation-range:entry 5% entry 35%">
+      <div style="display:flex;align-items:baseline;gap:18px;flex-wrap:wrap">
+        <span style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.12em;color:#cd5870">§ 01 / RISK</span>
+        <h2 style="margin:0;font-size:clamp(32px,3.4vw,44px);font-weight:800;letter-spacing:-.03em">One number, not three.</h2>
       </div>
-
-      <div class="arch-layer">
-        <div class="lyr-head"><span class="k">Adapt</span><span class="n">Access layer</span></div>
-        <div class="arch-chips">
-          <span class="chip key">Gateway front door</span>
-          <span class="chip">POST /info · /exchange</span>
-          <span class="chip">WebSocket</span>
-          <span class="chip">EVM JSON-RPC</span>
-          <span class="chip">mTLS · rate-limit</span>
-        </div>
+      <div style="height:1.5px;background:#15181d;margin:18px 0 0"></div>
+    </div>
+    <div class="m-risk" style="display:grid;grid-template-columns:.8fr 1.2fr;border:1.5px solid #15181d;border-top:none;animation:rise linear both;animation-timeline:view();animation-range:entry 10% entry 45%">
+      <div style="padding:32px;border-right:1.5px solid #15181d">
+        <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#8a8f98;margin-bottom:14px">SPEC</div>
+        <p style="margin:0;font-size:15px;line-height:1.65;color:#454b55">A SPAN-style scenario engine values your whole book at once, so a hedge stops paying margin twice. Same three positions, same equity — only the maintenance margin moves.</p>
+        <a href="whitepaper.html" style="display:inline-block;margin-top:20px;font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.06em">HOW THE ENGINE VALUES A BOOK →</a>
       </div>
-
-      <div class="arch-layer">
-        <div class="lyr-head"><span class="k">Clear</span><span class="n">Clearing core</span></div>
-        <div class="arch-groups">
-          <div class="arch-group">
-            <div class="g">Matching</div>
-            <div class="arch-chips">
-              <span class="chip">CLOB + STP</span>
-              <span class="chip key">RFQ</span>
-              <span class="chip key">Frequent batch auction</span>
-              <span class="chip key">MEV-resistant intake</span>
-            </div>
+      <div class="m-sums" style="display:grid;grid-template-columns:1fr 1fr">
+        <div style="padding:28px 32px;border-right:1.5px solid #e5e2d9">
+          <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#8a8f98">ACCOUNT SUMMARY</div>
+          <div style="font-size:13px;color:#5c636e;margin-top:4px;margin-bottom:18px">Isolated — every market posts its own</div>
+          <div style="display:grid;gap:9px;font-family:'Geist Mono',monospace;font-size:12.5px">
+            <div style="display:flex;justify-content:space-between"><span style="color:#8a8f98">Margin ratio</span><b style="font-weight:500;color:#cd5870">71.24%</b></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:#8a8f98">Portfolio value</span><b style="font-weight:500">528,018</b></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:#8a8f98">USDC available</span><b style="font-weight:500;color:#cd5870">58,214</b></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:#8a8f98">In use</span><b style="font-weight:500">26,401</b></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:#8a8f98">Unrealised</span><b style="font-weight:500">+1,020</b></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:#8a8f98">Equity</span><b style="font-weight:500">529,038</b></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:#8a8f98">Maint. margin</span><b style="font-weight:500">26,401</b></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:#8a8f98">Leverage</span><b style="font-weight:500">20.0×</b></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:#8a8f98">Liquidation risk</span><b style="font-weight:500;color:#cd5870">T0 · WARNING</b></div>
           </div>
-          <div class="arch-group">
-            <div class="g">Risk</div>
-            <div class="arch-chips">
-              <span class="chip key">SPAN portfolio margin</span>
-              <span class="chip key">Tiered grace T0–T4</span>
-              <span class="chip">ADL</span>
-              <span class="chip">Dynamic params</span>
-            </div>
-          </div>
-          <div class="arch-group">
-            <div class="g">State &amp; settlement</div>
-            <div class="arch-chips">
-              <span class="chip">Exchange machine</span>
-              <span class="chip">16 begin-block effects</span>
-              <span class="chip">LtHash16 → AppHash</span>
-            </div>
-            <div class="arch-subdiv" aria-hidden="true"></div>
-            <div class="arch-chips">
-              <span class="chip">Oracle · weighted-median mark</span>
-              <span class="chip">Funding</span>
-              <span class="chip">MetaBridge · validator co-signed</span>
-              <span class="chip">Dispute-window withdrawals</span>
-            </div>
+        </div>
+        <div style="padding:28px 32px;background:#eef4f7">
+          <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#0a5f86">✦ ACCOUNT SUMMARY</div>
+          <div style="font-size:13px;color:#5c636e;margin-top:4px;margin-bottom:18px">Cross-asset portfolio margin</div>
+          <div style="display:grid;gap:9px;font-family:'Geist Mono',monospace;font-size:12.5px">
+            <div style="display:flex;justify-content:space-between"><span style="color:#8a8f98">Margin ratio</span><b style="font-weight:500;color:#0a5f86">27.58%</b></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:#8a8f98">Portfolio value</span><b style="font-weight:500">528,018</b></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:#8a8f98">USDC available</span><b style="font-weight:500;color:#0a5f86">74,393</b></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:#8a8f98">In use</span><b style="font-weight:500">10,222</b></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:#8a8f98">Unrealised</span><b style="font-weight:500">+1,020</b></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:#8a8f98">Equity</span><b style="font-weight:500">529,038</b></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:#8a8f98">Maint. margin</span><b style="font-weight:500;color:#0a5f86">10,222</b></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:#8a8f98">Leverage</span><b style="font-weight:500">20.0×</b></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:#8a8f98">Liquidation risk</span><b style="font-weight:500;color:#0a5f86">SAFE</b></div>
           </div>
         </div>
       </div>
+    </div>
+  </section>
 
-      <div class="arch-layer">
-        <div class="lyr-head"><span class="k">Execute</span><span class="n">Execution</span></div>
-        <div class="arch-chips">
-          <span class="chip">Parallel execution</span>
-          <span class="chip">revm + Block-STM</span>
-          <span class="chip">CoreWriter actions</span>
-          <span class="chip key">Derivatives precompiles</span>
-          <span class="chip key">MIP-3 gas auction</span>
+  <section id="liquidation" data-screen-label="Liquidation" class="m-pad m-sec" style="position:relative;max-width:1280px;margin:0 auto;padding:110px 48px 0">
+    <div style="animation:rise linear both;animation-timeline:view();animation-range:entry 5% entry 35%">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:18px;flex-wrap:wrap">
+        <div style="display:flex;align-items:baseline;gap:18px;flex-wrap:wrap">
+          <span style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.12em;color:#cd5870">§ 02 / LIQUIDATION</span>
+          <h2 style="margin:0;font-size:clamp(32px,3.4vw,44px);font-weight:800;letter-spacing:-.03em">A warning before a liquidation.</h2>
         </div>
+        <span style="font-family:'Geist Mono',monospace;font-size:11px;color:#8a8f98">RATIO = EQUITY ÷ MAINT. MARGIN</span>
       </div>
+      <div style="height:1.5px;background:#15181d;margin:18px 0 0"></div>
+      <p style="margin:22px 0 0;max-width:64ch;font-size:16px;line-height:1.6;color:#454b55">The engine reports a band, not a verdict. T0 cancels your resting orders and touches no position — a block to react, not a tick. Above 1.1× it takes no action at all.</p>
+    </div>
+    <div class="m-tiers" style="display:grid;grid-template-columns:repeat(4,1fr);border:1.5px solid #15181d;margin-top:28px;animation:rise linear both;animation-timeline:view();animation-range:entry 10% entry 45%">
+      <div style="padding:26px 26px 30px;border-right:1.5px solid #15181d;background:#eef4f7">
+        <div style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.08em;color:#0a5f86">T0 <span style="color:#8a8f98">· WARNING</span></div>
+        <h4 style="margin:14px 0 10px;font-size:19px;font-weight:700;letter-spacing:-.01em">Resting orders cancelled</h4>
+        <p style="margin:0;font-size:13.5px;line-height:1.6;color:#454b55">Post-only orders are pulled. Positions are untouched. Add margin or reduce — nothing else happens.</p>
+        <div style="margin-top:16px;font-family:'Geist Mono',monospace;font-size:11px;color:#0a5f86">1.0 – 1.1×</div>
+      </div>
+      <div style="padding:26px 26px 30px;border-right:1.5px solid #15181d">
+        <div style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.08em;color:#15181d">T1 <span style="color:#8a8f98">· PARTIAL CLOSE</span></div>
+        <h4 style="margin:14px 0 10px;font-size:19px;font-weight:700;letter-spacing:-.01em">Half at market</h4>
+        <p style="margin:0;font-size:13.5px;line-height:1.6;color:#454b55">Half the position is closed at market.</p>
+        <div style="margin-top:16px;font-family:'Geist Mono',monospace;font-size:11px;color:#8a8f98">0.8 – 1.0×</div>
+      </div>
+      <div style="padding:26px 26px 30px;border-right:1.5px solid #15181d">
+        <div style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.08em;color:#15181d">T2 <span style="color:#8a8f98">· FULL CLOSE</span></div>
+        <h4 style="margin:14px 0 10px;font-size:19px;font-weight:700;letter-spacing:-.01em">Closed in full</h4>
+        <p style="margin:0;font-size:13.5px;line-height:1.6;color:#454b55">The position is closed at market.</p>
+        <div style="margin-top:16px;font-family:'Geist Mono',monospace;font-size:11px;color:#8a8f98">0.667 – 0.8×</div>
+      </div>
+      <div style="padding:26px 26px 30px">
+        <div style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.08em;color:#cd5870">T3 <span style="color:#8a8f98">· BACKSTOP</span></div>
+        <h4 style="margin:14px 0 10px;font-size:19px;font-weight:700;letter-spacing:-.01em">Taken over</h4>
+        <p style="margin:0;font-size:13.5px;line-height:1.6;color:#454b55">The backstop assumes the position.</p>
+        <div style="margin-top:16px;font-family:'Geist Mono',monospace;font-size:11px;color:#cd5870">below 0.667×</div>
+      </div>
+    </div>
+  </section>
 
-      <div class="arch-layer">
-        <div class="lyr-head"><span class="k">Order</span><span class="n">MetaFluxBFT</span></div>
-        <div class="arch-chips">
-          <span class="chip key">2-chain BFT consensus</span>
-          <span class="chip">Stake-weighted leader</span>
-          <span class="chip">Optimistic execution</span>
-          <span class="chip">QC / TC · ⅔ stake</span>
+  <section id="protocol" data-screen-label="Execution" class="m-pad m-sec" style="position:relative;max-width:1280px;margin:0 auto;padding:110px 48px 0">
+    <div style="animation:rise linear both;animation-timeline:view();animation-range:entry 5% entry 35%">
+      <div style="display:flex;align-items:baseline;gap:18px;flex-wrap:wrap">
+        <span style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.12em;color:#cd5870">§ 03 / EXECUTION</span>
+        <h2 style="margin:0;font-size:clamp(32px,3.4vw,44px);font-weight:800;letter-spacing:-.03em">The EVM, made parallel.</h2>
+      </div>
+      <div style="height:1.5px;background:#15181d;margin:18px 0 0"></div>
+    </div>
+    <div class="m-exec" style="display:grid;grid-template-columns:1fr 1fr;border:1.5px solid #15181d;border-top:none;animation:rise linear both;animation-timeline:view();animation-range:entry 10% entry 45%">
+      <div style="padding:30px 32px;border-right:1.5px solid #15181d;border-bottom:1.5px solid #e5e2d9">
+        <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#0a5f86;margin-bottom:12px">REVM ON BLOCK-STM</div>
+        <p style="margin:0;font-size:14.5px;line-height:1.65;color:#454b55">Your contract call does not queue behind a market it never touches. Derivatives precompiles — <b style="color:#15181d">portfolio margin, ADL pricing, RFQ depth, vault NAV</b> — run native rather than as 80,000-gas Solidity.</p>
+      </div>
+      <div style="padding:30px 32px;border-bottom:1.5px solid #e5e2d9">
+        <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#0a5f86;margin-bottom:12px">MATCHING OTHER CHAINS HAVEN'T SHIPPED</div>
+        <p style="margin:0;font-size:14.5px;line-height:1.65;color:#454b55">A central limit order book with self-trade prevention, plus <b style="color:#15181d">RFQ</b> for size that shouldn't advertise and <b style="color:#15181d">frequent batch auctions</b> where fairness beats latency. Intent is encrypted at intake and revealed at settlement.</p>
+        <div style="margin-top:14px;font-family:'Geist Mono',monospace;font-size:11px;color:#8a8f98">CLOB + STP · RFQ · FBA · MEV-RESISTANT INTAKE</div>
+      </div>
+      <div style="padding:30px 32px;border-right:1.5px solid #15181d">
+        <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#0a5f86;margin-bottom:12px">METAFLUXBFT CONSENSUS</div>
+        <p style="margin:0;font-size:14.5px;line-height:1.65;color:#454b55">A <b style="color:#15181d">2-chain BFT</b> protocol with a stake-weighted leader, optimistic execution, and quorum and timeout certificates at two-thirds stake.</p>
+      </div>
+      <div style="padding:30px 32px">
+        <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#0a5f86;margin-bottom:12px">SETTLEMENT IN THE BLOCK</div>
+        <p style="margin:0;font-size:14.5px;line-height:1.65;color:#454b55">Sixteen begin-block effects, a weighted-median oracle mark, funding, and an <b style="color:#15181d">LtHash16</b> state commitment folded into the app hash every block.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="architecture" data-screen-label="Architecture" class="m-pad m-sec" style="position:relative;max-width:1280px;margin:0 auto;padding:110px 48px 0">
+    <div style="animation:rise linear both;animation-timeline:view();animation-range:entry 5% entry 35%">
+      <div style="display:flex;align-items:baseline;gap:18px;flex-wrap:wrap">
+        <span style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.12em;color:#cd5870">§ 04 / ARCHITECTURE</span>
+        <h2 style="margin:0;font-size:clamp(32px,3.4vw,44px);font-weight:800;letter-spacing:-.03em">The clearing engine <em style="font-family:'PT Serif',serif;font-style:italic;font-weight:400;color:#cd5870">is</em> the chain.</h2>
+      </div>
+      <div style="height:1.5px;background:#15181d;margin:18px 0 0"></div>
+      <p style="margin:22px 0 0;max-width:64ch;font-size:16px;line-height:1.6;color:#454b55">Not a contract on someone else's L1. Here is the stack a signed order falls through, from the gateway down to consensus.</p>
+    </div>
+    <figure style="margin:20px 0 0;position:relative;border:1.5px solid #15181d;border-radius:4px;background:#ffffff;box-shadow:8px 8px 0 #e5e2d9;animation:rise linear both;animation-timeline:view();animation-range:entry 10% entry 40%">
+      <div style="position:absolute;top:-11px;left:32px;font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.12em;background:#ffffff;padding:0 10px;color:#0a5f86">FIG. 02 — THE STACK, EXPLODED</div>
+      <img src="arch.svg" alt="MetaFlux architecture: clients, access layer, clearing core, execution, MetaFluxBFT consensus" style="display:block;width:100%;height:auto">
+    </figure>
+  </section>
+
+  <section id="builders" data-screen-label="Builders" class="m-pad m-sec" style="position:relative;max-width:1280px;margin:0 auto;padding:110px 48px 0">
+    <div style="animation:rise linear both;animation-timeline:view();animation-range:entry 5% entry 35%">
+      <div style="display:flex;align-items:baseline;gap:18px;flex-wrap:wrap">
+        <span style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.12em;color:#cd5870">§ 05 / BUILDERS</span>
+        <h2 style="margin:0;font-size:clamp(32px,3.4vw,44px);font-weight:800;letter-spacing:-.03em">Deploy a market in one transaction.</h2>
+      </div>
+      <div style="height:1.5px;background:#15181d;margin:18px 0 0"></div>
+    </div>
+    <div class="m-build" style="display:grid;grid-template-columns:repeat(3,1fr);border:1.5px solid #15181d;border-top:none;animation:rise linear both;animation-timeline:view();animation-range:entry 10% entry 45%">
+      <div style="padding:30px 32px;border-right:1.5px solid #15181d">
+        <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#8a8f98;margin-bottom:12px">01 · THE AUCTION</div>
+        <p style="margin:0;font-size:14.5px;line-height:1.65;color:#454b55">Bids are on-chain and the winning bid is <b style="color:#15181d">burned</b>. Nobody has to approve you, and nobody is paid to.</p>
+      </div>
+      <div style="padding:30px 32px;border-right:1.5px solid #15181d">
+        <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#8a8f98;margin-bottom:12px">02 · THE SPEC</div>
+        <p style="margin:0;font-size:14.5px;line-height:1.65;color:#454b55">Leverage, maintenance ratio, funding parameters, oracle source. Live in the first block, taking orders in the next. <b style="color:#15181d">Liquidity is your problem; the protocol does the rest.</b></p>
+      </div>
+      <div style="padding:30px 32px">
+        <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#8a8f98;margin-bottom:12px">03 · THE SAME SOLIDITY</div>
+        <p style="margin:0;font-size:14.5px;line-height:1.65;color:#454b55">Same address format, same EIP-712 signing, same tooling — plus derivatives precompiles callable from any contract.</p>
+        <div style="display:flex;gap:18px;margin-top:14px;font-family:'Geist Mono',monospace;font-size:12px">
+          <a href="https://docs.mtf.exchange/mip/mip-3">MIP-3 SPEC →</a>
+          <a href="https://docs.mtf.exchange/">EVM DOCS →</a>
         </div>
       </div>
     </div>
+  </section>
 
-  </div>
-</section></div>
-
-<div class="slide-well"><section class="stage slide tinted" id="builders">
-  <div class="wrap">
-    <div class="stage-split">
-      <div class="col-head">
-        <div class="layer eyebrow" style="--i:0">Builders</div>
-        <h2 class="layer" style="--i:1">Deploy a market in one transaction.</h2>
-        <p>Win the on-chain gas auction, supply the spec, take orders in the next block. No protocol-team gate, no allow-list, no committee.</p>
-        <div class="stage-links">
-          <a href="https://docs.mtf.exchange/mip/mip-3">MIP-3 spec</a>
-          <a href="https://docs.mtf.exchange/">EVM docs</a>
+  <section id="traders" data-screen-label="Traders" class="m-pad m-sec" style="position:relative;max-width:1280px;margin:0 auto;padding:110px 48px 0">
+    <div style="animation:rise linear both;animation-timeline:view();animation-range:entry 5% entry 35%">
+      <div style="display:flex;align-items:baseline;gap:18px;flex-wrap:wrap">
+        <span style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.12em;color:#cd5870">§ 06 / TRADERS</span>
+        <h2 style="margin:0;font-size:clamp(32px,3.4vw,44px);font-weight:800;letter-spacing:-.03em">Your strategy ports unchanged.</h2>
+      </div>
+      <div style="height:1.5px;background:#15181d;margin:18px 0 0"></div>
+      <p style="margin:22px 0 0;max-width:64ch;font-size:16px;line-height:1.6;color:#454b55">Agent wallets, sub-accounts, vaults, cross and isolated margin, client order ids — the same primitives, one to one. The SDK absorbs the wire rewrite.</p>
+    </div>
+    <div class="m-trade" style="display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:32px;align-items:start;animation:rise linear both;animation-timeline:view();animation-range:entry 10% entry 45%">
+      <div class="m-briefs" style="display:grid;grid-template-columns:1fr 1fr;border:1.5px solid #15181d;min-width:0">
+        <div style="padding:24px 26px;border-right:1.5px solid #e5e2d9;border-bottom:1.5px solid #e5e2d9">
+          <h4 style="margin:0 0 8px;font-size:16px;font-weight:700">Cold master, hot agents</h4>
+          <p style="margin:0;font-size:13.5px;line-height:1.6;color:#454b55">Approve a trading key once. The agent signs every order and never holds withdrawal authority.</p>
+        </div>
+        <div style="padding:24px 26px;border-bottom:1.5px solid #e5e2d9">
+          <h4 style="margin:0 0 8px;font-size:16px;font-weight:700">Per-bot scoping</h4>
+          <p style="margin:0;font-size:13.5px;line-height:1.6;color:#454b55">Automatic expiry, a clean audit trail, and one key per strategy rather than one key per desk.</p>
+        </div>
+        <div style="padding:24px 26px;border-right:1.5px solid #e5e2d9">
+          <h4 style="margin:0 0 8px;font-size:16px;font-weight:700">MTF-native wire</h4>
+          <p style="margin:0;font-size:13.5px;line-height:1.6;color:#454b55">One gateway: POST /info, POST /exchange, WebSocket, EVM JSON-RPC. No compatibility shim.</p>
+        </div>
+        <div style="padding:24px 26px">
+          <h4 style="margin:0 0 8px;font-size:16px;font-weight:700">Every EVM wallet</h4>
+          <p style="margin:0;font-size:13.5px;line-height:1.6;color:#454b55">The EIP-712 envelope is standard, so hardware signers and browser wallets work unmodified.</p>
         </div>
       </div>
-      <dl class="layer specs" style="--i:2">
-        <div>
-          <dt>The auction</dt>
-          <dd>Bids are on-chain and the winning bid is <b>burned</b>. Nobody has to approve you, and nobody is paid to.</dd>
-        </div>
-        <div>
-          <dt>The spec</dt>
-          <dd>Leverage, maintenance ratio, funding parameters, oracle source. Live in the first block, taking orders in the next. <b>Liquidity is your problem; the protocol does the rest.</b></dd>
-        </div>
-        <div>
-          <dt>The same Solidity</dt>
-          <dd>Same address format, same EIP-712 signing, same tooling — plus derivatives precompiles callable from any contract.</dd>
-        </div>
-      </dl>
-    </div>
-  </div>
-</section></div>
+      <div style="position:relative;min-width:0">
+        <div style="position:absolute;top:-11px;left:24px;z-index:1;font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.12em;background:#faf9f5;padding:0 10px;color:#0a5f86">FIG. 03 — MIGRATION.TS</div>
+        <div style="border:1.5px solid #15181d;border-radius:4px;background:#15181d;box-shadow:8px 8px 0 #e5e2d9;overflow:hidden">
+          <pre style="margin:0;padding:26px 28px;font-family:'Geist Mono',monospace;font-size:12.5px;line-height:1.75;color:#c8cfd8;overflow-x:auto"><code><span style="color:#F5A9B8">import</span> { MetaFluxClient } <span style="color:#F5A9B8">from</span> <span style="color:#5BCEFA">"@metaflux/sdk"</span>;
 
-<div class="slide-well"><section class="stage slide" id="traders">
-  <div class="wrap">
-    <div class="stage-lede">
-      <div>
-        <div class="layer eyebrow" style="--i:0">Traders</div>
-        <h2 class="layer" style="--i:1">Your strategy ports unchanged.</h2>
-      </div>
-      <p>Agent wallets, sub-accounts, vaults, cross and isolated margin, client order ids — the same primitives, one to one. The SDK absorbs the wire rewrite.</p>
-    </div>
-
-    <div class="layer briefs" style="--i:2; margin-top: 56px;">
-      <div><h4>Cold master, hot agents</h4><p>Approve a trading key once. The agent signs every order and never holds withdrawal authority.</p></div>
-      <div><h4>Per-bot scoping</h4><p>Automatic expiry, a clean audit trail, and one key per strategy rather than one key per desk.</p></div>
-      <div><h4>MTF-native wire</h4><p>One gateway: POST /info, POST /exchange, WebSocket, EVM JSON-RPC. No compatibility shim.</p></div>
-      <div><h4>Every EVM wallet</h4><p>The EIP-712 envelope is standard, so hardware signers and browser wallets work unmodified.</p></div>
-    </div>
-  </div>
-
-  <div class="stage-figure narrow" style="margin-top: 56px;">
-    <div class="layer layer-figure code-frame" style="--i:1">
-      <div class="code-bar">
-        <div class="dots"><span></span><span></span><span></span></div>
-        <span>migration.ts</span>
-      </div>
-      <div class="code-block">
-<span class="k">import</span> { <span class="n">MetaFluxClient</span> } <span class="k">from</span> <span class="s">"@metaflux/sdk"</span>;
-
-<span class="c">// one gateway, one chain id — devnet is open today</span>
-<span class="k">const</span> client = <span class="k">new</span> <span class="n">MetaFluxClient</span>({
-  gateway: <span class="s">"https://api.devnet.mtf.exchange"</span>,
-  chainId: <span class="n">31337</span>,
-  signer,          <span class="c">// your agent wallet — never withdrawal authority</span>
+<span style="color:#6b7684">// one gateway, one chain id — devnet is open today</span>
+<span style="color:#F5A9B8">const</span> client = <span style="color:#F5A9B8">new</span> MetaFluxClient({
+  gateway: <span style="color:#5BCEFA">"https://api.devnet.mtf.exchange"</span>,
+  chainId: <span style="color:#6ee7a3">31337</span>,
+  signer, <span style="color:#6b7684">// your agent wallet — never withdrawal authority</span>
 });
 
-<span class="k">await</span> client.exchange.<span class="n">submitOrder</span>({ <span class="c">/* same strategy, new wire */</span> });
+<span style="color:#F5A9B8">await</span> client.exchange.submitOrder({ <span style="color:#6b7684">/* same strategy, new wire */</span> });</code></pre>
+        </div>
       </div>
     </div>
-  </div>
-</section></div>
+  </section>
 
-<div class="slide-well"><section class="stage slide tinted" id="faq">
-  <div class="wrap">
-    <div class="stage-split">
-      <div class="col-head">
-        <div class="layer eyebrow" style="--i:0">FAQ</div>
-        <h2 class="layer" style="--i:1">Honest answers.</h2>
-        <p>The complete API surface, concept catalog and integration guides live in the docs.</p>
-        <div class="stage-links"><a href="https://docs.mtf.exchange/">docs.mtf.exchange</a></div>
+  <section id="faq" data-screen-label="FAQ" class="m-pad m-sec" style="position:relative;max-width:1280px;margin:0 auto;padding:110px 48px 0">
+    <div style="animation:rise linear both;animation-timeline:view();animation-range:entry 5% entry 35%">
+      <div style="display:flex;align-items:baseline;gap:18px;flex-wrap:wrap">
+        <span style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.12em;color:#cd5870">§ 07 / FAQ</span>
+        <h2 style="margin:0;font-size:clamp(32px,3.4vw,44px);font-weight:800;letter-spacing:-.03em">Honest answers.</h2>
       </div>
-
-      <div class="layer faq-list" style="--i:2">
-        <details>
-          <summary>What is MetaFlux, exactly?</summary>
-          <p>An independent L1 derivatives chain. Its own validator set, its own BFT consensus, its own EVM execution layer. Built from first principles for derivatives clearing, not borrowed from a general-purpose L1.</p>
+      <div style="height:1.5px;background:#15181d;margin:18px 0 0"></div>
+    </div>
+    <div style="border:1.5px solid #15181d;border-top:none;animation:rise linear both;animation-timeline:view();animation-range:entry 10% entry 40%">
+      
+        <details style="border-bottom:1.5px solid #e5e2d9">
+          <summary style="display:flex;justify-content:space-between;align-items:center;gap:20px;padding:22px 32px;cursor:pointer;font-size:19px;font-weight:700;letter-spacing:-.01em;list-style:none">What is MetaFlux, exactly?<span class="faq-x" style="font-family:'Geist Mono',monospace;font-size:20px;color:#0a5f86;transition:transform .25s">+</span></summary>
+          <p style="margin:0;padding:0 32px 26px;max-width:78ch;font-size:15px;line-height:1.65;color:#454b55">An independent L1 derivatives chain. Its own validator set, its own BFT consensus, its own EVM execution layer. Built from first principles for derivatives clearing, not borrowed from a general-purpose L1.</p>
         </details>
-        <details>
-          <summary>How does it compare to the other perps DEXs?</summary>
-          <p>Specifically: Hyperliquid, dYdX (v4), Lighter, Aster. The honest table:</p>
-          <div class="compare">
-            <table>
-              <thead>
-                <tr><th>Capability</th><th>MetaFlux</th><th>Hyperliquid</th><th>dYdX v4</th><th>Lighter</th><th>Aster</th></tr>
-              </thead>
+      
+        <details style="border-bottom:1.5px solid #e5e2d9">
+          <summary style="display:flex;justify-content:space-between;align-items:center;gap:20px;padding:22px 32px;cursor:pointer;font-size:19px;font-weight:700;letter-spacing:-.01em;list-style:none">Which parts of this are shipping today?<span class="faq-x" style="font-family:'Geist Mono',monospace;font-size:20px;color:#0a5f86;transition:transform .25s">+</span></summary>
+          <p style="margin:0;padding:0 32px 26px;max-width:78ch;font-size:15px;line-height:1.65;color:#454b55">Components ship across phased testnet milestones — devnet runs the clearing core, the parallel EVM and the book; the rest lands on the sequence the whitepaper sets out. Where this site describes something that isn’t live yet, the whitepaper says when.</p>
+        </details>
+      
+        <details style="border-bottom:1.5px solid #e5e2d9">
+          <summary style="display:flex;justify-content:space-between;align-items:center;gap:20px;padding:22px 32px;cursor:pointer;font-size:19px;font-weight:700;letter-spacing:-.01em;list-style:none">When does mainnet launch?<span class="faq-x" style="font-family:'Geist Mono',monospace;font-size:20px;color:#0a5f86;transition:transform .25s">+</span></summary>
+          <p style="margin:0;padding:0 32px 26px;max-width:78ch;font-size:15px;line-height:1.65;color:#454b55">Mainnet follows audit and testnet milestones, not calendar dates. Devnet is live and open for integration now; a six-month public testnet precedes the TGE, with phased validator onboarding and the bridge audit as the explicit gating item.</p>
+        </details>
+      
+        <details style="border-bottom:1.5px solid #e5e2d9">
+          <summary style="display:flex;justify-content:space-between;align-items:center;gap:20px;padding:22px 32px;cursor:pointer;font-size:19px;font-weight:700;letter-spacing:-.01em;list-style:none">What does integration look like?<span class="faq-x" style="font-family:'Geist Mono',monospace;font-size:20px;color:#0a5f86;transition:transform .25s">+</span></summary>
+          <p style="margin:0;padding:0 32px 26px;max-width:78ch;font-size:15px;line-height:1.65;color:#454b55">MetaFlux speaks its own MTF-native protocol — one gateway serving POST /info, POST /exchange, WebSocket, and EVM JSON-RPC. The SDKs (TypeScript and Rust, preview) absorb the wire layer; the concepts — agent wallets, sub-accounts, margin modes — port one to one from other perp venues.</p>
+        </details>
+      
+        <details style="border-bottom:1.5px solid #e5e2d9">
+          <summary style="display:flex;justify-content:space-between;align-items:center;gap:20px;padding:22px 32px;cursor:pointer;font-size:19px;font-weight:700;letter-spacing:-.01em;list-style:none">How do I become a validator?<span class="faq-x" style="font-family:'Geist Mono',monospace;font-size:20px;color:#0a5f86;transition:transform .25s">+</span></summary>
+          <p style="margin:0;padding:0 32px 26px;max-width:78ch;font-size:15px;line-height:1.65;color:#454b55">Genesis validator recruitment opens ahead of mainnet. The initial set is small and grows through the first year. Reach out via the validator inquiry below — we want operators with on-chain ops experience and geographic diversity.</p>
+        </details>
+      
+        <details style="border-bottom:1.5px solid #e5e2d9">
+          <summary style="display:flex;justify-content:space-between;align-items:center;gap:20px;padding:22px 32px;cursor:pointer;font-size:19px;font-weight:700;letter-spacing:-.01em;list-style:none">What bridges do you support?<span class="faq-x" style="font-family:'Geist Mono',monospace;font-size:20px;color:#0a5f86;transition:transform .25s">+</span></summary>
+          <p style="margin:0;padding:0 32px 26px;max-width:78ch;font-size:15px;line-height:1.65;color:#454b55">Everything — USDC included — moves over MetaBridge, our validator-cosigned custody bridge: deposits credit on a two-thirds stake-weighted attestation quorum, withdrawals pass a dispute window before claim, and there is no admin key anywhere in the design. Corridors today: Base and Solana (test networks), Arbitrum next. It ships to mainnet only after the external audit.</p>
+        </details>
+      
+      <details>
+        <summary style="display:flex;justify-content:space-between;align-items:center;gap:20px;padding:22px 32px;cursor:pointer;font-size:19px;font-weight:700;letter-spacing:-.01em;list-style:none">How does it compare to the other perps DEXs?<span class="faq-x" style="font-family:'Geist Mono',monospace;font-size:20px;color:#0a5f86;transition:transform .25s">+</span></summary>
+        <div style="padding:0 32px 26px">
+          <p style="margin:0 0 16px;font-size:15px;line-height:1.65;color:#454b55">Specifically: Hyperliquid, dYdX (v4), Lighter, Aster. The honest table:</p>
+          <div style="border:1.5px solid #15181d;overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse;font-family:'Geist Mono',monospace;font-size:12px">
+              <thead><tr style="background:#f2f0e9">
+                <th style="text-align:left;padding:10px 14px;font-weight:500;letter-spacing:.06em;color:#8a8f98;border-bottom:1.5px solid #15181d">CAPABILITY</th>
+                <th style="text-align:left;padding:10px 14px;font-weight:500;letter-spacing:.06em;color:#0a5f86;border-bottom:1.5px solid #15181d;background:#eef4f7">METAFLUX</th>
+                <th style="text-align:left;padding:10px 14px;font-weight:500;letter-spacing:.06em;color:#8a8f98;border-bottom:1.5px solid #15181d">HYPERLIQUID</th>
+                <th style="text-align:left;padding:10px 14px;font-weight:500;letter-spacing:.06em;color:#8a8f98;border-bottom:1.5px solid #15181d">DYDX V4</th>
+                <th style="text-align:left;padding:10px 14px;font-weight:500;letter-spacing:.06em;color:#8a8f98;border-bottom:1.5px solid #15181d">LIGHTER</th>
+                <th style="text-align:left;padding:10px 14px;font-weight:500;letter-spacing:.06em;color:#8a8f98;border-bottom:1.5px solid #15181d">ASTER</th>
+              </tr></thead>
               <tbody>
-                <tr><td class="feature-name">L1 BFT consensus</td>      <td class="us">yes</td><td class="us">yes</td><td class="us">yes</td><td class="no">L2</td><td class="us">yes</td></tr>
-                <tr><td class="feature-name">EVM-compatible</td>          <td class="us">yes</td><td class="maybe">partial (HyperEVM)</td><td class="no">no (Cosmos)</td><td class="no">no</td><td class="maybe">partial</td></tr>
-                <tr><td class="feature-name">Parallel EVM execution</td>   <td class="us">yes</td><td class="no">no</td><td class="no">n/a</td><td class="no">n/a</td><td class="no">no</td></tr>
-                <tr><td class="feature-name">Cross-asset portfolio margin</td><td class="us">yes</td><td class="maybe">limited</td><td class="no">no</td><td class="no">no</td><td class="no">no</td></tr>
-                <tr><td class="feature-name">T0 grace tier before partial</td><td class="us">yes</td><td class="no">no</td><td class="no">no</td><td class="no">no</td><td class="no">no</td></tr>
-                <tr><td class="feature-name">RFQ + FBA matching</td>      <td class="us">yes</td><td class="no">no</td><td class="no">no</td><td class="no">no</td><td class="no">no</td></tr>
-                <tr><td class="feature-name">MEV-resistant matching</td>  <td class="us">yes</td><td class="no">no</td><td class="no">no</td><td class="no">no</td><td class="no">no</td></tr>
-                <tr><td class="feature-name">Permissionless market deploy</td><td class="us">yes</td><td class="us">yes</td><td class="no">no</td><td class="no">no</td><td class="no">no</td></tr>
-                <tr><td class="feature-name">HL-familiar primitives (agents · subs · vaults)</td>  <td class="us">yes</td><td class="us">native</td><td class="no">no</td><td class="no">no</td><td class="no">no</td></tr>
+                
+                  <tr>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#15181d;font-family:'Schibsted Grotesk',sans-serif;font-size:13px;font-weight:600">L1 BFT consensus</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;background:#eef4f7;color:#0a5f86">✓ yes</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#8a8f98">yes</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#8a8f98">yes</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#b0b5bd">— L2</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#8a8f98">yes</td>
+                  </tr>
+                
+                  <tr>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#15181d;font-family:'Schibsted Grotesk',sans-serif;font-size:13px;font-weight:600">EVM-compatible</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;background:#eef4f7;color:#0a5f86">✓ yes</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#8a8f98">partial</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#b0b5bd">— no</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#b0b5bd">— no</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#8a8f98">partial</td>
+                  </tr>
+                
+                  <tr>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#15181d;font-family:'Schibsted Grotesk',sans-serif;font-size:13px;font-weight:600">Parallel EVM execution</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;background:#eef4f7;color:#0a5f86">✓ yes</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#b0b5bd">— no</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#b0b5bd">— n/a</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#b0b5bd">— n/a</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#b0b5bd">— no</td>
+                  </tr>
+                
+                  <tr>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#15181d;font-family:'Schibsted Grotesk',sans-serif;font-size:13px;font-weight:600">Cross-asset portfolio margin</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;background:#eef4f7;color:#0a5f86">✓ yes</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#8a8f98">limited</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#b0b5bd">— no</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#b0b5bd">— no</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#b0b5bd">— no</td>
+                  </tr>
+                
+                  <tr>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#15181d;font-family:'Schibsted Grotesk',sans-serif;font-size:13px;font-weight:600">T0 grace tier before partial</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;background:#eef4f7;color:#0a5f86">✓ yes</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#b0b5bd">— no</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#b0b5bd">— no</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#b0b5bd">— no</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#b0b5bd">— no</td>
+                  </tr>
+                
+                  <tr>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#15181d;font-family:'Schibsted Grotesk',sans-serif;font-size:13px;font-weight:600">RFQ + FBA matching</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;background:#eef4f7;color:#0a5f86">✓ yes</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#b0b5bd">— no</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#b0b5bd">— no</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#b0b5bd">— no</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#b0b5bd">— no</td>
+                  </tr>
+                
+                  <tr>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#15181d;font-family:'Schibsted Grotesk',sans-serif;font-size:13px;font-weight:600">MEV-resistant matching</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;background:#eef4f7;color:#0a5f86">✓ yes</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#b0b5bd">— no</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#b0b5bd">— no</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#b0b5bd">— no</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#b0b5bd">— no</td>
+                  </tr>
+                
+                  <tr>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#15181d;font-family:'Schibsted Grotesk',sans-serif;font-size:13px;font-weight:600">Permissionless market deploy</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;background:#eef4f7;color:#0a5f86">✓ yes</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#8a8f98">yes</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#b0b5bd">— no</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#b0b5bd">— no</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#b0b5bd">— no</td>
+                  </tr>
+                
+                  <tr>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#15181d;font-family:'Schibsted Grotesk',sans-serif;font-size:13px;font-weight:600">HL-familiar primitives</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;background:#eef4f7;color:#0a5f86">✓ yes</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#8a8f98">yes</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#b0b5bd">— no</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#b0b5bd">— no</td>
+                    <td style="padding:9px 14px;border-bottom:1px solid #e5e2d9;color:#b0b5bd">— no</td>
+                  </tr>
+                
               </tbody>
             </table>
           </div>
-          <p style="margin-top: 16px;">Capability is one axis. Liquidity, fees, listings, and operational maturity are others. Pick the chain that wins on the axis you actually care about.</p>
-        </details>
-        <details>
-          <summary>Which parts of this are shipping today?</summary>
-          <p>Components ship across phased testnet milestones — devnet runs the clearing core, the parallel EVM and the book; the rest lands on the sequence the <a class="link" href="whitepaper.html">whitepaper</a> sets out. Where this site describes something that isn't live yet, the whitepaper says when.</p>
-        </details>
-        <details>
-          <summary>When does mainnet launch?</summary>
-          <p>Mainnet follows audit and testnet milestones, not calendar dates. Devnet is live and open for integration now; a six-month public testnet precedes the TGE, with phased validator onboarding and the bridge audit as the explicit gating item.</p>
-        </details>
-        <details>
-          <summary>What does integration look like?</summary>
-          <p>MetaFlux speaks its own MTF-native protocol — one gateway serving POST /info, POST /exchange, WebSocket, and EVM JSON-RPC. The SDKs (TypeScript and Rust, preview) absorb the wire layer; the concepts — agent wallets, sub-accounts, margin modes — port one to one from other perp venues. The EIP-712 envelope is standard and every EVM wallet works unmodified.</p>
-        </details>
-        <details>
-          <summary>How do I become a validator?</summary>
-          <p>Genesis validator recruitment opens ahead of mainnet. The initial set is small and grows through the first year. Reach out via the validator inquiry below — we want operators with on-chain ops experience and geographic diversity.</p>
-        </details>
-        <details>
-          <summary>What bridges do you support?</summary>
-          <p>Everything — USDC included — moves over MetaBridge, our validator-cosigned custody bridge: deposits credit on a two-thirds stake-weighted attestation quorum, withdrawals pass a dispute window before claim, and there is no admin key anywhere in the design — the bridge's trust assumption is exactly the chain's own. Corridors today: Base and Solana (test networks), Arbitrum next. It ships to mainnet only after the external audit.</p>
-        </details>
+          <p style="margin:16px 0 0;font-size:14px;line-height:1.6;color:#454b55">Capability is one axis. Liquidity, fees, listings, and operational maturity are others. Pick the chain that wins on the axis you actually care about.</p>
+        </div>
+      </details>
+    </div>
+    <div style="margin-top:14px;font-family:'Geist Mono',monospace;font-size:12px"><a href="https://docs.mtf.exchange/">FULL API SURFACE &amp; INTEGRATION GUIDES — DOCS.MTF.EXCHANGE →</a></div>
+  </section>
+
+  <section id="testnet" data-screen-label="CTA" class="m-pad" style="position:relative;max-width:1280px;margin:0 auto;padding:120px 48px 110px;text-align:center">
+    <div style="animation:rise linear both;animation-timeline:view();animation-range:entry 5% entry 40%">
+      <div style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.14em;color:#0a5f86">DEVNET IS OPEN — NO APPLICATION, NO ALLOW-LIST</div>
+      <h2 style="margin:18px 0 0;font-size:clamp(44px,5.4vw,76px);font-weight:800;letter-spacing:-.04em">Trade it <span style="font-family:'PT Serif',serif;font-style:italic;font-weight:400;color:#cd5870">today</span>.</h2>
+      <p style="margin:20px auto 0;max-width:58ch;font-size:16px;line-height:1.6;color:#454b55">Take test USDC from the faucet, point your client at the gateway, and trade. We especially want to hear from market makers and teams shipping production trading systems.</p>
+      <div class="m-ctarow" style="display:flex;gap:14px;justify-content:center;margin-top:34px;flex-wrap:wrap">
+        <a class="hv7" href="https://app.mtf.exchange/" target="_blank" rel="noopener" style="background:#15181d;color:#faf9f5;padding:14px 26px;border-radius:999px;font-weight:600;font-size:14px">Open the devnet →</a>
+        <a class="hv8" href="mailto:builders@mtf.exchange?subject=Devnet%20access%20request" style="border:1.5px solid #15181d;color:#15181d;padding:14px 26px;border-radius:999px;font-weight:600;font-size:14px">Talk to us →</a>
+        <a class="hv9" href="mailto:validators@mtf.exchange?subject=Validator%20inquiry" style="border:1.5px solid #15181d;color:#15181d;padding:14px 26px;border-radius:999px;font-weight:600;font-size:14px">Validator inquiry →</a>
       </div>
     </div>
-  </div>
-</section></div>
+  </section>
 
-<div class="slide-well"><section id="testnet" class="testnet-section slide">
-  <div class="wrap">
-    <h2 class="layer" style="--i:1">Trade it today.</h2>
-    <p>Devnet is open — no application, no allow-list. Take test USDC from the faucet, point your client at the gateway, and trade. We especially want to hear from market makers and teams shipping production trading systems.</p>
-    <div class="cta-row">
-      <a class="btn btn-primary" href="https://app.mtf.exchange/" target="_blank" rel="noopener">Open the devnet <span class="arrow">→</span></a>
-      <a class="btn btn-secondary" href="mailto:builders@mtf.exchange?subject=Devnet%20access%20request&body=Team%20%2F%20project%3A%0D%0A%0D%0AWhat%20you%27re%20building%3A%0D%0A%0D%0AMarkets%20you%20trade%3A%0D%0A%0D%0AStack%20%28language%20%C2%B7%20venues%20%C2%B7%20wire%20protocol%29%3A%0D%0A%0D%0AExpected%20volume%3A%0D%0A">Talk to us <span class="arrow">→</span></a>
-      <a class="btn btn-secondary" href="mailto:validators@mtf.exchange?subject=Validator%20inquiry&body=Operator%20%2F%20entity%3A%0D%0A%0D%0AOn-chain%20ops%20experience%3A%0D%0A%0D%0AInfrastructure%20%28regions%20%C2%B7%20hardware%29%3A%0D%0A%0D%0AOther%20networks%20you%20validate%3A%0D%0A%0D%0AContact%3A%0D%0A">Validator inquiry <span class="arrow">→</span></a>
+  <footer style="position:relative;border-top:1.5px solid #15181d;background:#f2f0e9">
+    <div style="max-width:1280px;margin:0 auto;padding:64px 48px 0;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px" class="m-foot">
+      <div>
+        <a href="#" style="display:flex;align-items:center;gap:10px;color:#15181d">
+          <img src="logo/metaflux-mark.svg" alt="MetaFlux logo" style="height:22px;width:auto;display:block">
+          <span style="display:inline-flex;align-items:baseline;font-family:Geist,-apple-system,sans-serif;font-size:18px;font-weight:500;letter-spacing:-.02em;line-height:1">Meta<em style="font-family:'PT Serif',serif;font-style:italic;font-weight:400;font-size:1.05em;letter-spacing:0;color:#F5A9B8">Flux</em></span>
+        </a>
+        <p style="margin:16px 0 0;font-size:13.5px;line-height:1.6;color:#454b55;max-width:34ch">An independent L1 derivatives exchange — perpetuals and spot. EVM-compatible, built from first principles for traders who care about market structure.</p>
+        <p style="margin:14px 0 0;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.1em;color:#8a8f98">A METAFLUX FOUNDATION PRODUCT</p>
+      </div>
+      <div>
+        <h5 style="margin:0 0 14px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;color:#8a8f98;font-weight:500">PROTOCOL</h5>
+        <div style="display:grid;gap:10px;font-size:14px">
+          <a class="hv10" href="https://docs.mtf.exchange/" style="color:#15181d">Docs</a>
+          <a class="hv11" href="whitepaper.html" style="color:#15181d">Whitepaper</a>
+          <a class="hv12" href="https://docs.mtf.exchange/api" style="color:#15181d">API reference</a>
+          <a class="hv13" href="https://docs.mtf.exchange/mip" style="color:#15181d">MIP-3 deploy</a>
+        </div>
+      </div>
+      <div>
+        <h5 style="margin:0 0 14px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;color:#8a8f98;font-weight:500">BUILD</h5>
+        <div style="display:grid;gap:10px;font-size:14px">
+          <a class="hv14" href="https://docs.mtf.exchange/integration/migrating-from-hl" style="color:#15181d">Migration guide</a>
+          <a class="hv15" href="https://docs.mtf.exchange/integration/signing" style="color:#15181d">Signing</a>
+          <a class="hv16" href="https://docs.mtf.exchange/concepts/agent-wallets" style="color:#15181d">Agent wallets</a>
+          <a class="hv17" href="https://app.mtf.exchange/" target="_blank" rel="noopener" style="color:#15181d">Devnet access</a>
+        </div>
+      </div>
+      <div>
+        <h5 style="margin:0 0 14px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;color:#8a8f98;font-weight:500">CONNECT</h5>
+        <div style="display:grid;gap:10px;font-size:14px">
+          <a class="hv18" href="https://x.com/MetaFluxDex" target="_blank" rel="noopener" style="color:#15181d">X / Twitter</a>
+          <a class="hv19" href="https://github.com/mtf-exchange" target="_blank" rel="noopener" style="color:#15181d">GitHub</a>
+          <a class="hv20" href="mailto:hello@mtf.exchange" style="color:#15181d">hello@mtf.exchange</a>
+          <a class="hv21" href="mailto:builders@mtf.exchange" style="color:#15181d">builders@mtf.exchange</a>
+        </div>
+      </div>
     </div>
-  </div>
-</section></div>
-
-
+    <div style="display:flex;align-items:flex-end;justify-content:center;padding:64px 0 0;overflow:hidden">
+      <div style="font-family:Geist,-apple-system,sans-serif;font-weight:500;letter-spacing:-.02em;line-height:.9;font-size:clamp(40px,18vw,232px);white-space:nowrap;margin-bottom:-.08em;color:rgba(21,24,29,.12);user-select:none">Meta<em style="font-family:'PT Serif',serif;font-style:italic;font-weight:400;letter-spacing:0;margin-left:.06em;color:rgba(245,169,184,.34)">Flux</em></div>
+    </div>
+    <div style="border-top:1.5px solid #d9d6cb">
+      <div style="max-width:1280px;margin:0 auto;padding:18px 48px;display:flex;justify-content:space-between;align-items:center;font-family:'Geist Mono',monospace;font-size:11.5px;color:#8a8f98">
+        <span>© 2026 METAFLUX · <a class="hv22" href="terms.html" style="color:#8a8f98">TERMS</a> · <a class="hv23" href="privacy.html" style="color:#8a8f98">PRIVACY</a></span>
+        <div style="display:flex;gap:16px">
+          <a class="hv24" href="https://x.com/MetaFluxDex" target="_blank" rel="noopener" aria-label="MetaFlux on X" style="color:#5c636e"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932 6.064-6.933ZM17.61 20.644h2.039L6.486 3.24H4.298L17.61 20.644Z"></path></svg></a>
+          <a class="hv25" href="https://github.com/mtf-exchange" target="_blank" rel="noopener" aria-label="MetaFlux on GitHub" style="color:#5c636e"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.91 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.014 2.898-.014 3.293 0 .322.216.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path></svg></a>
+        </div>
+      </div>
+    </div>
+  </footer>
 </div>
-
-<footer>
-  <div class="wrap">
-    <div class="foot-grid">
-      <div>
-        <a class="brand" href="/"><img class="brand-mark" src="logo/metaflux-mark.svg" alt="MetaFlux logo"><span class="b-word"><span class="b-meta">Meta</span><span class="b-flux">Flux</span></span></a>
-        <p class="foot-about">An independent L1 derivatives exchange — perpetuals and spot. EVM-compatible, built from first principles for traders who care about market structure.</p>
-        <p class="foot-attr">A MetaFlux Foundation product</p>
-      </div>
-      <div>
-        <h5>Protocol</h5>
-        <ul>
-          <li><a href="https://docs.mtf.exchange/">Docs</a></li>
-          <li><a href="whitepaper.html">Whitepaper</a></li>
-          <li><a href="https://docs.mtf.exchange/api">API reference</a></li>
-          <li><a href="https://docs.mtf.exchange/mip">MIP-3 deploy</a></li>
-        </ul>
-      </div>
-      <div>
-        <h5>Build</h5>
-        <ul>
-          <li><a href="https://docs.mtf.exchange/integration/migrating-from-hl">Migration guide</a></li>
-          <li><a href="https://docs.mtf.exchange/integration/signing">Signing</a></li>
-          <li><a href="https://docs.mtf.exchange/concepts/agent-wallets">Agent wallets</a></li>
-          <li><a href="https://app.mtf.exchange/" target="_blank" rel="noopener">Devnet access</a></li>
-        </ul>
-      </div>
-      <div>
-        <h5>Connect</h5>
-        <ul>
-          <li><a href="https://x.com/MetaFluxDex" target="_blank" rel="noopener">X / Twitter</a></li>
-          <li><a href="https://github.com/mtf-exchange" target="_blank" rel="noopener">GitHub</a></li>
-          <li><a href="mailto:hello@mtf.exchange?subject=Hello%2C%20MetaFlux&body=Who%20you%20are%3A%0D%0A%0D%0AWhat%20you%27re%20reaching%20out%20about%3A%0D%0A">hello@mtf.exchange</a></li>
-          <li><a href="mailto:builders@mtf.exchange?subject=Devnet%20access%20request&body=Team%20%2F%20project%3A%0D%0A%0D%0AWhat%20you%27re%20building%3A%0D%0A%0D%0AMarkets%20you%20trade%3A%0D%0A%0D%0AStack%20%28language%20%C2%B7%20venues%20%C2%B7%20wire%20protocol%29%3A%0D%0A%0D%0AExpected%20volume%3A%0D%0A">builders@mtf.exchange</a></li>
-          <li><a href="mailto:validators@mtf.exchange?subject=Validator%20inquiry&body=Operator%20%2F%20entity%3A%0D%0A%0D%0AOn-chain%20ops%20experience%3A%0D%0A%0D%0AInfrastructure%20%28regions%20%C2%B7%20hardware%29%3A%0D%0A%0D%0AOther%20networks%20you%20validate%3A%0D%0A%0D%0AContact%3A%0D%0A">validators@mtf.exchange</a></li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="foot-hero">
-      <div class="foot-word"><span class="b-meta">Meta</span><span class="b-flux">Flux</span></div>
-    </div>
-
-    <div class="foot-bottom">
-      <span class="foot-legal">© 2026 MetaFlux · <a href="terms.html">Terms</a> · <a href="privacy.html">Privacy</a></span>
-      <div class="socials">
-        <a href="https://x.com/MetaFluxDex" target="_blank" rel="noopener" aria-label="MetaFlux on X">
-          <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932 6.064-6.933ZM17.61 20.644h2.039L6.486 3.24H4.298L17.61 20.644Z"/></svg>
-        </a>
-        <a href="https://github.com/mtf-exchange" target="_blank" rel="noopener" aria-label="MetaFlux on GitHub">
-          <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.91 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.014 2.898-.014 3.293 0 .322.216.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
-        </a>
-      </div>
-    </div>
-  </div>
-</footer>
-
-<script src="backdrop.js" defer></script>
-<script src="main.js"></script>
 </body>
 </html>
