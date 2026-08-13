@@ -114,11 +114,11 @@
      deliberate exception is .chip.key, whose blue→rose gradient border is the
      ✦ marker itself. */
   --bg:          #ffffff;
-  --bg-elev:     #eff9ff;
-  --bg-elev-2:   #e0f2fd;
-  --seam:        #d6edfa;
-  --line:        rgba(0, 94, 122, 0.16);
-  --line-strong: rgba(0, 94, 122, 0.30);
+  --bg-elev:     #ffffff;
+  --bg-elev-2:   #f4f8fb;
+  --seam:        #eaf1f6;
+  --line:        rgba(12, 46, 66, 0.13);
+  --line-strong: rgba(12, 46, 66, 0.26);
 
   /* The text ramp is written as mixes of --content, so restating --content is
      enough to move all of it. The ink is a cool near-black (hue 250) — the old
@@ -265,8 +265,26 @@
   --font-brand-serif: 'PT Serif', 'Iowan Old Style', Cambria, Georgia, serif;
   --brand-flux-ink:   #F5A9B8;
 
-  --font-heading:        'Caprasimo', Georgia, serif;
-  --font-heading-weight: 400;
+  /* The display face. It is PT Serif — the same serif the wordmark's italic
+     `Flux` is set in, which means the headings and the logotype are finally the
+     same voice, and the page loads no additional family to do it.
+
+     It replaced Bodoni Moda, which replaced Caprasimo, and the two failures are
+     worth recording because they were opposite. Caprasimo is a fat round slab:
+     playful, and a clearing engine that looks playful looks unserious. Bodoni
+     is a Didone: its hairlines and its high contrast belong to fashion covers,
+     and on a page about maintenance-margin bands it reads as costume. What the
+     subject actually wants is the register of a prospectus — a sober
+     transitional serif with even colour, which is the family Times belongs to
+     and PT Serif is a better-drawn member of. */
+  --font-heading:        'PT Serif', 'Times New Roman', 'Liberation Serif', Times, serif;
+  --font-heading-weight: 700;
+  /* Bodoni is a DISPLAY face and nothing else. Its hairline serifs need size to
+     survive: h1 and h2 take it, and every smaller title — h3 through h6, card
+     headings, buttons — takes the body face at 700, where a Didone would just
+     look broken. --font-title exists to make that split explicit rather than
+     leaving it to whoever edits a heading next. */
+  --font-title:          'Figtree', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-body:           'Figtree', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-num:            'Inter', system-ui, sans-serif;
   /* Two site-local voices the terminal never needed. --font-code is a REAL
@@ -433,11 +451,23 @@ body {
   overflow-x: clip;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1, h2 {
   font-family: var(--font-heading);
   font-weight: var(--font-heading-weight);
-  line-height: 1.12;
-  letter-spacing: -0.015em;
+  line-height: 1.08;
+  letter-spacing: -0.018em;
+  margin: 0;
+  text-wrap: balance;
+}
+/* h3 and below are NOT the display face. A Didone's hairlines disappear under
+   ~28px and its high contrast reads as damage at card-heading size, so every
+   smaller title takes the body face at 700 — the same voice, one register down.
+   See --font-title. */
+h3, h4, h5, h6 {
+  font-family: var(--font-title);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.012em;
   margin: 0;
   text-wrap: balance;
 }
@@ -520,8 +550,8 @@ button:disabled { cursor: not-allowed; }
    ─────────────────────────────────────────────────────────────────────────── */
 .panel {
   background-color: var(--bg-elev);
+  border: 1px solid var(--line);
   border-radius: var(--radius-panel);
-  box-shadow: var(--shadow-sm);
 }
 .card-surface { background-color: var(--bg-elev); border-radius: var(--radius-md); }
 
@@ -1041,18 +1071,15 @@ h1 {
   max-width: 15ch;
   margin-bottom: 40px;
 }
-/* Was a rose italic span. Italic is impossible here, so the emphasis becomes
-   the system's own .flux-text sweep, blue → rose, with a solid fallback.
-   (DESIGN.md's "don't use gradient text" rule belongs to the system this
-   replaces; layout.css ships .flux-text as a first-class component.) */
-h1 .accent, h2 .accent { color: var(--accent); font-weight: var(--font-heading-weight); }
-@supports ((-webkit-background-clip: text) or (background-clip: text)) {
-  h1 .accent, h2 .accent {
-    background-image: linear-gradient(110deg, var(--accent) 0%, var(--accent-2) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
+/* The emphasis is ONE SOLID COLOUR. It was a blue→rose background-clip sweep,
+   which is the cheapest trick in the landing-page vocabulary: it says nothing
+   about the words it lands on, it fails to a transparent headline wherever the
+   clip is unsupported, and against a Didone's hairline serifs the gradient
+   bands visibly inside the stems. The accent is a colour, not an effect. */
+h1 .accent, h2 .accent {
+  color: var(--accent);
+  font-weight: var(--font-heading-weight);
+  font-style: italic;
 }
 .hero p.lede {
   font-size: 21px;
@@ -1227,7 +1254,7 @@ h2 {
   position: relative;
   border-radius: var(--radius-md);
   background-color: var(--bg-elev);
-  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--line);
   transition:
     transform 0.25s var(--ease-spring),
     box-shadow 0.25s var(--ease-spring);
@@ -2203,6 +2230,57 @@ footer .wrap { position: relative; z-index: 3; }
 }
 .briefs p { font-size: 14.5px; line-height: 1.55; color: var(--content-prose); }
 
+/* ─── the deck ──────────────────────────────────────────────────────────────
+   The page reads as a deck: each fold is a slide, and a slide's contents come
+   in in LAYERS as it arrives — eyebrow, then heading, then the copy, then the
+   evidence — rather than the whole block appearing at once. That staging is
+   the argument's own order made visible, and it is the reason the page can be
+   this long without feeling like a scroll.
+
+   Built on CSS scroll-driven animation (`animation-timeline: view()`), so it
+   costs no JavaScript, no observer, and nothing to hydrate. Two properties
+   carry it, both compositor-only.
+
+   THE RULE THAT MAKES THIS SAFE: the animation runs BACKWARDS from a visible
+   resting state. `.layer` sets its final appearance in the rule itself and the
+   keyframes only describe where it comes FROM. A browser with no support for
+   scroll timelines, a headless renderer, a hidden tab, a print — all of them
+   land on the declared state, which is the finished one. A reveal that gates
+   `opacity: 0` on a class the page might never add is how a section ships
+   blank, and it is not what this does.
+
+   `--i` on each layer is its position in the stagger; the range is short (the
+   layer is fully in by the time its top third has entered) so nothing is still
+   arriving once you have started reading it. */
+.layer {
+  opacity: 1;
+  transform: none;
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .layer {
+      animation: deck-layer linear both;
+      animation-timeline: view();
+      animation-range: entry 5% entry 46%;
+      animation-delay: calc(var(--i, 0) * -0.06s);
+    }
+    /* A slide's own artefact is heavier than its words and comes in last and
+       slowest — it is the thing you stop on. */
+    .layer-figure { animation-range: entry 2% entry 62%; }
+  }
+}
+@keyframes deck-layer {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: none; }
+}
+/* A view() timeline is evaluated against the scroll position, so a fold that
+   has never been scrolled to is legitimately mid-animation — which is the
+   effect. Print is not scrolled, so it would render those folds blank. Cancel
+   the timeline there and take the resting state. */
+@media print {
+  .layer { animation: none !important; opacity: 1 !important; transform: none !important; }
+}
+
 /* ─── the desk ──────────────────────────────────────────────────────────────
    metaflux-web's /trade/perp route, rebuilt in HTML against the running app —
    not from its label strings. Everything here is the shape the desk actually
@@ -2221,8 +2299,8 @@ footer .wrap { position: relative; z-index: 3; }
    ─────────────────────────────────────────────────────────────────────────── */
 .desk {
   background-color: var(--bg-elev);
+  border: 1px solid var(--line);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
   overflow: hidden;
   font-family: var(--font-num);
   font-variant-numeric: tabular-nums lining-nums;
@@ -2390,10 +2468,10 @@ footer .wrap { position: relative; z-index: 3; }
 .summaries { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 .summary {
   background-color: var(--bg-elev); border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm); padding: 20px 22px 18px;
+  border: 1px solid var(--line); padding: 20px 22px 18px;
   font-family: var(--font-num); font-variant-numeric: tabular-nums lining-nums;
 }
-.summary.lead { box-shadow: var(--shadow-md); }
+.summary.lead { border-color: var(--accent-300); }
 .summary h4 { font-family: var(--font-body); font-size: 13px; font-weight: 700; }
 .summary .mode { margin-top: 2px; font-size: 11px; color: var(--content-label); }
 .summary dl { display: flex; flex-direction: column; gap: 6px; margin-top: 16px; font-size: 12px; }
@@ -2408,8 +2486,8 @@ footer .wrap { position: relative; z-index: 3; }
 
 /* ─── the liquidation rail ──────────────────────────────────────────────── */
 .tiers { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 12px; }
-.tier { background-color: var(--bg-elev); border-radius: var(--radius-md); box-shadow: var(--shadow-sm); padding: 18px 18px 20px; }
-.tier.lead { background-color: var(--accent-100); box-shadow: var(--shadow-md); }
+.tier { background-color: var(--bg-elev); border: 1px solid var(--line); border-radius: var(--radius-md); padding: 18px 18px 20px; }
+.tier.lead { background-color: var(--accent-100); border-color: var(--accent-300); }
 .tier .code { font-family: var(--font-num); font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: var(--accent-800); }
 .tier .code em { font-style: normal; font-weight: 500; letter-spacing: 0.02em; color: var(--content-label); }
 .tier h4 { font-family: var(--font-body); font-size: 16px; font-weight: 700; letter-spacing: -0.01em; margin: 8px 0 6px; }

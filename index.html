@@ -41,7 +41,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caprasimo&family=Figtree:wght@400;500;600;700;800&family=Geist:wght@500&family=Inter:wght@400;500;600;700;800&family=PT+Serif:ital@1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Geist:wght@500&family=Inter:wght@400;500;600;700;800&family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 <noscript><style>#preloader{display:none!important}</style></noscript>
 
@@ -124,11 +124,6 @@
   </div>
 </div>
 
-<div class="ambient" aria-hidden="true">
-  <canvas class="page-backdrop"></canvas>
-</div>
-
-<div class="pride-bar"></div>
 
 <nav>
   <div class="bar">
@@ -146,9 +141,9 @@
 
 <header class="hero">
   <div class="wrap">
-    <div class="hero-head">
-      <h1>The chain that clears <span class="accent">its own trades</span>.</h1>
-      <p>Matching, cross-asset margin, liquidation and settlement run native on MetaFluxBFT — with a parallel EVM alongside. Not a contract on someone else's L1.</p>
+    <div class="layer hero-head" style="--i:0">
+      <h1>Derivatives, on <span class="accent">first principles</span>.</h1>
+      <p>The clearing engine is the chain. Matching, cross-asset margin, liquidation and settlement run native on MetaFluxBFT — with a parallel EVM alongside.</p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="https://app.mtf.exchange/" target="_blank" rel="noopener">Open the devnet <span class="arrow">→</span></a>
         <a class="btn btn-secondary" href="whitepaper.html">Read the whitepaper <span class="arrow">→</span></a>
@@ -280,7 +275,7 @@
 
 <section class="stage" id="numbers">
   <div class="wrap">
-    <div class="stage-band">
+    <div class="layer stage-band" style="--i:1">
       <div><div class="n">&lt;1s</div><div class="k">Finality, <b>2-chain BFT</b></div></div>
       <div><div class="n">1</div><div class="k">Margin number for a <b>whole book</b></div></div>
       <div><div class="n">T0</div><div class="k">Grace band <b>before any close</b></div></div>
@@ -293,13 +288,13 @@
   <div class="wrap">
     <div class="stage-split">
       <div class="col-head">
-        <div class="eyebrow">Risk</div>
-        <h2>One number, not three.</h2>
+        <div class="layer eyebrow" style="--i:0">Risk</div>
+        <h2 class="layer" style="--i:1">One number, not three.</h2>
         <p>A SPAN-style scenario engine values your whole book at once, so a hedge stops paying margin twice. Same three positions, same equity — only the maintenance margin moves.</p>
         <div class="stage-links"><a href="whitepaper.html">How the engine values a book</a></div>
       </div>
       <div>
-        <div class="summaries">
+        <div class="layer layer-figure summaries" style="--i:2">
           <div class="summary">
             <h4>Account summary</h4>
             <div class="mode">Isolated — every market posts its own</div>
@@ -343,14 +338,14 @@
   <div class="wrap">
     <div class="stage-lede">
       <div>
-        <div class="eyebrow">Liquidation</div>
-        <h2>A warning before a liquidation.</h2>
+        <div class="layer eyebrow" style="--i:0">Liquidation</div>
+        <h2 class="layer" style="--i:1">A warning before a liquidation.</h2>
       </div>
-      <p>The engine reports a band, not a verdict. T0 cancels your resting orders and touches no position — a block to react, not a tick. Above 1.1× it takes no action at all.</p>
+      <p class="layer" style="--i:2">The engine reports a band, not a verdict. T0 cancels your resting orders and touches no position — a block to react, not a tick. Above 1.1× it takes no action at all.</p>
     </div>
   </div>
   <div class="stage-figure">
-    <div class="tiers">
+    <div class="layer layer-figure tiers" style="--i:2">
       <div class="tier lead">
         <div class="code">T0 <em>· Warning</em></div>
         <h4>Resting orders cancelled</h4>
@@ -383,12 +378,12 @@
   <div class="wrap">
     <div class="stage-split">
       <div class="col-head">
-        <div class="eyebrow">Execution</div>
-        <h2>The EVM, made parallel.</h2>
+        <div class="layer eyebrow" style="--i:0">Execution</div>
+        <h2 class="layer" style="--i:1">The EVM, made parallel.</h2>
         <p>Transactions execute optimistically, side by side. Conflicts re-run; everything else commits.</p>
         <div class="stage-links"><a href="https://docs.mtf.exchange/">Read the docs</a></div>
       </div>
-      <dl class="specs">
+      <dl class="layer specs" style="--i:2">
         <div>
           <dt>revm on Block-STM</dt>
           <dd>Your contract call does not queue behind a market it never touches. Derivatives precompiles — <b>portfolio margin, ADL pricing, RFQ depth, vault NAV</b> — run native rather than as 80,000-gas Solidity.</dd>
@@ -415,13 +410,13 @@
   <div class="wrap">
     <div class="stage-lede">
       <div>
-        <div class="eyebrow">Architecture</div>
-        <h2>The clearing engine <span class="accent">is</span> the chain.</h2>
+        <div class="layer eyebrow" style="--i:0">Architecture</div>
+        <h2 class="layer" style="--i:1">The clearing engine <span class="accent">is</span> the chain.</h2>
       </div>
       <p>Not a contract on someone else's L1. Here is the stack a signed order falls through, from the gateway down to consensus.</p>
     </div>
 
-    <figure class="arch-figure">
+    <figure class="layer layer-figure arch-figure" style="--i:2">
       <svg class="arch-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" role="presentation" aria-hidden="true" font-family="Figtree, system-ui, -apple-system, sans-serif">
       <!-- Every fill, stroke and gradient stop below carries a class hook that
            styles.css paints from tokens, so one SVG serves both polarities. The
@@ -545,15 +540,15 @@
   <div class="wrap">
     <div class="stage-split">
       <div class="col-head">
-        <div class="eyebrow">Builders</div>
-        <h2>Deploy a market in one transaction.</h2>
+        <div class="layer eyebrow" style="--i:0">Builders</div>
+        <h2 class="layer" style="--i:1">Deploy a market in one transaction.</h2>
         <p>Win the on-chain gas auction, supply the spec, take orders in the next block. No protocol-team gate, no allow-list, no committee.</p>
         <div class="stage-links">
           <a href="https://docs.mtf.exchange/mip/mip-3">MIP-3 spec</a>
           <a href="https://docs.mtf.exchange/">EVM docs</a>
         </div>
       </div>
-      <dl class="specs">
+      <dl class="layer specs" style="--i:2">
         <div>
           <dt>The auction</dt>
           <dd>Bids are on-chain and the winning bid is <b>burned</b>. Nobody has to approve you, and nobody is paid to.</dd>
@@ -575,13 +570,13 @@
   <div class="wrap">
     <div class="stage-lede">
       <div>
-        <div class="eyebrow">Traders</div>
-        <h2>Your strategy ports unchanged.</h2>
+        <div class="layer eyebrow" style="--i:0">Traders</div>
+        <h2 class="layer" style="--i:1">Your strategy ports unchanged.</h2>
       </div>
       <p>Agent wallets, sub-accounts, vaults, cross and isolated margin, client order ids — the same primitives, one to one. The SDK absorbs the wire rewrite.</p>
     </div>
 
-    <div class="briefs" style="margin-top: 56px;">
+    <div class="layer briefs" style="--i:2; margin-top: 56px;">
       <div><h4>Cold master, hot agents</h4><p>Approve a trading key once. The agent signs every order and never holds withdrawal authority.</p></div>
       <div><h4>Per-bot scoping</h4><p>Automatic expiry, a clean audit trail, and one key per strategy rather than one key per desk.</p></div>
       <div><h4>MTF-native wire</h4><p>One gateway: POST /info, POST /exchange, WebSocket, EVM JSON-RPC. No compatibility shim.</p></div>
@@ -590,7 +585,7 @@
   </div>
 
   <div class="stage-figure narrow" style="margin-top: 56px;">
-    <div class="code-frame">
+    <div class="layer layer-figure code-frame" style="--i:1">
       <div class="code-bar">
         <div class="dots"><span></span><span></span><span></span></div>
         <span>migration.ts</span>
@@ -615,13 +610,13 @@
   <div class="wrap">
     <div class="stage-split">
       <div class="col-head">
-        <div class="eyebrow">FAQ</div>
-        <h2>Honest answers.</h2>
+        <div class="layer eyebrow" style="--i:0">FAQ</div>
+        <h2 class="layer" style="--i:1">Honest answers.</h2>
         <p>The complete API surface, concept catalog and integration guides live in the docs.</p>
         <div class="stage-links"><a href="https://docs.mtf.exchange/">docs.mtf.exchange</a></div>
       </div>
 
-      <div class="faq-list">
+      <div class="layer faq-list" style="--i:2">
         <details>
           <summary>What is MetaFlux, exactly?</summary>
           <p>An independent L1 derivatives chain. Its own validator set, its own BFT consensus, its own EVM execution layer. Built from first principles for derivatives clearing, not borrowed from a general-purpose L1.</p>
@@ -676,7 +671,7 @@
 
 <section id="testnet" class="testnet-section">
   <div class="wrap">
-    <h2>Trade it today.</h2>
+    <h2 class="layer" style="--i:1">Trade it today.</h2>
     <p>Devnet is open — no application, no allow-list. Take test USDC from the faucet, point your client at the gateway, and trade. We especially want to hear from market makers and teams shipping production trading systems.</p>
     <div class="cta-row">
       <a class="btn btn-primary" href="https://app.mtf.exchange/" target="_blank" rel="noopener">Open the devnet <span class="arrow">→</span></a>
@@ -743,7 +738,6 @@
   </div>
 </footer>
 
-<script src="backdrop.js" defer></script>
 <script src="main.js"></script>
 </body>
 </html>
