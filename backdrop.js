@@ -10,7 +10,7 @@
 //
 //   1. Colour. The card paints from `dir` (the trade's rise/fall colour) and
 //      `accentSoft` (--color-accent-300). A landing page has no direction, so
-//      `dir` becomes the sage voice and `accentSoft` stays accent-300 — the same
+//      `dir` becomes the rose voice and `accentSoft` stays accent-300 — the same
 //      two-voice relationship, in the palette this page actually has. Both come
 //      out of CSS custom properties, so the field re-inks if the palette moves.
 //   2. Frame. The card is a fixed 1200x630. Here the same card-space composition
@@ -49,7 +49,12 @@
   const H = 630;
   const FIELD_X = W * 0.76;
   const FIELD_Y = H * 0.5;
-  const WEIGHT = 0.62;
+  // Strength of the whole field, multiplying every wash, ring and ribbon alpha.
+  // 0.62 was tuned when the ground was a mid-tone paper that swallowed it. On
+  // pure white nothing is swallowed: at that weight the rose washes read as a
+  // pink cloud competing with the headline. 0.26 keeps the blue → rose sweep
+  // present as the paper's own breathing and lets the type win.
+  const WEIGHT = 0.26;
 
   /** Deterministic 0…1 from an integer. `Math.random` would repaint differently
    *  on every resize, which on a background reads as the page flickering. */
@@ -309,8 +314,8 @@
   let vh = 0;
   let dpr = 1;
   let place = null; // card-space → viewport transform, shared by base and sky
-  let ink = '#6f8a5f';
-  let soft = '#a8c4c6';
+  let ink = '#b56476';
+  let soft = '#87c9e5';
 
   /** Rebuild everything that only changes with the viewport size. */
   const build = () => {
@@ -325,9 +330,9 @@
     if (!ctx) return false;
 
     const cs = getComputedStyle(document.documentElement);
-    ink = cs.getPropertyValue('--backdrop-ink').trim() || '#6f8a5f';
-    soft = cs.getPropertyValue('--backdrop-soft').trim() || '#a8c4c6';
-    const ground = cs.getPropertyValue('--bg').trim() || '#eaefe6';
+    ink = cs.getPropertyValue('--backdrop-ink').trim() || '#b56476';
+    soft = cs.getPropertyValue('--backdrop-soft').trim() || '#87c9e5';
+    const ground = cs.getPropertyValue('--bg').trim() || '#f0f3f7';
 
     // Card space → viewport, anchored on the composition's focal point rather
     // than on the frame: the rings must open into the empty right of the fold at

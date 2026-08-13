@@ -1,12 +1,13 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   MetaFlux marketing site — "Organic / Perps Desktop v2".
+   MetaFlux marketing site — Organic structure, brand hues.
 
-   Transcribed from the app's own theme file, metaflux-web/src/routes/layout.css
-   (itself derived from the Organic design system, "MetaFlux Perps Desktop v2").
-   The app builds that file through Tailwind v4's @theme, so every token there
-   carries a --color- prefix. This site has no build step, so the prefix is
-   dropped and the short names the old styles.css already used are kept; the
-   values are identical to the app's.
+   The STRUCTURE here is the app's, transcribed from metaflux-web/src/routes/
+   layout.css (itself the Organic design system, "MetaFlux Perps Desktop v2"):
+   the same token names, the same lightness ladder, the same elevation, radii,
+   spacing and type. The app builds that file through Tailwind v4's @theme, so
+   every token there carries a --color- prefix; this site has no build step, so
+   the prefix is dropped and the short names the old styles.css already used
+   are kept.
 
      app (layout.css)             this file
      ─────────────────────────    ─────────────────────────────────
@@ -19,20 +20,49 @@
      --color-neutral-NNN       →  --neutral-100 … --neutral-900
      --color-up / -down        →  --up / --down (+ -dim)
 
-   This replaces the pure-black / blue→pink / aurora / liquid-glass theme
-   wholesale. Two things survive on purpose: the trans-pride bar at the top
-   edge, and the logo SVGs' own #5BCEFA → #cfc0e8 → #F5A9B8 ink. Those are the
-   brand mark speaking, not the interface — they live in --pride-* and are the
-   only fixed hexes outside the token blocks. Every other gradient, accent and
-   highlight in the page chrome is teal → sage, the same .flux-fill / .flux-text
-   sweep the app draws.
+   The COLOUR is not the app's, and this is the one deliberate divergence. The
+   terminal's Organic default is a `mist` ground with a `teal` accent and a
+   `sage` second voice — a green paper under green-blue ink. MetaFlux's brand is
+   not green: mtf-exchange/brand fixes it as the flux gradient, sky blue
+   #5BCEFA → soft pink #F5A9B8, and PRODUCT.md states the identity as blue /
+   pink / white. A site whose chrome is olive while its own logo, pride bar and
+   footer swatches are blue-and-pink reads as two brands stapled together, and
+   the mark loses every argument with the ground it sits on. So:
+
+     --bg          WHITE. The flag's third colour, and the only ground a blue
+                   and a rose both sit on without either going muddy. The
+                   surfaces above it are near-white and separate by edge and
+                   shadow rather than by fill — see the note at the token.
+     --accent      the flux blue at ink lightness: L 0.45, C 0.16, hue 250.
+                   Saturation is kept and paid for in lightness, because
+                   saturation is what makes #5BCEFA read as this brand.
+     --accent-2    the flux pink, same trade: L 0.615, C 0.15, hue 10.
+     neutrals      the Organic warm ramp (hue ~81) re-tinted to the ground's
+                   250. Warmth here is the rose's job, not the greys'.
+
+   Mixing the two accents lands on #8552a7, a violet — the same midpoint the
+   logo's own gradient passes through on its way from blue to pink. The brand's
+   flux arc is intact; only its lightness moved, so the ink can carry text.
+
+   What this replaced, and why it is written down: the first pass rotated the
+   Organic hues onto the brand's arc but kept Organic's CHROMA (0.044) and its
+   four-step tonal ground. Every number checked out and it looked awful — a
+   petrol-teal accent that was neither the brand's blue nor a navy, over grey
+   panels on a grey page. Deriving a palette by holding lightness and turning
+   hue is arithmetic, not colour. Saturation and ground are decisions.
+
+   Two things stay fixed hexes on purpose: the trans-pride bar at the top edge,
+   and the logo SVGs' own #5BCEFA → #cfc0e8 → #F5A9B8 ink. Those are the brand
+   mark speaking at full saturation, not the interface — they live in --pride-*
+   and are the only fixed hexes outside the token blocks. Every other gradient,
+   accent and highlight in the page chrome is blue → rose, the .flux-fill /
+   .flux-text sweep.
 
    The app has six appearance axes (theme / ground / accent / pnl / serif /
-   density); this site has none. Ground is baked to `mist`, accent to `teal` and
-   polarity to LIGHT — the app's own defaults — so a visitor who later opens the
-   terminal lands on the same paper. There is deliberately no dark theme and no
-   theme switch: the site is one surface, and a marketing page that follows the
-   OS is two surfaces to design, verify and keep honest.
+   density); this site has none. Polarity is baked to LIGHT. There is
+   deliberately no dark theme and no theme switch: the site is one surface, and
+   a marketing page that follows the OS is two surfaces to design, verify and
+   keep honest.
 
    Fonts are three Google voices, no @font-face. Every page's <head> carries:
      <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -45,92 +75,167 @@
 
    THE TWO CONTRAST RULES THIS FILE IS BUILT ON, because they decide most of it:
      1. Running prose is var(--content) or var(--content-prose); every small
-        label is var(--content-label). The app's --content-mid (4.39:1 on the
-        light ground) and --content-dim (2.73:1) are transcribed for name
-        parity but never painted here. See the measured table at the token.
-     2. --accent is safe as text in both polarities (8.1:1 light). --accent-2 is
-        NOT (3.19:1 light): as text it is always var(--accent-2-800), which
-        inverts to a pale sage in dark. As a FILL — washes, swatch halves,
-        gradient borders, dots — bare --accent-2 is correct.
+        label is var(--content-label). The app's --content-mid (4.48:1 on the
+        ground) and --content-dim (2.74:1) are transcribed for name parity but
+        never painted here. See the measured table at the token.
+     2. --accent is safe as text (8.91:1 on --bg). --accent-2 is NOT (3.74:1):
+        as text it is always var(--accent-2-800), the deep wine step, at
+        8.77:1. As a FILL — washes, swatch halves, gradient borders, dots —
+        bare --accent-2 is correct.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ─── tokens · light (the default) ──────────────────────────────────────── */
 :root {
   color-scheme: light;
 
-  /* Ground `mist`. --bg is the sheet content sits on; --seam is the desk that
-     sheet sits on, one step behind. See the note on html/body below. */
-  --bg:          #eaefe6;
-  --bg-elev:     #dde5d7;
-  --bg-elev-2:   #d0dbc9;
-  --seam:        #ccd6c5;
-  --line:        rgba(28, 36, 28, 0.16);
-  --line-strong: rgba(28, 36, 28, 0.34);
+  /* Ground. --bg is the sheet content sits on; --seam is the desk that sheet
+     sits on, one step behind. See the note on html/body below.
 
-  /* The text ramp is written as mixes of --content, so the dark block only has
-     to restate --content and all of these follow. */
-  --content:       #201e1d;
-  --content-mid:   color-mix(in oklch, var(--content) 62%, transparent);
-  --content-dim:   color-mix(in oklch, var(--content) 45%, transparent);
+     The page is WHITE — the flag's third colour, and the one ground a blue and
+     a rose can both sit on without either turning muddy.
+
+     Every surface above it is a TINT OF THE BRAND BLUE, not a grey. Organic
+     shaded its surfaces with a neutral because a terminal has four of them
+     stacked and neutral is the only thing that survives that. A marketing page
+     has one panel at a time on screen, so it can afford the colour — and the
+     colour is what stops #eff9ff reading as the grey a desaturated step of the
+     same lightness would. Hue 232, chroma climbing 0.014 → 0.030 as the surface
+     deepens: the further a surface is from the page, the more openly it admits
+     what it is made of.
+
+     There are NO box borders in this file. Panels, cards, chips, the nav pill,
+     the code frame and the comparison table used to carry
+     `border: 1px solid var(--line)`, and on a white page a neutral hairline
+     around every object reads as a wireframe — the drawing showing through the
+     picture. Separation is now the tint plus --shadow-sm, which is how a sheet
+     of paper on a desk actually separates. --line survives for RULES ONLY —
+     the line under a table row, the rule over a footer, the divider between
+     FAQ items — and it is a blue, so even those never go black. The one
+     deliberate exception is .chip.key, whose blue→rose gradient border is the
+     ✦ marker itself. */
+  --bg:          #ffffff;
+  --bg-elev:     #eff9ff;
+  --bg-elev-2:   #e0f2fd;
+  --seam:        #d6edfa;
+  --line:        rgba(0, 94, 122, 0.16);
+  --line-strong: rgba(0, 94, 122, 0.30);
+
+  /* The text ramp is written as mixes of --content, so restating --content is
+     enough to move all of it. The ink is a cool near-black (hue 250) — the old
+     #201e1d was warm, and a warm black over a cool paper reads as a smudge
+     wherever the two meet at a hairline. */
+  --content:       #1b1f23;
+  --content-mid:   color-mix(in oklab, var(--content) 62%, transparent);
+  --content-dim:   color-mix(in oklab, var(--content) 45%, transparent);
   /* Two site-local steps, and the only place this file departs from
      layout.css's text ramp. The app's own -mid and -dim are transcribed above
      unchanged so the names still mean the same thing next to the terminal, but
-     neither is usable here. Measured on canvas over --bg / --bg-elev /
-     --bg-elev-2, light then dark:
+     neither is usable here. Measured over --bg / --bg-elev / --bg-elev-2 (the
+     site is light-only, so there is no second column to keep honest):
 
-       --content        14.22  12.86  11.62   ·  13.72  11.42   9.55
-       --content-prose   7.35   6.97   6.51   ·   8.69   7.68   6.71   ← copy
-       --content-label   5.32   5.07   4.80   ·   6.96   6.23   5.53   ← labels
-       --content-mid     4.39   4.24   4.08   ·   5.96   5.42   4.85
-       --content-dim     2.73   2.64   2.54   ·   3.82   3.48   3.11
+       --content        16.58  15.99  14.96
+       --content-prose   8.11   7.94   7.60   ← copy
+       --content-label   5.70   5.65   5.46   ← labels
+       --content-mid     4.69   4.61   4.51
+       --content-dim     2.82   2.80   2.76
 
-     So -mid fails AA on every light ground — fine for the 12px column header of
-     a terminal at 13px body size, not for a marketing page whose smallest text
+     So -mid fails AA on every ground — fine for the 12px column header of a
+     terminal at 13px body size, not for a marketing page whose smallest text
      is 10px — and -dim is decorative only. Running copy takes --content or
      --content-prose; every small chrome label takes --content-label, which is
-     the lowest step that clears 4.5:1 on all three grounds in both polarities.
-     Nothing in this file paints text with --content-mid or --content-dim. */
-  --content-prose: color-mix(in oklch, var(--content) 78%, transparent);
-  --content-label: color-mix(in oklch, var(--content) 68%, transparent);
+     the lowest step that clears 4.5:1 on all three grounds. Nothing in this
+     file paints text with --content-mid or --content-dim. */
+  --content-prose: color-mix(in oklab, var(--content) 78%, transparent);
+  --content-label: color-mix(in oklab, var(--content) 68%, transparent);
 
-  /* Accent `teal` primary, `sage` second. Not a tint of the first — a genuine
-     second voice, which is why .flux-fill can sweep between them. */
-  --accent:       #24494f;
-  --accent-100:   #dfe9e9;
-  --accent-200:   #cddcdc;
-  --accent-300:   #a8c4c6;
-  --accent-600:   #1b393e;
-  --accent-700:   #142c30;
-  --accent-800:   #11282c;
-  --accent-2:     #6f8a5f;
-  --accent-2-100: #e9f0e0;
-  --accent-2-200: #d6e3c9;
-  --accent-2-300: #ccdbb2;
-  --accent-2-600: #5b7449;
-  --accent-2-700: #48603a;
-  --accent-2-800: #3a4e2f;
+  /* The brand's two voices, and the file's one real colour decision.
 
-  --neutral-100: #f9f4ed;
-  --neutral-200: #eee7db;
-  --neutral-300: #dcd3c4;
-  --neutral-400: #c0b6a5;
-  --neutral-500: #a19786;
-  --neutral-600: #82796a;
-  --neutral-700: #645c50;
-  --neutral-800: #474238;
-  --neutral-900: #2e2b25;
+     --accent-300 IS #5BCEFA. Not a relative of it, not a step near it — the
+     brand hex itself, unmodified, sitting in the ramp where the page can
+     actually reach it. Everything that FILLS takes it: the primary button, the
+     nav pill's CTA, the chips, the diagram's gradients and washes, the
+     backdrop's soft voice. Against --content it measures 9.20:1, so a slab of
+     brand blue carrying dark type is not a compromise, it is the best-contrast
+     control on the page.
 
-  /* Text ON an accent fill. layout.css has no such token — the app's filled
-     controls are all small chips — but a landing page's primary CTA is a slab
-     of accent and needs a polarity-safe answer. Light: pale neutral on dark
-     teal (8.96:1). Dark: the ramp inverts, so dark teal on pale teal (8.12:1). */
+     What it cannot do is be ink. #5BCEFA on white is 1.80:1 — it fails as body
+     text, as a link, and even as 60px display type, and no amount of wanting
+     changes that; it is a light colour, and the page is light. So the ramp
+     carries a second blue for text at the SAME HUE FAMILY (236 against the
+     anchor's 226.5), dark enough to read: --accent, 7.01:1. On screen the two
+     are obviously the same blue, one lit and one in shadow — which is what the
+     logo's own gradient does anyway.
+
+       fills, graphics, big shapes   → --accent-300   (#5BCEFA, the brand hex)
+       text, links, small marks      → --accent       (its ink)
+       hover / pressed on ink        → --accent-600 … -800
+
+     --accent-2 is the pink end at L 0.615 / C 0.15, a genuine second voice
+     rather than a tint of the first, which is why .flux-fill can sweep between
+     them. Mixing the two lands on a violet, the midpoint the lockup's own
+     gradient passes through.
+
+     Measured on --bg / --bg-elev / --bg-elev-2:
+
+       --accent        7.01  6.57  6.11    text-safe everywhere
+       --accent-600    8.37  7.84  7.29    hover: more contrast, not less
+       --accent-300    1.80  —     —       FILL ONLY. Never text, never a
+                                           1px mark. Dark type ON it: 9.20:1.
+       --accent-2      4.02  3.76  3.50    FILL ONLY — clears 3:1, not 4.5:1
+       --accent-2-800  9.00  8.42  7.84    the rose voice when it must be text
+
+     What this replaced, and why it is written down: the pass before this one
+     derived the blue by holding Organic's lightness and turning its hue, which
+     produced a petrol that was neither the brand's blue nor a navy. Then it
+     kept the saturation and paid in lightness, which produced an honest deep
+     blue that still was not #5BCEFA. The resolution is not a better
+     approximation — it is to stop approximating and let the real hex do the
+     job it can do (fill) while a second value does the job it cannot (ink). */
+  --accent:       #0a5f86;
+  --accent-100:   #d9f3ff;
+  --accent-200:   #a9e5ff;
+  --accent-300:   #5BCEFA;
+  --accent-600:   #005378;
+  --accent-700:   #004462;
+  --accent-800:   #003d59;
+  --accent-2:     #cd5870;
+  --accent-2-100: #ffe6e9;
+  --accent-2-200: #ffd0d6;
+  --accent-2-300: #ffbcc5;
+  --accent-2-600: #ae4058;
+  --accent-2-700: #95334a;
+  --accent-2-800: #812a3e;
+
+  /* Organic's neutral ramp, at its own lightness steps but re-tinted from warm
+     (hue ~81) toward the accent. A warm grey next to a sky-tinted surface reads
+     as a different material; warmth here is --accent-2's job. Almost nothing
+     paints from this ramp any more — the surfaces are accent tints and the text
+     is --content — so it survives for --on-accent, .tag-neutral and the shadow
+     ink. */
+  --neutral-100: #f7f9fc;
+  --neutral-200: #ebeff2;
+  --neutral-300: #d6dbe1;
+  --neutral-400: #b5bbc1;
+  --neutral-500: #949ba1;
+  --neutral-600: #767c82;
+  --neutral-700: #595e64;
+  --neutral-800: #3f4348;
+  --neutral-900: #292c2f;
+
+  /* Text ON a DEEP accent fill. The primary CTA no longer needs it — that is
+     a slab of #5BCEFA carrying --content at 9.20:1 — but anything that fills
+     with --accent or deeper still does. */
   --on-accent: var(--neutral-100);
 
-  /* Direction — the app's `standard` scheme. The site shows few signed numbers,
-     but any stat that leans should speak the terminal's language. Colour is
-     never the only cue: both solids fail AA as TEXT on the light ground
-     (--up 2.19:1, --down 3.11:1), so they are used as -dim fills behind
-     --content, never as the ink. */
+  /* Direction — the app's `standard` scheme, transcribed unchanged. No rule in
+     this file paints with them; they exist so a stat that ever does lean speaks
+     the terminal's language. Note the coincidence, and do not build on it:
+     `standard` is itself a cyan/rose pair, so --up and --down now sit close to
+     the two accents in hue while being far lighter and far more saturated. If
+     a signed number ever ships here, it needs its own separation from --accent
+     and --accent-2 — and, as ever, a sign or an arrow, since colour is never
+     the only cue. Both solids fail AA as TEXT on this ground (--up 2.27:1,
+     --down 3.26:1), so they are -dim fills behind --content, never the ink. */
   --up:       #00b3cc;
   --up-dim:   #d4f0f3;
   --down:     #e0567a;
@@ -138,8 +243,10 @@
   --warn:     #b7791f;
   --warn-dim: rgba(183, 121, 31, 0.14);
 
-  /* Brand ink — fixed in both themes. The three stops the logo SVGs carry; the
-     pride bar is a statement, not a surface. Only .pride-bar and
+  /* Brand ink at full saturation. The three stops the logo SVGs carry; the
+     pride bar is a statement, not a surface, and is never diluted. The accent
+     ramps above are these same hues taken down to ink lightness, which is why
+     the bar and the page now agree instead of arguing. Only .pride-bar and
      .pride-swatches may reference these. */
   --pride-blue:     #5BCEFA;
   --pride-lavender: #cfc0e8;
@@ -192,10 +299,10 @@
 
   /* Elevation is REAL here. The old site killed every shadow and leaned on the
      aurora for depth; this system separates surfaces with light instead. */
-  --shadow-sm: 0 1px 2px color-mix(in srgb, #2e2b25 14%, transparent);
-  --shadow-md: 0 3px 10px color-mix(in srgb, #2e2b25 16%, transparent);
-  --shadow-lg: 0 12px 32px color-mix(in srgb, #2e2b25 22%, transparent);
-  --scrim: color-mix(in oklch, var(--neutral-900) 55%, transparent);
+  --shadow-sm: 0 1px 2px color-mix(in srgb, #292c2f 14%, transparent);
+  --shadow-md: 0 3px 10px color-mix(in srgb, #292c2f 16%, transparent);
+  --shadow-lg: 0 12px 32px color-mix(in srgb, #292c2f 22%, transparent);
+  --scrim: color-mix(in oklab, var(--neutral-900) 55%, transparent);
 
   --touch-min: 44px;
   --scroll-y: 0px;   /* main.js writes the scroll offset here every frame */
@@ -207,24 +314,36 @@
   --tag-neutral-fg: var(--neutral-800);
 
   /* Isometric diagram faces. Naively mixing --bg-elev toward --seam is
-     polarity-safe but, on the light ground, --seam is barely darker than
-     --bg-elev — the three faces collapse into one flat green and the solid
-     stops reading as a solid. So the two polarities get genuinely different
-     recipes: light shades with ink (the only direction with range to spare),
-     dark shades toward the seam (a dark ground has no headroom for more ink).
-     Top face is always the lit one. */
+     tempting, but --seam is barely darker than --bg-elev — the three faces
+     collapse into one flat tone and the solid stops reading as a solid. So the
+     faces shade with ink, the one direction a pale ground has range to spare
+     in. Top face is always the lit one.
+
+     oklAB, not oklCH, and this is load-bearing: Chrome treats a low-chroma
+     input as achromatic, so `color-mix(in oklch, …)` between two near-neutrals
+     resolves the hue channel to `none` and the result renders at hue 0 — the
+     faces came out warm taupe on a cool page. Every mix in this file that
+     touches a near-neutral or `transparent` is in oklab for that reason. Only
+     the two accent → accent-2 gradient stops stay in oklch, where the polar
+     path through lavender is the whole point.
+
+     The percentages are set from the OUTPUT, not the input: the two side faces
+     want to land at L 0.775 and 0.644 whatever --bg-elev-2 happens to be, and
+     --bg-elev-2 moved a long way up the ramp when the ground went white. */
   --slab-top:      var(--bg);
-  --slab-r:        color-mix(in oklch, var(--bg-elev-2) 82%, var(--content));
-  --slab-l:        color-mix(in oklch, var(--bg-elev-2) 62%, var(--content));
-  /* Contact shadow under the stack. #2e2b25 is exactly the warm ink
-     --shadow-md is built from, so the figure's shadow and the page's agree. */
-  --slab-shadow:   #2e2b25;
+  --slab-r:        color-mix(in oklab, var(--bg-elev-2) 74%, var(--content));
+  --slab-l:        color-mix(in oklab, var(--bg-elev-2) 56%, var(--content));
+  /* Contact shadow under the stack. #292c2f is exactly the ink --shadow-md is
+     built from, so the figure's shadow and the page's agree. */
+  --slab-shadow:   #292c2f;
   --slab-shadow-o: 0.18;
 
   /* The backdrop's two voices, read by backdrop.js. Same relationship the share
-     card paints from: a saturated hue plus --color-accent-300 as the soft one. */
-  --backdrop-ink:  #6f8a5f;
-  --backdrop-soft: #a8c4c6;
+     card paints from: a saturated hue plus --color-accent-300 as the soft one —
+     here the rose against the brand blue, so the contour field under the fold
+     is the flux gradient drawn very quietly. */
+  --backdrop-ink:  #cd5870;
+  --backdrop-soft: #78caf4;
 }
 
 /* ─── legacy aliases ────────────────────────────────────────────────────────
@@ -238,13 +357,14 @@
 
    Two aliases deliberately do NOT point where their name suggests:
      --text-mid → --content-prose, not --content-mid. Every legacy call site is
-       running copy, and --content-mid is 4.39:1 on the light ground.
+       running copy, and --content-mid is 4.48:1 on this ground.
      --text-dim → --content-label, not --content-dim. Every legacy call site is
-       an 11–12px label somebody is expected to read; --content-dim is 2.73:1.
+       an 11–12px label somebody is expected to read; --content-dim is 2.74:1.
 
-   And one alias must NOT be followed at all: --blue/--pink now paint teal and
-   sage, which is right for the FAQ link and the disputes notice but wrong for
-   the three pride swatches that also reference them. See .pride-swatches.
+   --blue and --pink are finally honest names again — they point at the deep
+   blue and the deep rose. They still must NOT be followed for the three pride
+   swatches that also reference them: those need the flag at full saturation,
+   not ink. See .pride-swatches.
    ─────────────────────────────────────────────────────────────────────────── */
 :root {
   --text:      var(--content);
@@ -252,10 +372,10 @@
   --text-dim:  var(--content-label);
   --blue:      var(--accent);
   --blue-deep: var(--accent-600);
-  --blue-wash: color-mix(in oklch, var(--accent) 10%, transparent);
+  --blue-wash: color-mix(in oklab, var(--accent) 10%, transparent);
   --pink:      var(--accent-2-800);
   --pink-deep: var(--accent-2-600);
-  --pink-wash: color-mix(in oklch, var(--accent-2) 10%, transparent);
+  --pink-wash: color-mix(in oklab, var(--accent-2) 10%, transparent);
   --good:      var(--up);
   --bad:       var(--down);
   --mono:          var(--font-code);
@@ -344,7 +464,7 @@ button:disabled { cursor: not-allowed; }
    ring off focused chips. This pair is not a restyle, it is a fix. */
 :focus { outline: none; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-::selection { background: color-mix(in oklch, var(--accent) 30%, transparent); }
+::selection { background: color-mix(in oklab, var(--accent) 30%, transparent); }
 
 /* Every number the app draws is Inter with tabular + lining figures; .num gives
    the site the same texture on stats, labels and version strings. */
@@ -358,17 +478,17 @@ button:disabled { cursor: not-allowed; }
 .mono { font-family: var(--font-code); }
 
 * { scrollbar-width: thin;
-    scrollbar-color: color-mix(in oklch, var(--content) 22%, transparent) transparent; }
+    scrollbar-color: color-mix(in oklab, var(--content) 22%, transparent) transparent; }
 ::-webkit-scrollbar { width: 9px; height: 9px; }
 ::-webkit-scrollbar-track, ::-webkit-scrollbar-corner { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: color-mix(in oklch, var(--content) 18%, transparent);
+  background: color-mix(in oklab, var(--content) 18%, transparent);
   border-radius: 999px;
   border: 2.5px solid transparent;
   background-clip: content-box;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: color-mix(in oklch, var(--content) 34%, transparent);
+  background: color-mix(in oklab, var(--content) 34%, transparent);
   background-clip: content-box;
 }
 
@@ -399,9 +519,9 @@ button:disabled { cursor: not-allowed; }
    drawers. Everything that is always on screen is opaque material.
    ─────────────────────────────────────────────────────────────────────────── */
 .panel {
-  background-color: var(--bg);
-  border: 1px solid var(--line);
+  background-color: var(--bg-elev);
   border-radius: var(--radius-panel);
+  box-shadow: var(--shadow-sm);
 }
 .card-surface { background-color: var(--bg-elev); border-radius: var(--radius-md); }
 
@@ -502,7 +622,7 @@ button:disabled { cursor: not-allowed; }
   inset: 0;
   background: linear-gradient(90deg,
     transparent,
-    color-mix(in oklch, var(--accent) 10%, transparent),
+    color-mix(in oklab, var(--accent) 10%, transparent),
     transparent);
   transform: translateX(-100%);
   animation: shimmer 2.4s linear infinite;
@@ -515,7 +635,7 @@ button:disabled { cursor: not-allowed; }
 
    None of it survives, and the reason is worth stating once: an aurora is
    EMITTED light, which is a dark-ground affordance. Objects on paper do not
-   glow. Over #eaefe6 a bloom is either invisible or, at any strength you can
+   glow. Over #f0f3f7 a bloom is either invisible or, at any strength you can
    actually see, it tints the ground unpredictably and drags body copy under its
    contrast floor. The vignette existed only to protect legibility over the
    bloom, so with the bloom gone it has no job; a near-black scrim on a light
@@ -697,9 +817,8 @@ button:disabled { cursor: not-allowed; }
 @keyframes mfx-wipe { to { clip-path: inset(0 0 0 0); } }
 
 /* Beat 3 — a hairline draws out from the centre under the lockup, in the
-   interface's own accent sweep rather than the mark's brand ink. It is the one
-   moment the entrance says "teal/sage" instead of "blue/rose", which is the
-   handoff the page itself then makes. */
+   interface's own accent sweep. Same arc as the mark above it, taken down to
+   ink: the entrance hands the flag's blue→pink off to the page's own. */
 .pl-rule {
   width: 100%;
   height: 1.5px;
@@ -752,7 +871,7 @@ button:disabled { cursor: not-allowed; }
 /* ─── pride bar (top edge) ──────────────────────────────────────────────────
    Stays, and keeps the flag's own three colours — the same brand-ink exemption
    as logo/*.svg. Two things had to change for the pale ground: the bar was 2px
-   at 0.9 opacity, and a diluted pure-white segment on #ccd6c5 reads as a GAP in
+   at 0.9 opacity, and a diluted pure-white segment on #d0d9e0 reads as a GAP in
    the bar rather than a stripe. So: 3px, full opacity (never dilute the flag),
    and an inset hairline ring that gives the white band a top and bottom edge.
    The ring is a faint line in dark and a soft ink line in light — both
@@ -768,20 +887,23 @@ button:disabled { cursor: not-allowed; }
     var(--pride-pink)  62%, var(--pride-pink)  80%,
     var(--pride-blue)  80%, var(--pride-blue)  100%
   );
-  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--content) 22%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--content) 22%, transparent);
   position: relative;
   z-index: 1;
 }
 
 /* The three footer swatches. They were zero-size spans that rendered nothing —
-   there has never been a `.sw` rule outside .arch-legend — so this makes the
-   existing intent work. The inset ring is what lets the white one exist on a
-   pale footer, the same trick as the bar.
+   nothing else in the file styles a bare `.sw` — so this makes the existing
+   intent work. The inset ring is what lets the white one exist on a pale
+   footer, the same trick as the bar.
 
    The !important is a GUARD, not a style: the markup still carries
-   `style="background: var(--blue)"`, and --blue now paints teal. The one thing
-   this restyle is explicitly not allowed to do is turn the pride swatches into
-   the accent palette, and an inline declaration beats everything else. Once the
+   `style="background: var(--blue)"`, and --blue paints the deep INK blue, not
+   the flag's. The one thing this restyle is explicitly not allowed to do is
+   turn the pride swatches into the accent palette — they are the only place
+   the flag appears at full saturation besides the bar, and the resemblance now
+   that the accents share their hues makes the mistake easier, not harder. An
+   inline declaration beats everything else, so this guard stays. Once the
    three inline styles say var(--pride-blue) / var(--pride-pink) /
    var(--pride-white), these three lines paint exactly the same colours and can
    be dropped. */
@@ -791,7 +913,7 @@ button:disabled { cursor: not-allowed; }
   height: 10px;
   border-radius: 2px;
   vertical-align: -1px;
-  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--content) 20%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--content) 20%, transparent);
 }
 .pride-swatches .sw:nth-child(1) { background: var(--pride-blue)  !important; }
 .pride-swatches .sw:nth-child(2) { background: var(--pride-pink)  !important; }
@@ -825,7 +947,6 @@ nav .bar {
      for things that come and go. A raised opaque surface + hairline + shadow is
      the always-on material. */
   background-color: var(--bg-elev);
-  border: 1px solid var(--line);
   border-radius: var(--radius-pill);
   box-shadow: var(--shadow-md);
   transition: box-shadow 0.24s var(--ease-out-soft), background-color 0.24s var(--ease-out-soft);
@@ -874,9 +995,9 @@ nav ul a {
   letter-spacing: 0;
 }
 nav ul a:hover { color: var(--content); }
-/* The CTA is layout.css's .tag-accent, sized up to a control. Polarity-proof by
-   construction: the accent ramp inverts, so this is a pale teal chip with deep
-   ink in light and a deep teal chip with pale ink in dark. */
+/* The one solid colour in the nav: a pill of the brand blue itself, carrying
+   --content at 9.20:1. It is the smallest object on the page that has to be
+   recognisably MetaFlux from across a room. */
 nav .nav-cta {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 10px 18px;
@@ -884,9 +1005,8 @@ nav .nav-cta {
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0;
-  color: var(--accent-800);
-  background-color: var(--accent-100);
-  border: 1px solid transparent;
+  color: var(--content);
+  background-color: var(--accent-300);
   border-radius: var(--radius-pill);
   transition:
     background-color 0.18s var(--ease-spring),
@@ -894,7 +1014,7 @@ nav .nav-cta {
     transform 0.22s var(--ease-spring);
   -webkit-tap-highlight-color: transparent;
 }
-nav .nav-cta:hover { background-color: var(--accent-200); color: var(--accent-800); }
+nav .nav-cta:hover { background-color: color-mix(in oklab, var(--accent-300) 86%, var(--accent)); }
 nav .nav-cta:active { transform: translateY(0.5px) scale(0.985); transition-duration: 0.07s; }
 
 @media (max-width: 720px) {
@@ -922,7 +1042,7 @@ h1 {
   margin-bottom: 40px;
 }
 /* Was a rose italic span. Italic is impossible here, so the emphasis becomes
-   the system's own .flux-text sweep, teal → sage, with a solid fallback.
+   the system's own .flux-text sweep, blue → rose, with a solid fallback.
    (DESIGN.md's "don't use gradient text" rule belongs to the system this
    replaces; layout.css ships .flux-text as a first-class component.) */
 h1 .accent, h2 .accent { color: var(--accent); font-weight: var(--font-heading-weight); }
@@ -1026,16 +1146,16 @@ h1 .accent, h2 .accent { color: var(--accent); font-weight: var(--font-heading-w
 .btn:active { transform: translateY(0.5px) scale(0.985); transition-duration: 0.07s; }
 .btn:disabled, .btn[aria-disabled='true'] { opacity: 0.5; pointer-events: none; }
 
-/* Polarity-proof: deep teal with pale ink in light, pale teal with deep ink in
-   dark, and --accent-600 moves toward MORE contrast in both directions. */
+/* The deep blue carrying the palest neutral, 9.05:1; hover takes --accent-600,
+   which moves toward MORE contrast, not less. */
 .btn-primary {
-  background-color: var(--accent);
-  color: var(--on-accent);
+  background-color: var(--accent-300);
+  color: var(--content);
   box-shadow: var(--shadow-sm);
 }
 .btn-primary:hover {
-  background-color: var(--accent-600);
-  color: var(--on-accent);
+  background-color: color-mix(in oklab, var(--accent-300) 86%, var(--accent));
+  color: var(--content);
   box-shadow: var(--shadow-md);
   transform: translateY(-1px);
 }
@@ -1044,15 +1164,14 @@ h1 .accent, h2 .accent { color: var(--accent); font-weight: var(--font-heading-w
 /* Deliberately accent on hover, not accent-2: bare --accent-2 is 3.19:1 as
    text on --bg in light and fails AA. The old rose hover does not survive. */
 .btn-secondary {
-  background-color: var(--bg);
+  background-color: var(--bg-elev);
   color: var(--content);
-  border-color: var(--line-strong);
   box-shadow: var(--shadow-sm);
 }
 .btn-secondary:hover {
   border-color: var(--accent);
   color: var(--accent);
-  background-color: color-mix(in oklch, var(--accent) 8%, var(--bg));
+  background-color: color-mix(in oklab, var(--accent) 8%, var(--bg));
   box-shadow: var(--shadow-md);
   transform: translateY(-1px);
 }
@@ -1108,7 +1227,6 @@ h2 {
   position: relative;
   border-radius: var(--radius-md);
   background-color: var(--bg-elev);
-  border: 1px solid var(--line);
   box-shadow: var(--shadow-sm);
   transition:
     transform 0.25s var(--ease-spring),
@@ -1174,7 +1292,6 @@ h2 {
   overflow: hidden;
   border-radius: var(--radius-md);
   background-color: var(--bg-elev);
-  border: 1px solid var(--line);
   box-shadow: var(--shadow-sm);
   transition:
     transform 0.25s var(--ease-spring),
@@ -1190,11 +1307,11 @@ h2 {
 }
 .feature:nth-child(odd)::before {
   background: radial-gradient(circle at top right,
-    color-mix(in oklch, var(--accent) 7%, transparent), transparent 70%);
+    color-mix(in oklab, var(--accent) 7%, transparent), transparent 70%);
 }
 .feature:nth-child(even)::before {
   background: radial-gradient(circle at top right,
-    color-mix(in oklch, var(--accent-2) 9%, transparent), transparent 70%);
+    color-mix(in oklab, var(--accent-2) 9%, transparent), transparent 70%);
 }
 /* Promoted from bare coloured caps to the system's real chip. This is
    .tag-accent / .tag-accent-2, and it is correct in both polarities because the
@@ -1262,7 +1379,6 @@ h2 {
 .code-frame {
   margin-top: 40px;
   background-color: var(--bg-elev-2);
-  border: 1px solid var(--line);
   border-radius: var(--radius-panel);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
@@ -1283,7 +1399,7 @@ h2 {
 .code-bar .dots span:nth-child(1) { background: var(--accent-2); }
 .code-bar .dots span:nth-child(2) { background: var(--accent); }
 /* the third was a literal #fff, which vanishes on a light bar */
-.code-bar .dots span:nth-child(3) { background: color-mix(in oklch, var(--content) 25%, transparent); }
+.code-bar .dots span:nth-child(3) { background: color-mix(in oklab, var(--content) 25%, transparent); }
 .code-block {
   padding: 24px;
   font-family: var(--font-code);
@@ -1347,8 +1463,7 @@ details p {
    ─────────────────────────────────────────────────────────────────────────── */
 .compare {
   margin-top: 32px;
-  background-color: var(--bg);
-  border: 1px solid var(--line);
+  background-color: var(--bg-elev);
   border-radius: var(--radius-panel);
   box-shadow: var(--shadow-sm);
   overflow-x: auto;
@@ -1366,7 +1481,7 @@ details p {
 .compare th, .compare td {
   text-align: left;
   padding: 14px 18px;
-  border-bottom: 1px solid color-mix(in oklch, var(--content) 8%, transparent);
+  border-bottom: 1px solid color-mix(in oklab, var(--content) 8%, transparent);
   color: var(--content);
 }
 .compare th {
@@ -1381,7 +1496,7 @@ details p {
 .compare td.feature-name { color: var(--content); font-family: var(--font-body); }
 .compare td.us {
   color: var(--content);
-  background-color: color-mix(in oklch, var(--accent) 6%, transparent);
+  background-color: color-mix(in oklab, var(--accent) 6%, transparent);
 }
 .compare td.us::before { content: "✓ "; color: var(--accent); font-weight: 700; }
 .compare td.maybe { color: var(--content-label); }
@@ -1405,7 +1520,6 @@ details p {
   margin-inline: auto;
   padding: clamp(56px, 7vw, 104px) clamp(24px, 5vw, 72px);
   background-color: var(--bg-elev);
-  border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
 }
@@ -1501,7 +1615,7 @@ footer .wrap { position: relative; z-index: 3; }
   font-size: clamp(40px, 18vw, 232px);
   white-space: nowrap;
   margin-bottom: -0.08em;
-  color: color-mix(in oklch, var(--content) 12%, transparent);
+  color: color-mix(in oklab, var(--content) 12%, transparent);
 }
 .foot-hero .foot-word .b-flux {
   font-family: var(--font-brand-serif);
@@ -1555,9 +1669,9 @@ footer .wrap { position: relative; z-index: 3; }
   grid-template-columns: 156px 1fr;
   gap: 28px;
   padding: 22px 24px;
-  background-color: var(--bg);
-  border: 1px solid var(--line);
+  background-color: var(--bg-elev);
   border-radius: var(--radius-panel);
+  box-shadow: var(--shadow-sm);
 }
 /* down-flow cue between layers — already token-driven, unchanged */
 .arch-layer:not(:last-child)::after {
@@ -1609,7 +1723,6 @@ footer .wrap { position: relative; z-index: 3; }
   color: var(--content-prose);
   padding: 8px 11px;
   background-color: var(--bg-elev);
-  border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   white-space: nowrap;
   transition:
@@ -1645,58 +1758,6 @@ footer .wrap { position: relative; z-index: 3; }
 /* mobile sub-cluster divider inside the dense settlement group; hidden on
    desktop where the chip stack is sr-only */
 .arch-subdiv { display: none; }
-
-/* ─── architecture · legend ─────────────────────────────────────────────────
-   A contained figure-key plate: the top hairline (the layers' own border
-   language) ties the key to the diagram.
-
-   NOTE FOR THE PAGE AUTHOR: the caption next to .sw-color currently reads
-   "Blue = matching / execution · Rose = risk". After this change that sentence
-   is factually false about the swatch beside it and must become
-   "Teal = matching / execution · Sage = risk". It is the one place the
-   keep-all-copy constraint has to yield.
-   ─────────────────────────────────────────────────────────────────────────── */
-.arch-legend {
-  margin-top: clamp(28px, 3.2vw, 40px);
-  padding-top: 22px;
-  border-top: 1px solid var(--line);
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  font-size: 13px;
-  color: var(--content-label);
-}
-.arch-legend .lg-keys { display: flex; flex-direction: column; gap: 9px; }
-.arch-legend .lg {
-  display: grid;
-  grid-template-columns: 18px 1fr;
-  align-items: center;
-  gap: 10px;
-  font-family: var(--font-num);
-  font-size: 12px;
-  color: var(--content-label);
-}
-.arch-legend .sw {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-}
-.arch-legend .sw-spec { font-weight: 400; font-size: 11px; color: var(--accent); }
-/* the one sanctioned two-accent adjacency, now teal → sage (same rule as
-   .chip.key) — a fill, so bare --accent-2 is correct */
-.arch-legend .sw-color {
-  width: 14px; height: 14px; border-radius: 4px;
-  background: linear-gradient(105deg, var(--accent) 0 50%, var(--accent-2) 50% 100%);
-}
-.arch-legend .note {
-  display: block;
-  margin-top: 4px;
-  font-size: 11.5px;
-  letter-spacing: 0.01em;
-}
-.arch-legend .note .link { color: var(--content-prose); }
-.arch-legend .note .link:hover { color: var(--accent); }
 
 @media (max-width: 900px) { .arch-groups { grid-template-columns: 1fr; gap: 18px; } }
 @media (max-width: 720px) {
@@ -1745,21 +1806,19 @@ footer .wrap { position: relative; z-index: 3; }
 
 /* ── the figure's paint ─────────────────────────────────────────────────────
    Twenty-odd fills, strokes and gradient stops are baked into index.html as
-   presentation attributes in the old dark palette. They are NOT hand-edited to
-   new hexes, because a hex cannot answer both polarities. Instead every one of
-   them is driven from here.
-
-   Two mechanisms, both zero-markup:
-     · presentation attributes have specificity 0, so ANY rule beats them, and
-       an attribute selector can address them by the value they already carry;
+   presentation attributes. They are all driven from here instead:
+     · presentation attributes have specificity 0, so ANY rule beats them;
      · `stop-color`, `stop-opacity`, `fill`, `stroke` and `opacity` are all real
        CSS properties, so the <defs> gradients are restyled in place by id.
-   The original attributes stay put as a no-CSS fallback.
+   The attributes stay put as the no-CSS fallback, and they carry the LIGHT
+   resolution of these same tokens — never a second palette. Move a token here
+   and the matching literal in index.html moves with it.
 
-   If the page author later adds semantic classes (.face-l / .face-r / .face-t /
-   .edge / .edge-hi / .leader / .leader-dot / .node / .node-2 / .contact), the
-   class rules below take over and the attribute selectors can be deleted. Both
-   sets are listed together so they cannot drift apart. */
+   The earlier form of this block also matched each element by the hex it
+   carried (`polygon[fill="#0a0d14"]`, …), as a bridge until the SVG grew
+   semantic classes. It has them now, so those selectors are gone — and none
+   too soon: one of them addressed `[fill="#f0f3f7"]`, which is the new --bg,
+   and would have painted any future paper-filled shape in body ink. */
 
 /* the brand sweep inside the figure is diagram chrome, not the logo — it takes
    the migration, and becomes .flux-fill's own gradient */
@@ -1768,42 +1827,37 @@ footer .wrap { position: relative; z-index: 3; }
 #arch-flux stop:nth-child(3) { stop-color: var(--accent-2); }
 /* the slab top face: a shallow tonal step, not a dark-to-darker fall */
 #arch-top stop:nth-child(1) { stop-color: var(--slab-top); }
-/* srgb for the same reason as --slab-r / --slab-l above: in dark both inputs
-   are near-neutral greens and the oklch mix loses its hue to `none`. */
+/* srgb because both inputs are near-neutral papers a hair apart, and an oklch
+   mix of two such low-chroma colours can drop its hue to `none`. */
 #arch-top stop:nth-child(2) { stop-color: color-mix(in srgb, var(--slab-top) 88%, var(--seam)); }
 /* the clearing-core wash. The original .55/.4/.55 opacities were tuned against
-   near-black; on a pale ground they make the hero slab read as near-solid teal
+   near-black; on a pale ground they make the hero slab read as near-solid blue
    and destroy its relationship to the four neighbours. */
 #arch-herotop stop:nth-child(1) { stop-color: var(--accent);   stop-opacity: 0.16; }
 #arch-herotop stop:nth-child(2) { stop-color: color-mix(in oklch, var(--accent) 50%, var(--accent-2)); stop-opacity: 0.12; }
 #arch-herotop stop:nth-child(3) { stop-color: var(--accent-2); stop-opacity: 0.20; }
 
 /* slab faces */
-.arch-svg .face-l, .arch-svg polygon[fill="#0a0d14"] { fill: var(--slab-l); }
-.arch-svg .face-r, .arch-svg polygon[fill="#141925"] { fill: var(--slab-r); }
+.arch-svg .face-l { fill: var(--slab-l); }
+.arch-svg .face-r { fill: var(--slab-r); }
 .arch-svg .face-t { fill: var(--slab-top); }
 /* edges: the outline and the vertical corners are structure … */
-.arch-svg .edge,
-.arch-svg path[stroke="#3a435c"],
-.arch-svg polygon[stroke="#3a435c"] { stroke: var(--line-strong); }
+.arch-svg .edge { stroke: var(--line-strong); }
 /* … the old #5a6479 top rim was a LIT edge; it survives as a rim, in ink */
-.arch-svg .edge-hi,
-.arch-svg path[stroke="#5a6479"] { stroke: color-mix(in oklch, var(--content) 30%, transparent); }
+.arch-svg .edge-hi { stroke: color-mix(in oklab, var(--content) 30%, transparent); }
 /* leader lines out to the label column */
-.arch-svg .leader,
-.arch-svg path[stroke="#262d3e"] { stroke: var(--line-strong); }
-.arch-svg .leader-dot,
-.arch-svg circle[fill="#3a435c"] { fill: color-mix(in oklch, var(--content) 30%, transparent); }
+.arch-svg .leader { stroke: var(--line-strong); }
+.arch-svg .leader-dot { fill: color-mix(in oklab, var(--content) 30%, transparent); }
 /* origin dots: 2.7px graphics, not text, so bare --accent-2 clears the 3:1
    non-text threshold and is correct */
-.arch-svg .node,   .arch-svg circle[fill="#5BCEFA"] { fill: var(--accent); }
-.arch-svg .node-2, .arch-svg circle[fill="#F5A9B8"] { fill: var(--accent-2); }
+.arch-svg .node   { fill: var(--accent); }
+.arch-svg .node-2 { fill: var(--accent-2); }
 
 /* THE GLOW DOES NOT SURVIVE. A 26px Gaussian bloom of a saturated gradient at
-   22% over #eaefe6 is a printing smudge, not light. The contact shadow does
-   survive — that is the Organic depth vocabulary — re-tinted per polarity. */
-.arch-svg .glow, .arch-svg ellipse[filter="url(#arch-glow)"] { display: none; }
-.arch-svg .contact, .arch-svg ellipse[fill="#000"] {
+   22% over #f0f3f7 is a printing smudge, not light. The contact shadow does
+   survive — that is the Organic depth vocabulary — in the page's own ink. */
+.arch-svg .glow { display: none; }
+.arch-svg .contact {
   fill: var(--slab-shadow);
   opacity: var(--slab-shadow-o);
 }
@@ -1811,24 +1865,17 @@ footer .wrap { position: relative; z-index: 3; }
 /* the label column. Nothing in here may use --content-dim: the smallest text
    is 10px. ✦-marked specs take --accent so the figure and its legend agree. */
 .arch-svg [font-family] { font-family: var(--font-num); }
-.arch-svg .albl-i, .arch-svg .albl-cap,
-.arch-svg [fill="#8b96a8"] { fill: var(--content-label); }
-.arch-svg .albl-title,
-.arch-svg [fill="#f0f3f7"] { fill: var(--content); }
-.arch-svg .albl-spec,
-.arch-svg [fill="#7c8698"] { fill: var(--content-label); }
-.arch-svg .albl-spec-key,
-.arch-svg [fill="#d4dbe8"] { fill: var(--accent); }
-.arch-svg .albl-g-1,
-.arch-svg tspan[fill="#5BCEFA"] { fill: var(--accent); }
+.arch-svg .albl-i, .arch-svg .albl-cap { fill: var(--content-label); }
+.arch-svg .albl-title    { fill: var(--content); }
+.arch-svg .albl-spec     { fill: var(--content-label); }
+.arch-svg .albl-spec-key { fill: var(--accent); }
+.arch-svg .albl-g-1      { fill: var(--accent); }
 /* text, so the second voice takes its -800 step */
-.arch-svg .albl-g-2,
-.arch-svg tspan[fill="#F5A9B8"] { fill: var(--accent-2-800); }
+.arch-svg .albl-g-2 { fill: var(--accent-2-800); }
 /* Settlement was #7a8497 against the specs' #7c8698 — near-identical, a latent
    bug: it was meant to read as a peer of Matching and Risk, so it gets the same
    weight as they do rather than dissolving into its own spec list. */
-.arch-svg .albl-g-3,
-.arch-svg tspan[fill="#7a8497"] { fill: var(--content-label); font-weight: 600; }
+.arch-svg .albl-g-3 { fill: var(--content-label); font-weight: 600; }
 
 /* ─── responsive ────────────────────────────────────────────────────────── */
 @media (max-width: 720px) {
@@ -1924,7 +1971,6 @@ footer .wrap { position: relative; z-index: 3; }
 }
 .legal .disclaimer {
   background-color: var(--bg-elev);
-  border: 1px solid var(--line);
   border-radius: var(--radius-md);
   padding: 18px 20px;
   font-size: 14px;
@@ -1957,16 +2003,15 @@ footer .wrap { position: relative; z-index: 3; }
 .legal li { line-height: 1.72; margin-bottom: 7px; font-size: 15.5px; }
 .legal a  { color: var(--accent); text-decoration: underline; text-underline-offset: 2px;
             text-decoration-thickness: 1px;
-            text-decoration-color: color-mix(in oklch, var(--accent) 40%, transparent); }
+            text-decoration-color: color-mix(in oklab, var(--accent) 40%, transparent); }
 .legal a:hover { text-decoration-color: currentColor; }
 .legal strong { color: var(--content); font-weight: 600; }
 /* the author's-note callout. A 2px accent-2 stripe over an 8% wash — the wash
    is a fill so bare --accent-2 is right there, while the label is text and
    takes the -800 step. */
 .legal .view {
-  border-left: 2px solid var(--accent-2);
-  background: color-mix(in oklch, var(--accent-2) 8%, transparent);
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: color-mix(in oklab, var(--accent-2) 9%, transparent);
+  border-radius: var(--radius-sm);
   padding: 13px 18px;
   margin: 18px 0;
   font-size: 14.5px;
