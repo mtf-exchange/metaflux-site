@@ -25,14 +25,14 @@
    `sage` second voice — a green paper under green-blue ink. MetaFlux's brand is
    not green: mtf-exchange/brand fixes it as the flux gradient, sky blue
    #5BCEFA → soft pink #F5A9B8, and PRODUCT.md states the identity as blue /
-   pink / white. A site whose chrome is olive while its own logo, pride bar and
-   footer swatches are blue-and-pink reads as two brands stapled together, and
+   pink / white. A site whose chrome is olive while its own logo and preloader
+   strip are blue-and-pink reads as two brands stapled together, and
    the mark loses every argument with the ground it sits on. So:
 
      --bg          WHITE. The flag's third colour, and the only ground a blue
                    and a rose both sit on without either going muddy. The
-                   surfaces above it are near-white and separate by edge and
-                   shadow rather than by fill — see the note at the token.
+                   surfaces above it are tints of the brand blue and separate
+                   by fill alone — see the note at the token.
      --accent      the flux blue at ink lightness: L 0.45, C 0.16, hue 250.
                    Saturation is kept and paid for in lightness, because
                    saturation is what makes #5BCEFA read as this brand.
@@ -51,8 +51,8 @@
    panels on a grey page. Deriving a palette by holding lightness and turning
    hue is arithmetic, not colour. Saturation and ground are decisions.
 
-   Two things stay fixed hexes on purpose: the trans-pride bar at the top edge,
-   and the logo SVGs' own #5BCEFA → #cfc0e8 → #F5A9B8 ink. Those are the brand
+   Two things stay fixed hexes on purpose: the preloader's pride strip, and
+   the logo SVGs' own #5BCEFA → #cfc0e8 → #F5A9B8 ink. Those are the brand
    mark speaking at full saturation, not the interface — they live in --pride-*
    and are the only fixed hexes outside the token blocks. Every other gradient,
    accent and highlight in the page chrome is blue → rose, the .flux-fill /
@@ -213,8 +213,7 @@
      (hue ~81) toward the accent. A warm grey next to a sky-tinted surface reads
      as a different material; warmth here is --accent-2's job. Almost nothing
      paints from this ramp any more — the surfaces are accent tints and the text
-     is --content — so it survives for --on-accent, .tag-neutral and the shadow
-     ink. */
+     is --content — so it survives for --on-accent and --scrim. */
   --neutral-100: #f7f9fc;
   --neutral-200: #ebeff2;
   --neutral-300: #d6dbe1;
@@ -249,7 +248,7 @@
   /* Brand ink at full saturation. The three stops the logo SVGs carry; the
      pride bar is a statement, not a surface, and is never diluted. The accent
      ramps above are these same hues taken down to ink lightness, which is why
-     the bar and the page now agree instead of arguing. Only .pride-bar and
+     the bar and the page now agree instead of arguing. Only .pl-pride and
      .pride-swatches may reference these. */
   --pride-blue:     #5BCEFA;
   --pride-lavender: #cfc0e8;
@@ -411,36 +410,15 @@
 *, *::before, *::after { box-sizing: border-box; }
 * { margin: 0; padding: 0; }          /* carried over — page CSS assumes it */
 
-/* THE DESK AND THE SHEET.
-   html paints --seam: it is the canvas, so it is what shows in the overscroll
-   band above and below the document, and behind a page shorter than the
-   viewport. body paints --bg over it for exactly the height of the content —
-   that is the sheet. The one place the desk deliberately shows THROUGH the
-   sheet is the top band, where the pride bar and the floating nav pill live;
-   that is the gradient below, and it is why the pill reads as an object lying
-   on a desk rather than a bar welded to the page. Scroll down and the pill
-   floats over the sheet instead, exactly as the app's chrome does.
-
-   This is the Organic layering that replaces the aurora. It costs one
-   declaration and no markup, which is why it is here and not in a wrapper. */
+/* ONE GROUND. html and body are the same white sheet — there is no desk
+   band, no canvas showing through, no second surface behind the page. The
+   ladder's tints appear only where an object earns one. */
 html {
-  /* The page has one ground. --seam used to paint here so a "desk" band showed
-     above the nav pill, which made sense while the pride bar sat on it; with
-     the bar gone that band reads as a stray strip across the top of the page.
-     The desk is retired: html and body are the same sheet, and the only thing
-     --seam still does is fill the overscroll rubber-band. */
   background-color: var(--bg);
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
 }
 
-/* No desk band. --color-seam is the surface an app WINDOW sits on, and the
-   terminal earns it by actually having a window; a marketing page has no such
-   frame, so the band was a 97px strip of the darkest ground in the system laid
-   across the top of the page for nothing. It read as a dirty stripe with a hard
-   edge where it stopped, and it put the nav pill (--bg) at almost exactly the
-   value of the page below it, so the pill looked like a hole punched in the
-   strip rather than a surface floating over it. The page is one ground. */
 body {
   background-color: var(--bg);
   color: var(--content);
@@ -613,13 +591,12 @@ button:disabled { cursor: not-allowed; }
 .tactile {
   transition:
     transform 0.22s var(--ease-spring),
-    filter 0.15s var(--ease-spring),
     background-color 0.18s var(--ease-spring),
     color 0.18s var(--ease-spring);
   -webkit-tap-highlight-color: transparent;
 }
 .tactile:active { transform: translateY(0.5px) scale(0.985); transition-duration: 0.07s; }
-.tactile:disabled:active { transform: none; filter: none; }
+.tactile:disabled:active { transform: none; }
 
 /* ─── motion library ────────────────────────────────────────────────────────
    The app's named animations, transcribed so the site speaks the same motion
@@ -753,10 +730,9 @@ button:disabled { cursor: not-allowed; }
 }
 #preloader.fade-out { opacity: 0; visibility: hidden; }
 
-/* The pride strip continues across the overlay. Without it the page's own
-   .pride-bar reads as switching on the moment the preloader lifts; same
-   colours and same 3px means the two are indistinguishable through the
-   crossfade and the edge simply stays put. */
+/* The flag along the overlay's top edge — the brand at full saturation for
+   the moment of entrance. It belongs to the overlay and leaves with it; the
+   page itself carries no bar. */
 .pl-pride {
   position: absolute;
   top: 0; left: 0; right: 0;
@@ -889,7 +865,6 @@ button:disabled { cursor: not-allowed; }
 @keyframes mfx-enter-down { from { opacity: 0; transform: translateY(-10px); }
                             to   { opacity: 1; transform: translateY(0); } }
 
-#preloader.fade-out ~ .pride-bar { animation: mffade 0.5s var(--ease-out-soft) both; }
 #preloader.fade-out ~ nav        { animation: mfx-enter-down 0.52s var(--ease-out-soft) both; }
 #preloader.fade-out ~ .hero .wrap > * {
   animation: mfx-enter 0.56s var(--ease-out-soft) both;
@@ -935,7 +910,7 @@ nav {
   position: sticky;
   top: 16px;
   z-index: 100;
-  margin: 16px 24px 20px;   /* the bottom gap is the desk showing under the pill */
+  margin: 16px 24px 20px;   /* air around the pill — it floats, it isn't welded */
 }
 nav .bar {
   display: flex; align-items: center; justify-content: space-between;
@@ -1057,52 +1032,6 @@ h1 .accent, h2 .accent {
   line-height: 1.55;
 }
 .hero p.lede strong { color: var(--content); font-weight: 600; }
-
-/* ─── typewriter ────────────────────────────────────────────────────────────
-   The instrument-readout register survives the face change: Organic has no
-   monospace voice, so the line moves to Inter with tabular + lining figures,
-   and the uppercase label keeps its 0.08em tracking to hold the register.
-   ─────────────────────────────────────────────────────────────────────────── */
-.typed-line {
-  font-family: var(--font-num);
-  font-variant-numeric: tabular-nums lining-nums;
-  font-size: 15px;
-  color: var(--content-label);
-  margin: -16px 0 36px;
-  letter-spacing: 0.01em;
-  display: inline-flex;
-  align-items: baseline;
-  gap: 6px;
-}
-.typed-line .label {
-  color: var(--content-label);
-  text-transform: uppercase;
-  font-size: 12px;
-  letter-spacing: 0.08em;
-}
-.typed-line .typewriter {
-  color: var(--accent);
-  font-weight: 600;
-  min-width: 22ch;
-  display: inline-block;
-}
-.typed-line .cursor {
-  display: inline-block;
-  width: 8px;
-  height: 1.05em;
-  background: var(--accent-2);   /* a fill, so bare accent-2 is correct */
-  vertical-align: text-bottom;
-  margin-left: 2px;
-  animation: blink 1.1s steps(1) infinite;
-}
-@keyframes blink {
-  0%, 50%      { opacity: 1; }
-  50.01%, 100% { opacity: 0; }
-}
-/* End state, not a duration — the global clamp cannot pick one. */
-@media (prefers-reduced-motion: reduce) {
-  .typed-line .cursor { animation: none; opacity: 0.6; }
-}
 
 /* ─── buttons ───────────────────────────────────────────────────────────────
    A button is a slab of colour. Rest, hover and press are all restatements of
@@ -1645,11 +1574,6 @@ footer .wrap { position: relative; z-index: 3; }
    too soon: one of them addressed `[fill="#f0f3f7"]`, which is the new --bg,
    and would have painted any future paper-filled shape in body ink. */
 
-/* the brand sweep inside the figure is diagram chrome, not the logo — it takes
-   the migration, and becomes .flux-fill's own gradient */
-#arch-flux stop:nth-child(1) { stop-color: var(--accent); }
-#arch-flux stop:nth-child(2) { stop-color: color-mix(in oklch, var(--accent) 50%, var(--accent-2)); }
-#arch-flux stop:nth-child(3) { stop-color: var(--accent-2); }
 /* the slab top face: a shallow tonal step, not a dark-to-darker fall */
 #arch-top stop:nth-child(1) { stop-color: var(--slab-top); }
 /* srgb because both inputs are near-neutral papers a hair apart, and an oklch
@@ -1662,14 +1586,13 @@ footer .wrap { position: relative; z-index: 3; }
 #arch-herotop stop:nth-child(2) { stop-color: color-mix(in oklch, var(--accent) 50%, var(--accent-2)); stop-opacity: 0.12; }
 #arch-herotop stop:nth-child(3) { stop-color: var(--accent-2); stop-opacity: 0.20; }
 
-/* slab faces. The solid is drawn by its three tones alone — no outline, no
-   rim, no contact shadow. Two of the stroke classes below survive because
-   they are ANNOTATION, not edges: the leader lines that carry each slab out
-   to its label are the diagram's pointing finger. */
+/* slab faces. The solid is drawn by its three tones alone — no outline
+   strokes, no rim, no glow, no contact shadow (all deleted from the SVG
+   itself; the top faces are the #arch-top gradient, tuned through
+   --slab-top). The only strokes left in the figure are the leaders —
+   annotation, not edges. */
 .arch-svg .face-l { fill: var(--slab-l); }
 .arch-svg .face-r { fill: var(--slab-r); }
-.arch-svg .face-t { fill: var(--slab-top); }
-.arch-svg .edge, .arch-svg .edge-hi, .arch-svg .edge-flux { stroke: none; }
 /* leader lines out to the label column */
 .arch-svg .leader { stroke: color-mix(in oklab, var(--content) 30%, transparent); }
 .arch-svg .leader-dot { fill: color-mix(in oklab, var(--content) 30%, transparent); }
@@ -1678,9 +1601,6 @@ footer .wrap { position: relative; z-index: 3; }
 .arch-svg .node   { fill: var(--accent); }
 .arch-svg .node-2 { fill: var(--accent-2); }
 
-/* glow and contact shadow are both gone — one was emitted light, the other
-   cast light, and neither exists in a colour-only vocabulary */
-.arch-svg .glow, .arch-svg .contact { display: none; }
 
 /* the label column. Nothing in here may use --content-dim: the smallest text
    is 10px. ✦-marked specs take --accent so the figure and its legend agree. */
@@ -1739,7 +1659,7 @@ footer .wrap { position: relative; z-index: 3; }
 }
 
 /* phones: caps placed at end of the page rules so they win over the base hero
-   sizing (stops the big h1 / typewriter line forcing document width > viewport) */
+   sizing (stops the big h1 forcing document width > viewport) */
 @media (max-width: 600px) {
   .wrap { padding-left: 20px; padding-right: 20px; }
   .hero { padding: 88px 0 64px; } /* min-height + centring inherited from 720px */
@@ -1747,8 +1667,6 @@ footer .wrap { position: relative; z-index: 3; }
   .hero h1, .paper-hero h1 { font-size: clamp(32px, 8.6vw, 46px); max-width: 100%; }
   h2, .testnet-section h2 { font-size: clamp(25px, 6.4vw, 34px); }
   .hero p.lede { font-size: 18px; }
-  .typed-line { display: flex; flex-wrap: wrap; }
-  .typed-line .typewriter { min-width: 0; max-width: 100%; }
   .testnet-section .wrap { width: calc(100% - 40px); }
 }
 
@@ -1819,9 +1737,8 @@ footer .wrap { position: relative; z-index: 3; }
             text-decoration-color: color-mix(in oklab, var(--accent) 40%, transparent); }
 .legal a:hover { text-decoration-color: currentColor; }
 .legal strong { color: var(--content); font-weight: 600; }
-/* the author's-note callout. A 2px accent-2 stripe over an 8% wash — the wash
-   is a fill so bare --accent-2 is right there, while the label is text and
-   takes the -800 step. */
+/* the author's-note callout: an accent-2 wash. The wash is a fill, so bare
+   --accent-2 is right there; the label is text and takes the -800 step. */
 .legal .view {
   background: color-mix(in oklab, var(--accent-2) 9%, transparent);
   border-radius: var(--radius-sm);
@@ -1854,8 +1771,8 @@ footer .wrap { position: relative; z-index: 3; }
    smooth scrolling is neither an animation nor a transition, so it survives and
    has to be named; and animation-DELAY survives too, which would leave any
    fill-mode:both entrance holding its invisible `from` state for the length of
-   the delay. The two rules that choose a resting APPEARANCE rather than a
-   duration (#preloader .pl-p, .typed-line .cursor) stay where they are.
+   the delay. The rules that choose a resting APPEARANCE rather than a
+   duration (the #preloader block's reduced-motion states) stay where they are.
    ─────────────────────────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

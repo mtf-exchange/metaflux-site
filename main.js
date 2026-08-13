@@ -3,9 +3,7 @@
 // 1. Preloader: draws the mark, lifts the overlay, then REMOVES it — the
 //    entrance animations are keyed off `#preloader.fade-out ~ …`, so the node
 //    going away is what ends them.
-// 2. Typewriter effect on `.typewriter` elements. Cycles through a list of
-//    phrases sourced from `data-phrases` (pipe-separated). Respects
-//    prefers-reduced-motion (renders the first phrase static, no animation).
+// 2. TOC scroll-spy on the whitepaper page.
 //
 // There is no appearance code here any more: the site is light-only, so nothing
 // resolves a polarity, stamps an attribute or listens to prefers-color-scheme.
@@ -70,54 +68,6 @@
     // crawler) resolve the figure to visible anyway so it never ships blank.
     setTimeout(() => archFig.classList.add('in'), 1800);
   }
-
-  // ── typewriter ───────────────────────────────────────────────────
-  // Each element:  <span class="typewriter" data-phrases="a|b|c">a</span>
-  //   - `data-phrases` is pipe-separated; first phrase is the static fallback.
-  //   - Optional `data-cps` (chars per second; default 22 typing, 40 deleting).
-  //   - Optional `data-pause` (ms paused after a phrase fully typed; default 1600).
-  document.querySelectorAll('.typewriter').forEach((el) => {
-    const phrases = (el.dataset.phrases || el.textContent || '').split('|').map(s => s.trim()).filter(Boolean);
-    if (phrases.length === 0) return;
-    if (reduce || phrases.length === 1) {
-      el.textContent = phrases[0];
-      return;
-    }
-    const typeMs = 1000 / parseInt(el.dataset.cps || '22', 10);
-    const delMs  = 1000 / parseInt(el.dataset.cpsDel || '40', 10);
-    const pauseMs = parseInt(el.dataset.pause || '1600', 10);
-
-    let i = 0;     // phrase index
-    let j = 0;     // char index
-    let mode = 'typing'; // 'typing' | 'pausing' | 'deleting'
-
-    const tick = () => {
-      const p = phrases[i];
-      if (mode === 'typing') {
-        j++;
-        el.textContent = p.slice(0, j);
-        if (j >= p.length) {
-          mode = 'pausing';
-          setTimeout(tick, pauseMs);
-          return;
-        }
-        setTimeout(tick, typeMs);
-      } else if (mode === 'pausing') {
-        mode = 'deleting';
-        setTimeout(tick, delMs);
-      } else {
-        j--;
-        el.textContent = p.slice(0, Math.max(0, j));
-        if (j <= 0) {
-          mode = 'typing';
-          i = (i + 1) % phrases.length;
-        }
-        setTimeout(tick, delMs);
-      }
-    };
-    el.textContent = '';
-    setTimeout(tick, 400);
-  });
 
   // ── TOC scroll-spy (whitepaper page only) ────────────────────────
   // Highlights the table-of-contents link for the section currently in
