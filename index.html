@@ -146,77 +146,279 @@
 
 <header class="hero">
   <div class="wrap">
-    <h1>Derivatives,<br>on <span class="accent">first principles</span>.</h1>
-    <div class="typed-line">
-      <span class="label">/ what we ship</span>
-      <span class="typewriter" data-phrases="parallel EVM execution|cross-asset portfolio margin|MEV-resistant matching|permissionless market deploy|sub-second finality|RFQ + frequent batch auctions|tiered liquidation grace|first-class API wallets">parallel EVM execution</span><span class="cursor"></span>
+    <div class="hero-head">
+      <h1>The chain that clears <span class="accent">its own trades</span>.</h1>
+      <p>Matching, cross-asset margin, liquidation and settlement run native on MetaFluxBFT — with a parallel EVM alongside. Not a contract on someone else's L1.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="https://app.mtf.exchange/" target="_blank" rel="noopener">Open the devnet <span class="arrow">→</span></a>
+        <a class="btn btn-secondary" href="whitepaper.html">Read the whitepaper <span class="arrow">→</span></a>
+      </div>
     </div>
-    <p class="lede">A parallel EVM, so your contract calls don't queue behind everyone else's. Portfolio margin that nets a hedged book to one number, not three. Matching that doesn't bleed to MEV. The things every serious trading desk has been asking for, on a chain that ships them.</p>
-    <div class="cta-row">
-      <a class="btn btn-primary" href="https://docs.mtf.exchange/">Read the docs <span class="arrow">→</span></a>
-      <a class="btn btn-secondary" href="https://app.mtf.exchange/" target="_blank" rel="noopener">Apply for devnet <span class="arrow">→</span></a>
+  </div>
+
+  <div class="stage-figure">
+    <div class="desk" role="img" aria-label="The MetaFlux devnet desk: a BTC-USDC perpetual with its chart, order book, order ticket and blotter.">
+
+      <div class="desk-rail">
+        <span class="seg"><span class="on">Perpetuals</span><span>Spot</span><span>Margin</span><span>Options</span><span>CDS</span></span>
+        <span class="net"><i></i>Devnet</span>
+        <span class="wallet">Connect wallet</span>
+      </div>
+
+      <div class="desk-mkt">
+        <span class="desk-sym"><span class="star">☆</span><b>BTC-USDC</b><span class="desk-chip">PERP</span></span>
+        <span class="desk-stat"><span class="k">Mark</span><span class="v">63809.3</span></span>
+        <span class="desk-stat"><span class="k">Oracle</span><span class="v">63827.1</span></span>
+        <span class="desk-stat"><span class="k">24h Change</span><span class="v dn">−$44 / −0.07%</span></span>
+        <span class="desk-stat"><span class="k">24h Volume</span><span class="v">$2,777</span></span>
+        <span class="desk-stat"><span class="k">Open Interest</span><span class="v">$641,290</span></span>
+        <span class="desk-stat"><span class="k">Funding (1h)</span><span class="v dn">−0.0200%</span></span>
+      </div>
+
+      <div class="desk-body">
+
+        <div class="desk-pane">
+          <div class="desk-chart">
+            <div class="tf"><span>15m</span><span class="on">1H</span><span>4H</span><span>Indicators</span><span>Mark</span></div>
+            <div class="ohlc">BTC-USDC · 1h · MetaFlux &nbsp; O <b>63853.5</b> H <b>63863.8</b> L <b>63796.0</b> C <b>63809.3</b> <span class="dn">−47.6 (−0.07%)</span></div>
+            <svg viewBox="0 0 560 240" preserveAspectRatio="none" aria-hidden="true">
+              <g stroke="var(--line)" stroke-width="1">
+                <line x1="0" y1="30" x2="560" y2="30"/><line x1="0" y1="80" x2="560" y2="80"/>
+                <line x1="0" y1="130" x2="560" y2="130"/><line x1="0" y1="180" x2="560" y2="180"/>
+              </g>
+              <g stroke-width="7" stroke-linecap="butt">
+                <g stroke="var(--accent-300)">
+                  <line x1="18"  y1="58"  x2="18"  y2="96"/><line x1="46"  y1="44"  x2="46"  y2="88"/>
+                  <line x1="102" y1="62"  x2="102" y2="104"/><line x1="130" y1="72"  x2="130" y2="112"/>
+                  <line x1="214" y1="120" x2="214" y2="152"/><line x1="242" y1="112" x2="242" y2="146"/>
+                  <line x1="326" y1="150" x2="326" y2="182"/><line x1="410" y1="140" x2="410" y2="176"/>
+                  <line x1="438" y1="128" x2="438" y2="164"/><line x1="522" y1="104" x2="522" y2="138"/>
+                </g>
+                <g stroke="var(--accent-2)">
+                  <line x1="74"  y1="50"  x2="74"  y2="92"/><line x1="158" y1="84"  x2="158" y2="126"/>
+                  <line x1="186" y1="100" x2="186" y2="140"/><line x1="270" y1="128" x2="270" y2="168"/>
+                  <line x1="298" y1="140" x2="298" y2="176"/><line x1="354" y1="158" x2="354" y2="192"/>
+                  <line x1="382" y1="150" x2="382" y2="186"/><line x1="466" y1="118" x2="466" y2="158"/>
+                  <line x1="494" y1="110" x2="494" y2="148"/><line x1="550" y1="98"  x2="550" y2="132"/>
+                </g>
+              </g>
+              <path d="M18 78 L74 70 L130 92 L186 118 L242 130 L298 158 L354 174 L410 158 L466 138 L522 120 L550 114"
+                    fill="none" stroke="var(--accent-700)" stroke-width="1.5" opacity=".55"/>
+              <line x1="0" y1="122" x2="560" y2="122" stroke="var(--content)" stroke-width="1" stroke-dasharray="3 4" opacity=".35"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="desk-pane">
+          <div class="book-head"><span class="on">Order book</span><span>Trades</span></div>
+          <div class="book-cols"><span>Price <i>0.1 ▾</i></span><span>Size (USDC)</span><span>Total (USDC) <i>▾</i></span></div>
+          <div class="book-row ask" style="--d:22%"><span>64,335.5</span><span>29,553.799</span><span>410,967.627</span></div>
+          <div class="book-row ask" style="--d:31%"><span>64,270.8</span><span>29,524.077</span><span>381,413.828</span></div>
+          <div class="book-row ask" style="--d:43%"><span>64,209.7</span><span>29,496.010</span><span>351,889.751</span></div>
+          <div class="book-row ask" style="--d:55%"><span>64,152.4</span><span>29,469.688</span><span>322,393.741</span></div>
+          <div class="book-row ask" style="--d:66%"><span>64,099.0</span><span>29,445.158</span><span>292,924.053</span></div>
+          <div class="book-row ask" style="--d:78%"><span>64,049.6</span><span>29,422.465</span><span>263,478.896</span></div>
+          <div class="book-row ask" style="--d:90%"><span>64,004.3</span><span>29,401.655</span><span>234,056.431</span></div>
+          <div class="book-mid"><b>63,809.4</b><span>spread 29.5 · 0.046%</span></div>
+          <div class="book-row bid" style="--d:23%"><span>63,794.6</span><span>28,920.644</span><span>28,920.644</span></div>
+          <div class="book-row bid" style="--d:34%"><span>63,788.1</span><span>29,882.811</span><span>58,803.455</span></div>
+          <div class="book-row bid" style="--d:45%"><span>63,777.3</span><span>29,878.390</span><span>88,681.845</span></div>
+          <div class="book-row bid" style="--d:57%"><span>63,752.5</span><span>29,866.134</span><span>118,547.978</span></div>
+          <div class="book-row bid" style="--d:68%"><span>63,729.8</span><span>29,855.499</span><span>148,403.478</span></div>
+          <div class="book-row bid" style="--d:80%"><span>63,694.4</span><span>29,838.916</span><span>178,242.393</span></div>
+          <div class="book-row bid" style="--d:92%"><span>63,657.9</span><span>29,821.816</span><span>208,064.210</span></div>
+          <div class="book-imb">
+            <span class="l">50%</span>
+            <span class="bar"><i style="width:50%"></i><i style="width:50%"></i></span>
+            <span class="r">50%</span>
+          </div>
+        </div>
+
+        <div class="desk-pane">
+          <div class="tkt">
+            <div class="tkt-row"><span>Cross ▾</span><span>100x ▾</span><span>One-way ▾</span></div>
+            <div class="tkt-seg"><span class="on">＋ Open</span><span>－ Close</span></div>
+            <div class="tkt-tabs"><span>Market</span><span class="on">Limit</span><span>More</span></div>
+            <div class="tkt-line"><span>Available to trade</span><b>184,620.44 USDC</b></div>
+            <div class="tkt-line"><span>Current position</span><b>3.25 BTC</b></div>
+            <div class="tkt-field"><span class="k">Price</span><span class="v">63809.3</span><span class="bbo">BBO</span></div>
+            <div class="tkt-field"><span class="k">Size</span><span class="v">95,714 USDC</span></div>
+            <div class="tkt-slider"><span class="track"><i></i><b></b></span><span class="pct">50%</span></div>
+            <div class="tkt-line"><span>Take profit / stop loss</span><b>TIF GTC</b></div>
+            <div class="tkt-go">Buy / Long BTC-USDC</div>
+            <div class="tkt-read">
+              <span>Liq price</span><span>52,140.5</span>
+              <span>Cost</span><span>957.14 USDC</span>
+              <span>Fees (maker / taker)</span><span>0.0100% / 0.0350%</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="desk-foot">
+        <div class="desk-tabs">
+          <span>Balances</span><span class="on">Positions (3)</span><span>Open Orders</span><span>TWAP</span>
+          <span>Trade History</span><span>Position History</span><span>Funding History</span><span>Order History</span>
+        </div>
+        <table class="blotter">
+          <thead>
+            <tr><th>Market</th><th>Size</th><th>Value</th><th>Entry</th><th>Mark</th><th>PnL (ROE%)</th><th>Liq.</th><th>Margin</th><th>Funding</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><b>BTC-USDC</b></td><td class="long">↑ +3.250</td><td>207,380</td><td>63,480.0</td><td>63,809.3</td><td class="long">+1,070 (+10.1%)</td><td>52,140.5</td><td>10,369</td><td>−38.20</td></tr>
+            <tr><td><b>ETH-USDC</b></td><td class="short">↓ −42.00</td><td>132,678</td><td>3,196.4</td><td>3,158.9</td><td class="long">+1,575 (+23.7%)</td><td>3,842.7</td><td>6,634</td><td>+12.44</td></tr>
+            <tr><td><b>SOL-USDC</b></td><td class="short">↓ −1,250</td><td>184,375</td><td>146.20</td><td>147.50</td><td class="short">−1,625 (−17.6%)</td><td>179.40</td><td>9,219</td><td>+21.06</td></tr>
+          </tbody>
+        </table>
+      </div>
+
     </div>
+    <p class="stage-caption">The devnet desk, rebuilt here in HTML. Numbers are illustrative; every column, label and band on this page is one the engine actually reports.</p>
   </div>
 </header>
 
-<section id="protocol">
+<section class="stage" id="numbers">
   <div class="wrap">
-    <div class="section-head">
-      <div>
-        <div class="section-tag">01 — Differentiation</div>
-        <h2>What we built that <span class="accent">the others</span> didn't.</h2>
-      </div>
-      <p>Most new exchanges compete on lower fees. We're not interested in that race. MetaFlux is a bet that traders care more about market structure, risk infrastructure, and execution latency than they care about saving 0.2 bps a fill.</p>
+    <div class="stage-band">
+      <div><div class="n">&lt;1s</div><div class="k">Finality, <b>2-chain BFT</b></div></div>
+      <div><div class="n">1</div><div class="k">Margin number for a <b>whole book</b></div></div>
+      <div><div class="n">T0</div><div class="k">Grace band <b>before any close</b></div></div>
+      <div><div class="n">0</div><div class="k">Committees between you and a <b>new market</b></div></div>
     </div>
+  </div>
+</section>
 
-    <div class="pillars">
-      <div class="pillar">
-        <div class="num">01 / Microstructure</div>
-        <h3>Order types other chains haven't shipped.</h3>
-        <p>RFQ for size that shouldn't advertise on the book. Frequent batch auctions for markets where fairness beats latency. Matching encrypted at intake, revealed at settlement.</p>
-        <ul>
-          <li>RFQ + maker quotes</li>
-          <li>Frequent batch auctions</li>
-          <li>Threshold-encrypted intent</li>
-          <li>On-chain market-making primitives</li>
-        </ul>
+<section class="stage" id="margin">
+  <div class="wrap">
+    <div class="stage-split">
+      <div class="col-head">
+        <div class="eyebrow">Risk</div>
+        <h2>One number, not three.</h2>
+        <p>A SPAN-style scenario engine values your whole book at once, so a hedge stops paying margin twice. Same three positions, same equity — only the maintenance margin moves.</p>
+        <div class="stage-links"><a href="whitepaper.html">How the engine values a book</a></div>
       </div>
-
-      <div class="pillar">
-        <div class="num">02 / Risk</div>
-        <h3>Margin that respects correlation.</h3>
-        <p>A SPAN-style scenario engine nets your hedged book to one number. A T0 yellow-card grace tier freezes resting orders before any position is touched — one block to react, not one tick.</p>
-        <ul>
-          <li>Cross-asset portfolio margin</li>
-          <li>Tiered liquidation (T0 → T4)</li>
-          <li>Dynamic risk parameters</li>
-          <li>Hedge mode — dual-side positions</li>
-        </ul>
-      </div>
-
-      <div class="pillar">
-        <div class="num">03 / Execution</div>
-        <h3>The EVM, made parallel.</h3>
-        <p>Transactions execute optimistically and in parallel; conflicts re-run, the rest commit. Derivatives-aware precompiles (portfolio margin, ADL pricing, RFQ depth, vault NAV) run native — not as 80,000-gas Solidity.</p>
-        <ul>
-          <li>Parallel EVM execution</li>
-          <li>Derivatives precompiles</li>
-          <li>Native cross-chain calls</li>
-          <li>EIP-712, EVM addresses</li>
-        </ul>
+      <div>
+        <div class="summaries">
+          <div class="summary">
+            <h4>Account summary</h4>
+            <div class="mode">Isolated — every market posts its own</div>
+            <div class="rule"></div>
+            <dl>
+              <div><dt>Margin ratio</dt><dd class="hot"><span class="ring"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="var(--line)" stroke-width="4"/><circle cx="12" cy="12" r="9" stroke="var(--accent-2)" stroke-width="4" stroke-linecap="round" stroke-dasharray="40 57" transform="rotate(-90 12 12)"/></svg>71.24%</span></dd></div>
+              <div><dt>Portfolio value</dt><dd>528,018</dd></div>
+              <div><dt>USDC available</dt><dd class="hot">58,214</dd></div>
+              <div><dt>In use</dt><dd>26,401</dd></div>
+              <div><dt>Unrealised</dt><dd>+1,020</dd></div>
+              <div><dt>Equity</dt><dd>529,038</dd></div>
+              <div><dt>Maint. margin</dt><dd>26,401</dd></div>
+              <div><dt>Leverage</dt><dd>20.0×</dd></div>
+              <div><dt>Liquidation risk</dt><dd class="hot">T0 · Warning</dd></div>
+            </dl>
+          </div>
+          <div class="summary lead">
+            <h4>Account summary</h4>
+            <div class="mode">Cross-asset portfolio margin</div>
+            <div class="rule"></div>
+            <dl>
+              <div><dt>Margin ratio</dt><dd class="key"><span class="ring"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="var(--line)" stroke-width="4"/><circle cx="12" cy="12" r="9" stroke="var(--accent-300)" stroke-width="4" stroke-linecap="round" stroke-dasharray="16 81" transform="rotate(-90 12 12)"/></svg>27.58%</span></dd></div>
+              <div><dt>Portfolio value</dt><dd>528,018</dd></div>
+              <div><dt>USDC available</dt><dd class="key">74,393</dd></div>
+              <div><dt>In use</dt><dd>10,222</dd></div>
+              <div><dt>Unrealised</dt><dd>+1,020</dd></div>
+              <div><dt>Equity</dt><dd>529,038</dd></div>
+              <div><dt>Maint. margin</dt><dd class="key">10,222</dd></div>
+              <div><dt>Leverage</dt><dd>20.0×</dd></div>
+              <div><dt>Liquidation risk</dt><dd class="key">Safe</dd></div>
+            </dl>
+          </div>
+        </div>
+        <p class="stage-caption">AccountSummary as the desk draws it — the ratio ring in its risk colour, then the readings, then the band the engine reports.</p>
       </div>
     </div>
   </div>
 </section>
 
-<section id="architecture">
+<section class="stage" id="liquidation">
   <div class="wrap">
-    <div class="section-head">
+    <div class="stage-lede">
       <div>
-        <div class="section-tag">02 — Architecture</div>
-        <h2>One L1. A native <span class="accent">clearing core</span>, on MetaFluxBFT consensus.</h2>
+        <div class="eyebrow">Liquidation</div>
+        <h2>A warning before a liquidation.</h2>
       </div>
-      <p>Not a contract on someone else's chain — the clearing engine <em>is</em> the chain. Matching, cross-asset margin, liquidation and settlement run native on MetaFluxBFT consensus, with a parallel EVM alongside for programmability. Here's the stack a signed order falls through.</p>
+      <p>The engine reports a band, not a verdict. T0 cancels your resting orders and touches no position — a block to react, not a tick. Above 1.1× it takes no action at all.</p>
+    </div>
+  </div>
+  <div class="stage-figure">
+    <div class="tiers">
+      <div class="tier lead">
+        <div class="code">T0 <em>· Warning</em></div>
+        <h4>Resting orders cancelled</h4>
+        <p>Post-only orders are pulled. Positions are untouched. Add margin or reduce — nothing else happens.</p>
+        <span class="ratio">equity ÷ maint. margin · 1.0–1.1×</span>
+      </div>
+      <div class="tier">
+        <div class="code">T1 <em>· Partial close</em></div>
+        <h4>Half at market</h4>
+        <p>Half the position is closed at market.</p>
+        <span class="ratio">0.8–1.0×</span>
+      </div>
+      <div class="tier">
+        <div class="code">T2 <em>· Full close</em></div>
+        <h4>Closed in full</h4>
+        <p>The position is closed at market.</p>
+        <span class="ratio">0.667–0.8×</span>
+      </div>
+      <div class="tier">
+        <div class="code">T3 <em>· Backstop</em></div>
+        <h4>Taken over</h4>
+        <p>The backstop assumes the position.</p>
+        <span class="ratio">below 0.667×</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="stage" id="protocol">
+  <div class="wrap">
+    <div class="stage-split">
+      <div class="col-head">
+        <div class="eyebrow">Execution</div>
+        <h2>The EVM, made parallel.</h2>
+        <p>Transactions execute optimistically, side by side. Conflicts re-run; everything else commits.</p>
+        <div class="stage-links"><a href="https://docs.mtf.exchange/">Read the docs</a></div>
+      </div>
+      <dl class="specs">
+        <div>
+          <dt>revm on Block-STM</dt>
+          <dd>Your contract call does not queue behind a market it never touches. Derivatives precompiles — <b>portfolio margin, ADL pricing, RFQ depth, vault NAV</b> — run native rather than as 80,000-gas Solidity.</dd>
+        </div>
+        <div>
+          <dt>Matching other chains haven't shipped</dt>
+          <dd>A central limit order book with self-trade prevention, plus <b>RFQ</b> for size that shouldn't advertise and <b>frequent batch auctions</b> where fairness beats latency. Intent is encrypted at intake and revealed at settlement.</dd>
+          <span class="meta">CLOB + STP · RFQ · FBA · MEV-resistant intake</span>
+        </div>
+        <div>
+          <dt>MetaFluxBFT consensus</dt>
+          <dd>A <b>2-chain BFT</b> protocol with a stake-weighted leader, optimistic execution, and quorum and timeout certificates at two-thirds stake.</dd>
+        </div>
+        <div>
+          <dt>Settlement in the block</dt>
+          <dd>Sixteen begin-block effects, a weighted-median oracle mark, funding, and an <b>LtHash16</b> state commitment folded into the app hash every block.</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section class="stage" id="architecture">
+  <div class="wrap">
+    <div class="stage-lede">
+      <div>
+        <div class="eyebrow">Architecture</div>
+        <h2>The clearing engine <span class="accent">is</span> the chain.</h2>
+      </div>
+      <p>Not a contract on someone else's L1. Here is the stack a signed order falls through, from the gateway down to consensus.</p>
     </div>
 
     <figure class="arch-figure">
@@ -339,60 +541,55 @@
   </div>
 </section>
 
-<section id="builders">
+<section class="stage" id="builders">
   <div class="wrap">
-    <div class="section-head">
-      <div>
-        <div class="section-tag">03 — Builders</div>
-        <h2>Permissionless market deploy. <span class="accent">Real</span> EVM.</h2>
+    <div class="stage-split">
+      <div class="col-head">
+        <div class="eyebrow">Builders</div>
+        <h2>Deploy a market in one transaction.</h2>
+        <p>Win the on-chain gas auction, supply the spec, take orders in the next block. No protocol-team gate, no allow-list, no committee.</p>
+        <div class="stage-links">
+          <a href="https://docs.mtf.exchange/mip/mip-3">MIP-3 spec</a>
+          <a href="https://docs.mtf.exchange/">EVM docs</a>
+        </div>
       </div>
-      <p>Any builder can list a new perpetual or spot market via an on-chain gas auction. No protocol-team gate, no allow-list, no committee. The protocol arbitrates the auction; you ship the market.</p>
-    </div>
-
-    <div class="features">
-      <div class="feature">
-        <div class="tag">MIP-3</div>
-        <h4>Deploy a market in one transaction.</h4>
-        <p>Win the gas auction — the winning bid is burned — supply the spec (leverage, maintenance ratio, funding parameters, oracle source), and the market is live in the first block, taking orders the next. Liquidity is your problem; the protocol does the rest.</p>
-        <a class="link" href="https://docs.mtf.exchange/mip/mip-3">MIP-3 spec →</a>
-      </div>
-
-      <div class="feature">
-        <div class="tag">EVM</div>
-        <h4>Same Solidity. Faster chain.</h4>
-        <p>Same address format, same signing, same Solidity. Plus derivatives-aware precompiles (portfolio margin, ADL pricing, RFQ depth, vault NAV) callable from any smart contract.</p>
-        <a class="link" href="https://docs.mtf.exchange/">EVM docs →</a>
-      </div>
+      <dl class="specs">
+        <div>
+          <dt>The auction</dt>
+          <dd>Bids are on-chain and the winning bid is <b>burned</b>. Nobody has to approve you, and nobody is paid to.</dd>
+        </div>
+        <div>
+          <dt>The spec</dt>
+          <dd>Leverage, maintenance ratio, funding parameters, oracle source. Live in the first block, taking orders in the next. <b>Liquidity is your problem; the protocol does the rest.</b></dd>
+        </div>
+        <div>
+          <dt>The same Solidity</dt>
+          <dd>Same address format, same EIP-712 signing, same tooling — plus derivatives precompiles callable from any contract.</dd>
+        </div>
+      </dl>
     </div>
   </div>
 </section>
 
-<section id="traders">
+<section class="stage" id="traders">
   <div class="wrap">
-    <div class="section-head">
+    <div class="stage-lede">
       <div>
-        <div class="section-tag">04 — Traders</div>
-        <h2>Migration measured in <span class="accent">days</span>.</h2>
+        <div class="eyebrow">Traders</div>
+        <h2>Your strategy ports unchanged.</h2>
       </div>
-      <p>Your strategy ports unchanged: agent wallets, sub-accounts, vaults, cross/isolated margin, client order ids — the same primitives, one to one. The wire layer is MTF-native by design (no compatibility shim), and the SDK absorbs that rewrite: same EIP-712 signing, every EVM wallet works unmodified.</p>
+      <p>Agent wallets, sub-accounts, vaults, cross and isolated margin, client order ids — the same primitives, one to one. The SDK absorbs the wire rewrite.</p>
     </div>
 
-    <div class="features">
-      <div class="feature">
-        <div class="tag">API WALLETS</div>
-        <h4>Cold master. Hot agents.</h4>
-        <p>Approve a trading key once from your cold master. The agent signs every order without ever holding withdrawal authority. Per-bot scoping, automatic expiry, a clean audit trail.</p>
-        <a class="link" href="https://docs.mtf.exchange/concepts/agent-wallets">Agent wallets →</a>
-      </div>
-
-      <div class="feature">
-        <div class="tag">MTF-NATIVE SDK</div>
-        <h4>Same concepts. New wire, absorbed.</h4>
-        <p>TypeScript and Rust SDKs speak the native surface — POST /info, POST /exchange, WebSocket — with typed fixed-point wrappers and hardware-signer support. The migration guide maps every action and query name from where you're coming from.</p>
-        <a class="link" href="https://docs.mtf.exchange/integration/migrating-from-hl">Migration guide →</a>
-      </div>
+    <div class="briefs" style="margin-top: 56px;">
+      <div><h4>Cold master, hot agents</h4><p>Approve a trading key once. The agent signs every order and never holds withdrawal authority.</p></div>
+      <div><h4>Per-bot scoping</h4><p>Automatic expiry, a clean audit trail, and one key per strategy rather than one key per desk.</p></div>
+      <div><h4>MTF-native wire</h4><p>One gateway: POST /info, POST /exchange, WebSocket, EVM JSON-RPC. No compatibility shim.</p></div>
+      <div><h4>Every EVM wallet</h4><p>The EIP-712 envelope is standard, so hardware signers and browser wallets work unmodified.</p></div>
     </div>
+  </div>
 
+  <div class="stage-figure narrow" style="margin-top: 56px;">
     <div class="code-frame">
       <div class="code-bar">
         <div class="dots"><span></span><span></span><span></span></div>
@@ -414,80 +611,81 @@
   </div>
 </section>
 
-<section id="faq">
+<section class="stage" id="faq">
   <div class="wrap">
-    <div class="section-head">
-      <div>
-        <div class="section-tag">05 — FAQ</div>
-        <h2>Honest <span class="accent">answers</span>.</h2>
+    <div class="stage-split">
+      <div class="col-head">
+        <div class="eyebrow">FAQ</div>
+        <h2>Honest answers.</h2>
+        <p>The complete API surface, concept catalog and integration guides live in the docs.</p>
+        <div class="stage-links"><a href="https://docs.mtf.exchange/">docs.mtf.exchange</a></div>
       </div>
-      <p>For deeper coverage, the documentation at <a class="mono" style="color: var(--accent);" href="https://docs.mtf.exchange/">docs.mtf.exchange</a> has the complete API surface, concept catalog, and integration guides. This is just the highlights.</p>
-    </div>
 
-    <div class="faq-list">
-      <details>
-        <summary>What is MetaFlux, exactly?</summary>
-        <p>An independent L1 derivatives chain. Its own validator set, its own BFT consensus, its own EVM execution layer. Built from first principles for derivatives clearing, not borrowed from a general-purpose L1.</p>
-      </details>
-      <details>
-        <summary>How does it compare to the other perps DEXs?</summary>
-        <p>Specifically: Hyperliquid, dYdX (v4), Lighter, Aster. The honest table:</p>
-        <div class="compare">
-          <table>
-            <thead>
-              <tr><th>Capability</th><th>MetaFlux</th><th>Hyperliquid</th><th>dYdX v4</th><th>Lighter</th><th>Aster</th></tr>
-            </thead>
-            <tbody>
-              <tr><td class="feature-name">L1 BFT consensus</td>      <td class="us">yes</td><td class="us">yes</td><td class="us">yes</td><td class="no">L2</td><td class="us">yes</td></tr>
-              <tr><td class="feature-name">EVM-compatible</td>          <td class="us">yes</td><td class="maybe">partial (HyperEVM)</td><td class="no">no (Cosmos)</td><td class="no">no</td><td class="maybe">partial</td></tr>
-              <tr><td class="feature-name">Parallel EVM execution</td>   <td class="us">yes</td><td class="no">no</td><td class="no">n/a</td><td class="no">n/a</td><td class="no">no</td></tr>
-              <tr><td class="feature-name">Cross-asset portfolio margin</td><td class="us">yes</td><td class="maybe">limited</td><td class="no">no</td><td class="no">no</td><td class="no">no</td></tr>
-              <tr><td class="feature-name">T0 grace tier before partial</td><td class="us">yes</td><td class="no">no</td><td class="no">no</td><td class="no">no</td><td class="no">no</td></tr>
-              <tr><td class="feature-name">RFQ + FBA matching</td>      <td class="us">yes</td><td class="no">no</td><td class="no">no</td><td class="no">no</td><td class="no">no</td></tr>
-              <tr><td class="feature-name">MEV-resistant matching</td>  <td class="us">yes</td><td class="no">no</td><td class="no">no</td><td class="no">no</td><td class="no">no</td></tr>
-              <tr><td class="feature-name">Permissionless market deploy</td><td class="us">yes</td><td class="us">yes</td><td class="no">no</td><td class="no">no</td><td class="no">no</td></tr>
-              <tr><td class="feature-name">HL-familiar primitives (agents · subs · vaults)</td>  <td class="us">yes</td><td class="us">native</td><td class="no">no</td><td class="no">no</td><td class="no">no</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p style="margin-top: 16px;">Capability is one axis. Liquidity, fees, listings, and operational maturity are others. Pick the chain that wins on the axis you actually care about.</p>
-      </details>
-      <details>
-        <summary>When does mainnet launch?</summary>
-        <p>Mainnet follows audit and testnet milestones, not calendar dates. Devnet is live and open for integration now; a six-month public testnet precedes the TGE, with phased validator onboarding and the bridge audit as the explicit gating item. Subscribe to updates via the docs site.</p>
-      </details>
-      <details>
-        <summary>What does integration look like?</summary>
-        <p>MetaFlux speaks its own MTF-native protocol — one gateway serving POST /info, POST /exchange, WebSocket, and EVM JSON-RPC. The SDKs (TypeScript and Rust, preview) absorb the wire layer; the concepts — agent wallets, sub-accounts, margin modes — port one to one from other perp venues, and the wire is small enough to hand-implement from the typed-data signing spec. The EIP-712 envelope is standard and every EVM wallet works unmodified.</p>
-      </details>
-      <details>
-        <summary>How do I become a validator?</summary>
-        <p>Genesis validator recruitment opens ahead of mainnet. The initial set is small and grows through the first year. Reach out via the validator inquiry below — we want operators with on-chain ops experience and geographic diversity.</p>
-      </details>
-      <details>
-        <summary>What bridges do you support?</summary>
-        <p>Everything — USDC included — moves over MetaBridge, our validator-cosigned custody bridge: deposits credit on a two-thirds stake-weighted attestation quorum, withdrawals pass a dispute window before claim, and there is no admin key anywhere in the design — the bridge's trust assumption is exactly the chain's own. Corridors today: Base and Solana (test networks), Arbitrum next. It ships to mainnet only after the external audit.</p>
-      </details>
-      <details>
-        <summary>Why the trans-pride palette?</summary>
-        <p>The blue / pink / white reads cleanly as a brand system and isn't taken by anyone else in this space. It also signals what kind of community we want: technical, welcoming, and uninterested in the dominant aesthetic of the rest of crypto.</p>
-      </details>
+      <div class="faq-list">
+        <details>
+          <summary>What is MetaFlux, exactly?</summary>
+          <p>An independent L1 derivatives chain. Its own validator set, its own BFT consensus, its own EVM execution layer. Built from first principles for derivatives clearing, not borrowed from a general-purpose L1.</p>
+        </details>
+        <details>
+          <summary>How does it compare to the other perps DEXs?</summary>
+          <p>Specifically: Hyperliquid, dYdX (v4), Lighter, Aster. The honest table:</p>
+          <div class="compare">
+            <table>
+              <thead>
+                <tr><th>Capability</th><th>MetaFlux</th><th>Hyperliquid</th><th>dYdX v4</th><th>Lighter</th><th>Aster</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="feature-name">L1 BFT consensus</td>      <td class="us">yes</td><td class="us">yes</td><td class="us">yes</td><td class="no">L2</td><td class="us">yes</td></tr>
+                <tr><td class="feature-name">EVM-compatible</td>          <td class="us">yes</td><td class="maybe">partial (HyperEVM)</td><td class="no">no (Cosmos)</td><td class="no">no</td><td class="maybe">partial</td></tr>
+                <tr><td class="feature-name">Parallel EVM execution</td>   <td class="us">yes</td><td class="no">no</td><td class="no">n/a</td><td class="no">n/a</td><td class="no">no</td></tr>
+                <tr><td class="feature-name">Cross-asset portfolio margin</td><td class="us">yes</td><td class="maybe">limited</td><td class="no">no</td><td class="no">no</td><td class="no">no</td></tr>
+                <tr><td class="feature-name">T0 grace tier before partial</td><td class="us">yes</td><td class="no">no</td><td class="no">no</td><td class="no">no</td><td class="no">no</td></tr>
+                <tr><td class="feature-name">RFQ + FBA matching</td>      <td class="us">yes</td><td class="no">no</td><td class="no">no</td><td class="no">no</td><td class="no">no</td></tr>
+                <tr><td class="feature-name">MEV-resistant matching</td>  <td class="us">yes</td><td class="no">no</td><td class="no">no</td><td class="no">no</td><td class="no">no</td></tr>
+                <tr><td class="feature-name">Permissionless market deploy</td><td class="us">yes</td><td class="us">yes</td><td class="no">no</td><td class="no">no</td><td class="no">no</td></tr>
+                <tr><td class="feature-name">HL-familiar primitives (agents · subs · vaults)</td>  <td class="us">yes</td><td class="us">native</td><td class="no">no</td><td class="no">no</td><td class="no">no</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="margin-top: 16px;">Capability is one axis. Liquidity, fees, listings, and operational maturity are others. Pick the chain that wins on the axis you actually care about.</p>
+        </details>
+        <details>
+          <summary>Which parts of this are shipping today?</summary>
+          <p>Components ship across phased testnet milestones — devnet runs the clearing core, the parallel EVM and the book; the rest lands on the sequence the <a class="link" href="whitepaper.html">whitepaper</a> sets out. Where this site describes something that isn't live yet, the whitepaper says when.</p>
+        </details>
+        <details>
+          <summary>When does mainnet launch?</summary>
+          <p>Mainnet follows audit and testnet milestones, not calendar dates. Devnet is live and open for integration now; a six-month public testnet precedes the TGE, with phased validator onboarding and the bridge audit as the explicit gating item.</p>
+        </details>
+        <details>
+          <summary>What does integration look like?</summary>
+          <p>MetaFlux speaks its own MTF-native protocol — one gateway serving POST /info, POST /exchange, WebSocket, and EVM JSON-RPC. The SDKs (TypeScript and Rust, preview) absorb the wire layer; the concepts — agent wallets, sub-accounts, margin modes — port one to one from other perp venues. The EIP-712 envelope is standard and every EVM wallet works unmodified.</p>
+        </details>
+        <details>
+          <summary>How do I become a validator?</summary>
+          <p>Genesis validator recruitment opens ahead of mainnet. The initial set is small and grows through the first year. Reach out via the validator inquiry below — we want operators with on-chain ops experience and geographic diversity.</p>
+        </details>
+        <details>
+          <summary>What bridges do you support?</summary>
+          <p>Everything — USDC included — moves over MetaBridge, our validator-cosigned custody bridge: deposits credit on a two-thirds stake-weighted attestation quorum, withdrawals pass a dispute window before claim, and there is no admin key anywhere in the design — the bridge's trust assumption is exactly the chain's own. Corridors today: Base and Solana (test networks), Arbitrum next. It ships to mainnet only after the external audit.</p>
+        </details>
+      </div>
     </div>
   </div>
 </section>
 
 <section id="testnet" class="testnet-section">
   <div class="wrap">
-    <div class="section-tag" style="margin-bottom: 24px;">06 — Devnet</div>
-    <h2>Build with us, <span class="accent">before launch</span>.</h2>
-    <p>Devnet is open — no application, no allow-list. Grab test USDC from the faucet, point your client at the gateway, and trade. We're particularly interested in feedback from market makers and teams shipping production trading systems.</p>
+    <h2>Trade it today.</h2>
+    <p>Devnet is open — no application, no allow-list. Take test USDC from the faucet, point your client at the gateway, and trade. We especially want to hear from market makers and teams shipping production trading systems.</p>
     <div class="cta-row">
       <a class="btn btn-primary" href="https://app.mtf.exchange/" target="_blank" rel="noopener">Open the devnet <span class="arrow">→</span></a>
-      <a class="btn btn-secondary" href="mailto:builders@mtf.exchange?subject=Devnet%20access%20request&body=Team%20%2F%20project%3A%0D%0A%0D%0AWhat%20you%27re%20building%3A%0D%0A%0D%0AMarkets%20you%20trade%3A%0D%0A%0D%0AStack%20%28language%20%C2%B7%20venues%20%C2%B7%20wire%20protocol%29%3A%0D%0A%0D%0AExpected%20volume%3A%0D%0A">Request access <span class="arrow">→</span></a>
+      <a class="btn btn-secondary" href="mailto:builders@mtf.exchange?subject=Devnet%20access%20request&body=Team%20%2F%20project%3A%0D%0A%0D%0AWhat%20you%27re%20building%3A%0D%0A%0D%0AMarkets%20you%20trade%3A%0D%0A%0D%0AStack%20%28language%20%C2%B7%20venues%20%C2%B7%20wire%20protocol%29%3A%0D%0A%0D%0AExpected%20volume%3A%0D%0A">Talk to us <span class="arrow">→</span></a>
       <a class="btn btn-secondary" href="mailto:validators@mtf.exchange?subject=Validator%20inquiry&body=Operator%20%2F%20entity%3A%0D%0A%0D%0AOn-chain%20ops%20experience%3A%0D%0A%0D%0AInfrastructure%20%28regions%20%C2%B7%20hardware%29%3A%0D%0A%0D%0AOther%20networks%20you%20validate%3A%0D%0A%0D%0AContact%3A%0D%0A">Validator inquiry <span class="arrow">→</span></a>
     </div>
   </div>
 </section>
+
 
 <footer>
   <div class="wrap">
