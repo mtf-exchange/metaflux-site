@@ -360,8 +360,8 @@
      card paints from: a saturated hue plus --color-accent-300 as the soft one —
      here the rose against the brand blue, so the contour field under the fold
      is the flux gradient drawn very quietly. */
-  --backdrop-ink:  #cd5870;
-  --backdrop-soft: #78caf4;
+  --backdrop-ink:  #5BCEFA;
+  --backdrop-soft: #cd5870;
 }
 
 /* ─── legacy aliases ────────────────────────────────────────────────────────
@@ -422,7 +422,12 @@
    This is the Organic layering that replaces the aurora. It costs one
    declaration and no markup, which is why it is here and not in a wrapper. */
 html {
-  background-color: var(--seam);
+  /* The page has one ground. --seam used to paint here so a "desk" band showed
+     above the nav pill, which made sense while the pride bar sat on it; with
+     the bar gone that band reads as a stray strip across the top of the page.
+     The desk is retired: html and body are the same sheet, and the only thing
+     --seam still does is fill the overscroll rubber-band. */
+  background-color: var(--bg);
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
 }
@@ -2178,6 +2183,9 @@ footer .wrap { position: relative; z-index: 3; }
 
 /* the artefact well */
 .stage-figure { max-width: 1240px; margin: 0 auto; padding: 0 32px; }
+/* The hero's own figure needs air under the CTA row — without it the product
+   shot butts straight into the buttons and the two read as one object. */
+.hero .stage-figure { margin-top: clamp(56px, 7vw, 104px); }
 .stage-figure.narrow { max-width: 900px; }
 .stage-caption {
   margin: 20px 0 0;
@@ -2231,234 +2239,122 @@ footer .wrap { position: relative; z-index: 3; }
 .briefs p { font-size: 14.5px; line-height: 1.55; color: var(--content-prose); }
 
 /* ─── the deck ──────────────────────────────────────────────────────────────
-   The page reads as a deck: each fold is a slide, and a slide's contents come
-   in in LAYERS as it arrives — eyebrow, then heading, then the copy, then the
-   evidence — rather than the whole block appearing at once. That staging is
-   the argument's own order made visible, and it is the reason the page can be
-   this long without feeling like a scroll.
+   The page is a deck and it should read as one: a slide arrives, holds the
+   screen while you read it, and is pushed off by the next. Three mechanisms,
+   all CSS, no JavaScript, no observer, nothing to hydrate.
 
-   Built on CSS scroll-driven animation (`animation-timeline: view()`), so it
-   costs no JavaScript, no observer, and nothing to hydrate. Two properties
-   carry it, both compositor-only.
+   1. STACKING. Every fold is `position: sticky; top: 0` inside its own scroll
+      well (.slide-well, one viewport of travel beyond the slide's own height).
+      A sticky element stays put while its well scrolls past, so the next slide
+      climbs over the one before it — the page deals slides rather than
+      scrolling a document. Each well raises the z-index by one so the incoming
+      slide is always on top.
 
-   THE RULE THAT MAKES THIS SAFE: the animation runs BACKWARDS from a visible
-   resting state. `.layer` sets its final appearance in the rule itself and the
-   keyframes only describe where it comes FROM. A browser with no support for
-   scroll timelines, a headless renderer, a hidden tab, a print — all of them
-   land on the declared state, which is the finished one. A reveal that gates
-   `opacity: 0` on a class the page might never add is how a section ships
-   blank, and it is not what this does.
+   2. THE OUTGOING SLIDE RECEDES. As its well exits, it scales to 0.93, dims,
+      and blurs a little — the depth cue that says "behind", which is what makes
+      the stack read as a stack rather than as a jump cut. On the exit range, so
+      it happens exactly while it is being covered.
 
-   `--i` on each layer is its position in the stagger; the range is short (the
-   layer is fully in by the time its top third has entered) so nothing is still
-   arriving once you have started reading it. */
-.layer {
-  opacity: 1;
-  transform: none;
+   3. LAYERED ENTRANCE. Inside a slide the parts arrive in the argument's own
+      order — eyebrow, heading, copy, then the evidence — each 60px below its
+      resting place, staggered by --i. Big enough to see, short enough that
+      nothing is still moving once you are reading it.
+
+   THE RULE THAT KEEPS THIS SAFE: every animation runs BACKWARDS from a visible
+   resting state. `.layer` and `.slide` declare their finished appearance in the
+   rule itself; the keyframes only describe where they come from and where they
+   go. No-support, reduced-motion, print and headless renderers all land on the
+   finished page. A reveal that gates `opacity: 0` on a class the page might
+   never add is how a section ships blank, and that is not what this is.
+   ─────────────────────────────────────────────────────────────────────────── */
+.deck { position: relative; }
+.slide-well { position: relative; }
+.slide {
+  position: relative;
+  background-color: var(--bg);
+  transform-origin: 50% 22%;
 }
+/* The first slide is the only transparent one: the fixed contour field behind
+   the page shows through it, and every slide that stacks OVER it must be
+   opaque or you would see the whole deck through the top card. */
+.hero.slide { background-color: transparent; }
+.slide.tinted { background-color: var(--bg-elev-2); }
+
 @supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .layer {
-      animation: deck-layer linear both;
+  @media (prefers-reduced-motion: no-preference) and (min-width: 900px) {
+    .slide-well { padding-bottom: 62vh; }
+    .slide {
+      position: sticky;
+      top: 0;
+      animation: slide-recede linear both;
       animation-timeline: view();
-      animation-range: entry 5% entry 46%;
-      animation-delay: calc(var(--i, 0) * -0.06s);
+      animation-range: exit -10% exit 88%;
+      will-change: transform, opacity;
     }
-    /* A slide's own artefact is heavier than its words and comes in last and
-       slowest — it is the thing you stop on. */
-    .layer-figure { animation-range: entry 2% entry 62%; }
+    /* the last slide has nothing coming over it, so it must not recede */
+    .slide-well:last-of-type { padding-bottom: 0; }
+    .slide-well:last-of-type .slide { animation: none; position: relative; }
+
+    .layer {
+      animation: deck-layer cubic-bezier(0.16, 1, 0.3, 1) both;
+      animation-timeline: view();
+      animation-range: entry 4% entry 52%;
+      animation-delay: calc(var(--i, 0) * -0.14s);
+    }
+    /* the artefact is the heaviest thing on a slide and lands last */
+    .layer-figure { animation-range: entry 0% entry 66%; }
   }
 }
+
+.slide, .layer { opacity: 1; transform: none; filter: none; }
+
+@keyframes slide-recede {
+  from { transform: scale(1);    opacity: 1;    filter: blur(0); }
+  60%  { transform: scale(0.965); opacity: 0.72; filter: blur(0.6px); }
+  to   { transform: scale(0.93); opacity: 0.28; filter: blur(2.5px); }
+}
 @keyframes deck-layer {
-  from { opacity: 0; transform: translateY(22px); }
+  from { opacity: 0; transform: translateY(60px); }
   to   { opacity: 1; transform: none; }
 }
-/* A view() timeline is evaluated against the scroll position, so a fold that
-   has never been scrolled to is legitimately mid-animation — which is the
-   effect. Print is not scrolled, so it would render those folds blank. Cancel
-   the timeline there and take the resting state. */
+/* A view() timeline is evaluated against scroll position, so a fold never
+   scrolled to is legitimately mid-animation — that is the effect. Print is not
+   scrolled, so cancel the timelines there and take the resting state. */
 @media print {
-  .layer { animation: none !important; opacity: 1 !important; transform: none !important; }
+  .slide, .layer { animation: none !important; opacity: 1 !important; transform: none !important; filter: none !important; position: static !important; }
+  .slide-well { padding-bottom: 0 !important; }
 }
 
-/* ─── the desk ──────────────────────────────────────────────────────────────
-   metaflux-web's /trade/perp route, rebuilt in HTML against the running app —
-   not from its label strings. Everything here is the shape the desk actually
-   has: the market strip's ☆ · symbol · PERP chip · six stats; the book's
-   `Price 0.1 ▾ / Size (USDC) / Total (USDC) ▾` header, asks above bids, depth
-   filling from the right, the spread line between them and the 50/50 depth
-   imbalance bar under them; the ticket's Cross / 100x / One-way chips over the
-   Open|Close segment, the Market · Limit · More tabs, the BBO button on the
-   price field, the 0–100 size slider, TIF, and the Liq price / Cost / Max
-   read-out under the button; and the blotter's real tab set.
+/* ─── the product shot ──────────────────────────────────────────────────────
+   This was a hand-built HTML replica of metaflux-web's /trade/perp route, and
+   it was the wrong call twice over: the first version was assembled from the
+   app's i18n label strings without ever looking at the app, and even the second
+   — built against a screenshot — could only ever be an impression of the real
+   surface. A marketing page that claims "the clearing engine is the chain"
+   cannot illustrate it with a drawing of the product.
 
-   HTML rather than a screenshot for three reasons: it stays sharp at any
-   density, it re-inks itself when the palette moves — which it did twice this
-   week — and a raster of the terminal pasted on a paper page is a hole punched
-   in the paper. Numbers are illustrative. Nothing else is.
+   So it is a photograph. shots/desk.png is the running devnet desk at 1860px:
+   live market data, the real chart with the position's entry line on it, the
+   real order book, the real ticket, and the real PositionsPanel — coin marks,
+   20× badges, cross-margin cells, Close / Limit / Market / Reverse, TP/SL and
+   all. The four positions were pushed into the app's own account store so its
+   own component rendered them; nothing in the image is drawn by this site.
+
+   Re-shooting it: run metaflux-web, open /trade/perp/BTC-USDC at 1860×1080,
+   seed `account.positions` from the store module, screenshot, and crop the dead
+   band between the last row and the ticker strip.
    ─────────────────────────────────────────────────────────────────────────── */
-.desk {
-  background-color: var(--bg-elev);
-  border: 1px solid var(--line);
+.stage-figure .shot {
+  display: block;
+  width: 100%;
+  height: auto;
   border-radius: var(--radius-lg);
-  overflow: hidden;
-  font-family: var(--font-num);
-  font-variant-numeric: tabular-nums lining-nums;
-  font-size: 12px;
-  color: var(--content);
+  border: 1px solid var(--line);
+  /* The one place on the page that keeps a real shadow: it is a screen, it sits
+     above the paper, and the lift is what says so. */
+  box-shadow: 0 24px 60px color-mix(in srgb, #0c2e42 16%, transparent),
+              0 2px 8px color-mix(in srgb, #0c2e42 8%, transparent);
 }
-.desk-rail {
-  display: flex; align-items: center; gap: 8px;
-  padding: 9px 14px;
-  background-color: var(--bg);
-  font-size: 12.5px;
-}
-.desk-rail .seg { display: flex; gap: 2px; }
-.desk-rail .seg span { padding: 5px 11px; border-radius: var(--radius-pill); color: var(--content-label); font-weight: 600; }
-.desk-rail .seg span.on { background: var(--accent-300); color: var(--content); }
-.desk-rail .net { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; color: var(--content-label); }
-.desk-rail .net i { width: 6px; height: 6px; border-radius: 999px; background: var(--accent-2); display: inline-block; }
-.desk-rail .wallet {
-  padding: 6px 13px; border-radius: var(--radius-pill);
-  background: var(--accent); color: var(--on-accent); font-weight: 700; font-size: 12px;
-}
-
-/* market strip — 50px in the app, label over value */
-.desk-mkt {
-  display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
-  padding: 11px 16px;
-  background-color: var(--bg-elev);
-}
-.desk-sym { display: flex; align-items: center; gap: 8px; }
-.desk-sym b { font-family: var(--font-body); font-size: 17px; font-weight: 700; letter-spacing: -0.015em; }
-.desk-sym .star { color: var(--content-label); }
-.desk-chip {
-  font-size: 10.5px; font-weight: 800; letter-spacing: 0.05em;
-  padding: 2px 8px; border-radius: var(--radius-pill);
-  background: var(--accent-2-100); color: var(--accent-2-800);
-}
-.desk-stat { display: flex; flex-direction: column; }
-.desk-stat .k { font-size: 11px; font-weight: 700; letter-spacing: 0.02em; color: var(--content-label); }
-.desk-stat .v { margin-top: 2px; font-size: 14px; font-weight: 700; }
-.desk-stat .v.dn { color: var(--accent-2-800); }
-.desk-stat .v.up { color: var(--accent-700); }
-
-.desk-body { display: grid; grid-template-columns: 1.55fr 1.15fr 1fr; gap: 1px; background: var(--line); }
-.desk-pane { background-color: var(--bg-elev); min-width: 0; }
-
-/* chart pane — a real candle series, drawn as SVG in the page's own ink */
-.desk-chart { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 10px; height: 100%; }
-.desk-chart .tf { display: flex; gap: 4px; font-size: 11px; }
-.desk-chart .tf span { padding: 4px 9px; border-radius: var(--radius-pill); color: var(--content-label); font-weight: 600; }
-.desk-chart .tf span.on { background: var(--accent-100); color: var(--accent-800); }
-.desk-chart .ohlc { font-size: 11px; color: var(--content-label); }
-.desk-chart .ohlc b { color: var(--content); font-weight: 600; }
-.desk-chart svg { width: 100%; flex: 1; min-height: 190px; display: block; }
-
-/* order book */
-.book-head { display: flex; background-color: var(--bg); }
-.book-head span {
-  flex: 1; text-align: center; padding: 10px 0 8px;
-  font-size: 12px; font-weight: 700; color: var(--content-label);
-  box-shadow: inset 0 -2px 0 transparent;
-}
-.book-head span.on { color: var(--content); box-shadow: inset 0 -2px 0 var(--accent-300); }
-.book-cols, .book-row {
-  display: grid; grid-template-columns: 0.9fr 1fr 1fr;
-  align-items: center; padding: 0 12px;
-}
-.book-cols {
-  padding-top: 8px; padding-bottom: 4px;
-  font-size: 10.5px; font-weight: 700; letter-spacing: 0.02em; color: var(--content-label);
-}
-.book-cols span:nth-child(n+2) { text-align: right; }
-.book-cols i { font-style: normal; font-weight: 500; opacity: 0.7; }
-.book-row { position: relative; height: 19px; font-size: 11.5px; }
-.book-row::before {
-  content: ""; position: absolute; top: 1px; bottom: 1px; right: 8px;
-  width: var(--d, 0%); border-radius: 2px;
-  background: color-mix(in oklab, var(--accent-2) 16%, transparent);
-}
-.book-row.bid::before { background: color-mix(in oklab, var(--accent-300) 36%, transparent); }
-.book-row span { position: relative; }
-.book-row span:nth-child(n+2) { text-align: right; color: var(--content-prose); }
-.book-row.ask span:first-child { color: var(--accent-2-800); font-weight: 600; }
-.book-row.bid span:first-child { color: var(--accent-700); font-weight: 600; }
-.book-mid {
-  display: flex; justify-content: space-between; align-items: baseline;
-  padding: 6px 12px; margin: 3px 0;
-  background-color: var(--bg); font-size: 11px; color: var(--content-label);
-}
-.book-mid b { font-size: 13px; font-weight: 700; color: var(--accent-700); }
-/* the imbalance bar the app puts under the ladder */
-.book-imb { display: flex; align-items: center; gap: 8px; padding: 8px 12px 12px; font-size: 11px; font-weight: 600; }
-.book-imb .bar { flex: 1; height: 4px; border-radius: 999px; overflow: hidden; display: flex; }
-.book-imb .bar i { display: block; height: 100%; }
-.book-imb .bar i:first-child { background: var(--accent-300); }
-.book-imb .bar i:last-child  { background: var(--accent-2); }
-.book-imb .l { color: var(--accent-700); }
-.book-imb .r { color: var(--accent-2-800); }
-
-/* the ticket */
-.tkt { padding: 12px; display: flex; flex-direction: column; gap: 9px; }
-.tkt-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-.tkt-row span {
-  padding: 7px 0; text-align: center; border-radius: var(--radius-sm);
-  background: var(--bg); font-size: 11.5px; font-weight: 600; color: var(--content-prose);
-}
-.tkt-seg { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-.tkt-seg span {
-  padding: 9px 0; text-align: center; border-radius: var(--radius-sm);
-  background: var(--bg); font-family: var(--font-body); font-size: 13px; font-weight: 700; color: var(--content-prose);
-}
-.tkt-seg span.on { background: var(--accent); color: var(--on-accent); }
-.tkt-tabs { display: flex; gap: 14px; padding: 3px 2px 6px; font-size: 12px; }
-.tkt-tabs span { color: var(--content-label); font-weight: 600; padding-bottom: 5px; box-shadow: inset 0 -2px 0 transparent; }
-.tkt-tabs span.on { color: var(--content); box-shadow: inset 0 -2px 0 var(--accent-300); }
-.tkt-line { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--content-label); }
-.tkt-line b { color: var(--content); font-weight: 600; }
-.tkt-field {
-  display: flex; align-items: center; gap: 8px;
-  padding: 9px 11px; border-radius: var(--radius-sm); background: var(--bg);
-}
-.tkt-field .k { font-size: 11.5px; color: var(--content-label); }
-.tkt-field .v { margin-left: auto; font-size: 13px; font-weight: 700; }
-.tkt-field .bbo {
-  padding: 4px 9px; border-radius: var(--radius-sm);
-  background: var(--accent-100); color: var(--accent-800); font-size: 11px; font-weight: 700;
-}
-.tkt-slider { display: flex; align-items: center; gap: 10px; padding: 2px 0 4px; }
-.tkt-slider .track { flex: 1; height: 3px; border-radius: 999px; background: var(--bg-elev-2); position: relative; }
-.tkt-slider .track i { position: absolute; inset: 0 auto 0 0; width: 50%; border-radius: 999px; background: var(--accent-300); }
-.tkt-slider .track b {
-  position: absolute; left: 50%; top: 50%; width: 11px; height: 11px; margin: -5.5px 0 0 -5.5px;
-  border-radius: 999px; background: var(--accent); display: block;
-}
-.tkt-slider .pct { font-size: 11.5px; font-weight: 700; padding: 4px 8px; border-radius: var(--radius-sm); background: var(--bg); }
-.tkt-go {
-  margin-top: 2px; text-align: center; padding: 11px 0;
-  border-radius: var(--radius-pill); background: var(--accent-300); color: var(--content);
-  font-family: var(--font-body); font-size: 14px; font-weight: 700;
-}
-.tkt-read { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 12px; padding-top: 3px; font-size: 11px; color: var(--content-label); }
-.tkt-read span:nth-child(even) { text-align: right; }
-
-/* the blotter */
-.desk-foot { background-color: var(--bg); }
-.desk-tabs { display: flex; gap: 18px; padding: 9px 16px 0; font-size: 12px; overflow-x: auto; }
-.desk-tabs span { white-space: nowrap; color: var(--content-label); font-weight: 600; padding-bottom: 7px; box-shadow: inset 0 -2px 0 transparent; }
-.desk-tabs span.on { color: var(--content); box-shadow: inset 0 -2px 0 var(--accent-300); }
-.blotter { width: 100%; border-collapse: collapse; font-size: 11.5px; }
-.blotter th {
-  text-align: right; padding: 9px 16px 7px;
-  font-size: 10.5px; font-weight: 700; letter-spacing: 0.02em; color: var(--content-label);
-}
-.blotter th:first-child, .blotter td:first-child { text-align: left; }
-.blotter td { text-align: right; padding: 8px 16px; color: var(--content-prose); }
-.blotter tr + tr td { border-top: 1px solid var(--line); }
-.blotter td b { color: var(--content); font-weight: 600; font-family: var(--font-body); }
-.blotter .long  { color: var(--accent-700);   font-weight: 600; }
-.blotter .short { color: var(--accent-2-800); font-weight: 600; }
 
 /* ─── the margin panel ──────────────────────────────────────────────────────
    AccountSummary as the app draws it — a 12px ring in the risk colour beside
@@ -2495,8 +2391,6 @@ footer .wrap { position: relative; z-index: 3; }
 .tier .ratio { display: block; margin-top: 12px; font-family: var(--font-num); font-size: 11px; color: var(--content-label); }
 
 @media (max-width: 1100px) {
-  .desk-body { grid-template-columns: 1fr 1fr; }
-  .desk-body .desk-pane:first-child { grid-column: 1 / -1; }
   .tiers { grid-template-columns: 1fr 1fr; }
   .briefs { grid-template-columns: 1fr 1fr; }
 }
@@ -2509,10 +2403,7 @@ footer .wrap { position: relative; z-index: 3; }
 }
 @media (max-width: 720px) {
   .stage-figure { padding: 0 20px; }
-  .desk-body { grid-template-columns: 1fr; }
   .tiers, .briefs { grid-template-columns: 1fr; }
-  .desk-mkt { gap: 12px 16px; }
-  .blotter th:nth-child(n+6), .blotter td:nth-child(n+6) { display: none; }
 }
 
 /* ─── print ─────────────────────────────────────────────────────────────────

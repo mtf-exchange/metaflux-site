@@ -125,6 +125,10 @@
 </div>
 
 
+<div class="ambient" aria-hidden="true">
+  <canvas class="page-backdrop"></canvas>
+</div>
+
 <nav>
   <div class="bar">
     <a class="brand" href="/"><img class="brand-mark" src="logo/metaflux-mark.svg" alt="MetaFlux — L1 derivatives exchange"><span class="b-word"><span class="b-meta">Meta</span><span class="b-flux">Flux</span></span></a>
@@ -139,11 +143,12 @@
   </div>
 </nav>
 
-<header class="hero">
+<div class="deck">
+<div class="slide-well"><header class="hero slide">
   <div class="wrap">
     <div class="layer hero-head" style="--i:0">
       <h1>Derivatives, on <span class="accent">first principles</span>.</h1>
-      <p>The clearing engine is the chain. Matching, cross-asset margin, liquidation and settlement run native on MetaFluxBFT — with a parallel EVM alongside.</p>
+      <p>The clearing engine is the chain. Matching, cross-asset margin, liquidation and settlement all run native on MetaFluxBFT consensus.</p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="https://app.mtf.exchange/" target="_blank" rel="noopener">Open the devnet <span class="arrow">→</span></a>
         <a class="btn btn-secondary" href="whitepaper.html">Read the whitepaper <span class="arrow">→</span></a>
@@ -152,128 +157,16 @@
   </div>
 
   <div class="stage-figure">
-    <div class="desk" role="img" aria-label="The MetaFlux devnet desk: a BTC-USDC perpetual with its chart, order book, order ticket and blotter.">
-
-      <div class="desk-rail">
-        <span class="seg"><span class="on">Perpetuals</span><span>Spot</span><span>Margin</span><span>Options</span><span>CDS</span></span>
-        <span class="net"><i></i>Devnet</span>
-        <span class="wallet">Connect wallet</span>
-      </div>
-
-      <div class="desk-mkt">
-        <span class="desk-sym"><span class="star">☆</span><b>BTC-USDC</b><span class="desk-chip">PERP</span></span>
-        <span class="desk-stat"><span class="k">Mark</span><span class="v">63809.3</span></span>
-        <span class="desk-stat"><span class="k">Oracle</span><span class="v">63827.1</span></span>
-        <span class="desk-stat"><span class="k">24h Change</span><span class="v dn">−$44 / −0.07%</span></span>
-        <span class="desk-stat"><span class="k">24h Volume</span><span class="v">$2,777</span></span>
-        <span class="desk-stat"><span class="k">Open Interest</span><span class="v">$641,290</span></span>
-        <span class="desk-stat"><span class="k">Funding (1h)</span><span class="v dn">−0.0200%</span></span>
-      </div>
-
-      <div class="desk-body">
-
-        <div class="desk-pane">
-          <div class="desk-chart">
-            <div class="tf"><span>15m</span><span class="on">1H</span><span>4H</span><span>Indicators</span><span>Mark</span></div>
-            <div class="ohlc">BTC-USDC · 1h · MetaFlux &nbsp; O <b>63853.5</b> H <b>63863.8</b> L <b>63796.0</b> C <b>63809.3</b> <span class="dn">−47.6 (−0.07%)</span></div>
-            <svg viewBox="0 0 560 240" preserveAspectRatio="none" aria-hidden="true">
-              <g stroke="var(--line)" stroke-width="1">
-                <line x1="0" y1="30" x2="560" y2="30"/><line x1="0" y1="80" x2="560" y2="80"/>
-                <line x1="0" y1="130" x2="560" y2="130"/><line x1="0" y1="180" x2="560" y2="180"/>
-              </g>
-              <g stroke-width="7" stroke-linecap="butt">
-                <g stroke="var(--accent-300)">
-                  <line x1="18"  y1="58"  x2="18"  y2="96"/><line x1="46"  y1="44"  x2="46"  y2="88"/>
-                  <line x1="102" y1="62"  x2="102" y2="104"/><line x1="130" y1="72"  x2="130" y2="112"/>
-                  <line x1="214" y1="120" x2="214" y2="152"/><line x1="242" y1="112" x2="242" y2="146"/>
-                  <line x1="326" y1="150" x2="326" y2="182"/><line x1="410" y1="140" x2="410" y2="176"/>
-                  <line x1="438" y1="128" x2="438" y2="164"/><line x1="522" y1="104" x2="522" y2="138"/>
-                </g>
-                <g stroke="var(--accent-2)">
-                  <line x1="74"  y1="50"  x2="74"  y2="92"/><line x1="158" y1="84"  x2="158" y2="126"/>
-                  <line x1="186" y1="100" x2="186" y2="140"/><line x1="270" y1="128" x2="270" y2="168"/>
-                  <line x1="298" y1="140" x2="298" y2="176"/><line x1="354" y1="158" x2="354" y2="192"/>
-                  <line x1="382" y1="150" x2="382" y2="186"/><line x1="466" y1="118" x2="466" y2="158"/>
-                  <line x1="494" y1="110" x2="494" y2="148"/><line x1="550" y1="98"  x2="550" y2="132"/>
-                </g>
-              </g>
-              <path d="M18 78 L74 70 L130 92 L186 118 L242 130 L298 158 L354 174 L410 158 L466 138 L522 120 L550 114"
-                    fill="none" stroke="var(--accent-700)" stroke-width="1.5" opacity=".55"/>
-              <line x1="0" y1="122" x2="560" y2="122" stroke="var(--content)" stroke-width="1" stroke-dasharray="3 4" opacity=".35"/>
-            </svg>
-          </div>
-        </div>
-
-        <div class="desk-pane">
-          <div class="book-head"><span class="on">Order book</span><span>Trades</span></div>
-          <div class="book-cols"><span>Price <i>0.1 ▾</i></span><span>Size (USDC)</span><span>Total (USDC) <i>▾</i></span></div>
-          <div class="book-row ask" style="--d:22%"><span>64,335.5</span><span>29,553.799</span><span>410,967.627</span></div>
-          <div class="book-row ask" style="--d:31%"><span>64,270.8</span><span>29,524.077</span><span>381,413.828</span></div>
-          <div class="book-row ask" style="--d:43%"><span>64,209.7</span><span>29,496.010</span><span>351,889.751</span></div>
-          <div class="book-row ask" style="--d:55%"><span>64,152.4</span><span>29,469.688</span><span>322,393.741</span></div>
-          <div class="book-row ask" style="--d:66%"><span>64,099.0</span><span>29,445.158</span><span>292,924.053</span></div>
-          <div class="book-row ask" style="--d:78%"><span>64,049.6</span><span>29,422.465</span><span>263,478.896</span></div>
-          <div class="book-row ask" style="--d:90%"><span>64,004.3</span><span>29,401.655</span><span>234,056.431</span></div>
-          <div class="book-mid"><b>63,809.4</b><span>spread 29.5 · 0.046%</span></div>
-          <div class="book-row bid" style="--d:23%"><span>63,794.6</span><span>28,920.644</span><span>28,920.644</span></div>
-          <div class="book-row bid" style="--d:34%"><span>63,788.1</span><span>29,882.811</span><span>58,803.455</span></div>
-          <div class="book-row bid" style="--d:45%"><span>63,777.3</span><span>29,878.390</span><span>88,681.845</span></div>
-          <div class="book-row bid" style="--d:57%"><span>63,752.5</span><span>29,866.134</span><span>118,547.978</span></div>
-          <div class="book-row bid" style="--d:68%"><span>63,729.8</span><span>29,855.499</span><span>148,403.478</span></div>
-          <div class="book-row bid" style="--d:80%"><span>63,694.4</span><span>29,838.916</span><span>178,242.393</span></div>
-          <div class="book-row bid" style="--d:92%"><span>63,657.9</span><span>29,821.816</span><span>208,064.210</span></div>
-          <div class="book-imb">
-            <span class="l">50%</span>
-            <span class="bar"><i style="width:50%"></i><i style="width:50%"></i></span>
-            <span class="r">50%</span>
-          </div>
-        </div>
-
-        <div class="desk-pane">
-          <div class="tkt">
-            <div class="tkt-row"><span>Cross ▾</span><span>100x ▾</span><span>One-way ▾</span></div>
-            <div class="tkt-seg"><span class="on">＋ Open</span><span>－ Close</span></div>
-            <div class="tkt-tabs"><span>Market</span><span class="on">Limit</span><span>More</span></div>
-            <div class="tkt-line"><span>Available to trade</span><b>184,620.44 USDC</b></div>
-            <div class="tkt-line"><span>Current position</span><b>3.25 BTC</b></div>
-            <div class="tkt-field"><span class="k">Price</span><span class="v">63809.3</span><span class="bbo">BBO</span></div>
-            <div class="tkt-field"><span class="k">Size</span><span class="v">95,714 USDC</span></div>
-            <div class="tkt-slider"><span class="track"><i></i><b></b></span><span class="pct">50%</span></div>
-            <div class="tkt-line"><span>Take profit / stop loss</span><b>TIF GTC</b></div>
-            <div class="tkt-go">Buy / Long BTC-USDC</div>
-            <div class="tkt-read">
-              <span>Liq price</span><span>52,140.5</span>
-              <span>Cost</span><span>957.14 USDC</span>
-              <span>Fees (maker / taker)</span><span>0.0100% / 0.0350%</span>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="desk-foot">
-        <div class="desk-tabs">
-          <span>Balances</span><span class="on">Positions (3)</span><span>Open Orders</span><span>TWAP</span>
-          <span>Trade History</span><span>Position History</span><span>Funding History</span><span>Order History</span>
-        </div>
-        <table class="blotter">
-          <thead>
-            <tr><th>Market</th><th>Size</th><th>Value</th><th>Entry</th><th>Mark</th><th>PnL (ROE%)</th><th>Liq.</th><th>Margin</th><th>Funding</th></tr>
-          </thead>
-          <tbody>
-            <tr><td><b>BTC-USDC</b></td><td class="long">↑ +3.250</td><td>207,380</td><td>63,480.0</td><td>63,809.3</td><td class="long">+1,070 (+10.1%)</td><td>52,140.5</td><td>10,369</td><td>−38.20</td></tr>
-            <tr><td><b>ETH-USDC</b></td><td class="short">↓ −42.00</td><td>132,678</td><td>3,196.4</td><td>3,158.9</td><td class="long">+1,575 (+23.7%)</td><td>3,842.7</td><td>6,634</td><td>+12.44</td></tr>
-            <tr><td><b>SOL-USDC</b></td><td class="short">↓ −1,250</td><td>184,375</td><td>146.20</td><td>147.50</td><td class="short">−1,625 (−17.6%)</td><td>179.40</td><td>9,219</td><td>+21.06</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-    </div>
-    <p class="stage-caption">The devnet desk, rebuilt here in HTML. Numbers are illustrative; every column, label and band on this page is one the engine actually reports.</p>
+    <picture>
+      <source srcset="shots/desk.webp" type="image/webp">
+      <img class="shot" src="shots/desk.png" width="1860" height="980" loading="eager" decoding="async"
+           alt="The MetaFlux devnet trading desk: a BTC-USDC perpetual with its candle chart, order book, order ticket and a four-position blotter.">
+    </picture>
+    <p class="stage-caption">The devnet desk, running. Market data is live off the devnet; the four positions are illustrative, rendered by the app’s own blotter.</p>
   </div>
-</header>
+</header></div>
 
-<section class="stage" id="numbers">
+<div class="slide-well"><section class="stage slide tinted" id="numbers">
   <div class="wrap">
     <div class="layer stage-band" style="--i:1">
       <div><div class="n">&lt;1s</div><div class="k">Finality, <b>2-chain BFT</b></div></div>
@@ -282,9 +175,9 @@
       <div><div class="n">0</div><div class="k">Committees between you and a <b>new market</b></div></div>
     </div>
   </div>
-</section>
+</section></div>
 
-<section class="stage" id="margin">
+<div class="slide-well"><section class="stage slide" id="margin">
   <div class="wrap">
     <div class="stage-split">
       <div class="col-head">
@@ -332,9 +225,9 @@
       </div>
     </div>
   </div>
-</section>
+</section></div>
 
-<section class="stage" id="liquidation">
+<div class="slide-well"><section class="stage slide tinted" id="liquidation">
   <div class="wrap">
     <div class="stage-lede">
       <div>
@@ -372,9 +265,9 @@
       </div>
     </div>
   </div>
-</section>
+</section></div>
 
-<section class="stage" id="protocol">
+<div class="slide-well"><section class="stage slide" id="protocol">
   <div class="wrap">
     <div class="stage-split">
       <div class="col-head">
@@ -404,9 +297,9 @@
       </dl>
     </div>
   </div>
-</section>
+</section></div>
 
-<section class="stage" id="architecture">
+<div class="slide-well"><section class="stage slide tinted" id="architecture">
   <div class="wrap">
     <div class="stage-lede">
       <div>
@@ -534,9 +427,9 @@
     </div>
 
   </div>
-</section>
+</section></div>
 
-<section class="stage" id="builders">
+<div class="slide-well"><section class="stage slide" id="builders">
   <div class="wrap">
     <div class="stage-split">
       <div class="col-head">
@@ -564,9 +457,9 @@
       </dl>
     </div>
   </div>
-</section>
+</section></div>
 
-<section class="stage" id="traders">
+<div class="slide-well"><section class="stage slide tinted" id="traders">
   <div class="wrap">
     <div class="stage-lede">
       <div>
@@ -604,9 +497,9 @@
       </div>
     </div>
   </div>
-</section>
+</section></div>
 
-<section class="stage" id="faq">
+<div class="slide-well"><section class="stage slide" id="faq">
   <div class="wrap">
     <div class="stage-split">
       <div class="col-head">
@@ -667,9 +560,9 @@
       </div>
     </div>
   </div>
-</section>
+</section></div>
 
-<section id="testnet" class="testnet-section">
+<div class="slide-well"><section id="testnet" class="testnet-section slide">
   <div class="wrap">
     <h2 class="layer" style="--i:1">Trade it today.</h2>
     <p>Devnet is open — no application, no allow-list. Take test USDC from the faucet, point your client at the gateway, and trade. We especially want to hear from market makers and teams shipping production trading systems.</p>
@@ -679,8 +572,10 @@
       <a class="btn btn-secondary" href="mailto:validators@mtf.exchange?subject=Validator%20inquiry&body=Operator%20%2F%20entity%3A%0D%0A%0D%0AOn-chain%20ops%20experience%3A%0D%0A%0D%0AInfrastructure%20%28regions%20%C2%B7%20hardware%29%3A%0D%0A%0D%0AOther%20networks%20you%20validate%3A%0D%0A%0D%0AContact%3A%0D%0A">Validator inquiry <span class="arrow">→</span></a>
     </div>
   </div>
-</section>
+</section></div>
 
+
+</div>
 
 <footer>
   <div class="wrap">
@@ -738,6 +633,7 @@
   </div>
 </footer>
 
+<script src="backdrop.js" defer></script>
 <script src="main.js"></script>
 </body>
 </html>

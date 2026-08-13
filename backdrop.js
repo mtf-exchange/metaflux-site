@@ -54,7 +54,7 @@
   // pure white nothing is swallowed: at that weight the rose washes read as a
   // pink cloud competing with the headline. 0.26 keeps the blue → rose sweep
   // present as the paper's own breathing and lets the type win.
-  const WEIGHT = 0.26;
+  const WEIGHT = 0.44;
 
   /** Deterministic 0…1 from an integer. `Math.random` would repaint differently
    *  on every resize, which on a background reads as the page flickering. */
@@ -314,8 +314,8 @@
   let vh = 0;
   let dpr = 1;
   let place = null; // card-space → viewport transform, shared by base and sky
-  let ink = '#b56476';
-  let soft = '#87c9e5';
+  let ink = '#5BCEFA';
+  let soft = '#cd5870';
 
   /** Rebuild everything that only changes with the viewport size. */
   const build = () => {
@@ -330,8 +330,8 @@
     if (!ctx) return false;
 
     const cs = getComputedStyle(document.documentElement);
-    ink = cs.getPropertyValue('--backdrop-ink').trim() || '#b56476';
-    soft = cs.getPropertyValue('--backdrop-soft').trim() || '#87c9e5';
+    ink = cs.getPropertyValue('--backdrop-ink').trim() || '#5BCEFA';
+    soft = cs.getPropertyValue('--backdrop-soft').trim() || '#cd5870';
     const ground = cs.getPropertyValue('--bg').trim() || '#f0f3f7';
 
     // Card space → viewport, anchored on the composition's focal point rather
