@@ -23,16 +23,16 @@
  *      Close / Limit / Market / Reverse, TP/SL, the margin-ratio ring, the
  *      liquidation band. Nothing here is drawn by the marketing site.
  *
- *      It re-writes them every animation frame while the shot is taken: the
- *      socket pushes a fresh account_state on every commit and would clear them
- *      out from under the camera otherwise.
+ *      The socket would clear them on the next commit (an unknown wallet's
+ *      account_state is empty), so account frames are dropped at the WebSocket
+ *      while the camera is up — see the init script below for why re-seeding
+ *      instead was a mistake.
  *
- *   3. Crops. The viewport is 1860x1080 and the blotter's dead space sits
- *      between the last position row and the ticker strip — but the RIGHT
- *      column keeps going, so the cut is measured off the account panel's own
- *      bottom edge rather than a fixed y. Cropping through it is what spoiled
- *      the first version of this image: it sliced the summary in half and left
- *      half a ticker entry in the corner.
+ *   3. Crops by measurement, never a fixed y: down to whichever column
+ *      finishes last (account panel vs blotter), stopping before the ticker
+ *      strip. A fixed-y crop is what spoiled the first version of this image —
+ *      it sliced the account summary in half and left half a ticker entry in
+ *      the corner.
  *
  * Numbers are illustrative and the caption on the page says so. Market data,
  * the book, the chart and every label are live.
@@ -66,6 +66,33 @@ const page = await browser.newPage({
 	// first version of this image with the summary sliced in half.
 	viewport: { width: 1860, height: 1220 },
 	deviceScaleFactor: 2
+});
+
+// The node pushes a fresh account_state on every commit, and for a wallet it
+// has never seen that state is empty — so it clears the seeded positions out
+// from under the camera. The first workaround re-seeded them every animation
+// frame, which was worse than the disease: the blotter flashes any row whose
+// values move (flash.ts / the 1.4s mfflash arrival sweep), so a per-frame
+// rewrite kept all four rows lit and the photograph showed them soaked in
+// highlight. Instead: once __holdAccount is set, account_state frames are
+// dropped at the socket. Market data keeps flowing; the account is ours; no
+// value ever changes twice; nothing flashes.
+await page.addInitScript(() => {
+	const strip = (handler) =>
+		function (ev) {
+			if (window.__holdAccount && typeof ev.data === 'string' && ev.data.includes('account_state'))
+				return;
+			return handler.call(this, ev);
+		};
+	const desc = Object.getOwnPropertyDescriptor(WebSocket.prototype, 'onmessage');
+	Object.defineProperty(WebSocket.prototype, 'onmessage', {
+		get() { return desc.get.call(this); },
+		set(fn) { desc.set.call(this, fn ? strip(fn) : fn); }
+	});
+	const add = WebSocket.prototype.addEventListener;
+	WebSocket.prototype.addEventListener = function (type, fn, ...rest) {
+		return add.call(this, type, type === 'message' && fn ? strip(fn) : fn, ...rest);
+	};
 });
 
 await page.goto(`${BASE}/trade/perp/BTC-USDC`, { waitUntil: 'networkidle' });
@@ -128,14 +155,21 @@ await page.evaluate(async (rows) => {
 			availableToTrade: [notional, notional]
 		};
 	};
-	const hold = () => {
-		a.positions = build();
-		totals();
-		requestAnimationFrame(hold);
-	};
-	hold();
+	window.__holdAccount = true; // from here the socket's account frames are dropped
+	a.positions = build();
+	totals();
 }, POSITIONS);
-await page.waitForTimeout(2000);
+
+// Let the arrival wash (`mfflash`, 1.4s — the whole-row soak that made the
+// first shot look fake) finish, and insist it has: no .row-flash at the
+// shutter. Cell-level .flash-up/.flash-down are NOT waited out — those are
+// live mark-price ticks, a real desk blinks like that, and a photograph with
+// one or two lit cells is the truth.
+await page.waitForTimeout(2200);
+await page.waitForFunction(() => document.querySelectorAll('.row-flash').length === 0, {
+	timeout: 10000
+});
+await page.waitForTimeout(200);
 
 // 3 — measure the crop off the right column, never a fixed y
 const cut = await page.evaluate(() => {
