@@ -3,18 +3,16 @@
 // 1. Preloader: draws the mark, lifts the overlay, then REMOVES it — the
 //    entrance animations are keyed off `#preloader.fade-out ~ …`, so the node
 //    going away is what ends them.
-// 2. Adds `scrolled` class to nav once the hero scrolls past, so the bar picks
-//    up a deeper shadow. Pure aesthetic.
-// 3. Typewriter effect on `.typewriter` elements. Cycles through a list of
+// 2. Typewriter effect on `.typewriter` elements. Cycles through a list of
 //    phrases sourced from `data-phrases` (pipe-separated). Respects
 //    prefers-reduced-motion (renders the first phrase static, no animation).
 //
 // There is no appearance code here any more: the site is light-only, so nothing
 // resolves a polarity, stamps an attribute or listens to prefers-color-scheme.
+// There is no scroll listener either — the nav pill used to deepen its shadow
+// past the hero, and a design with no shadows has no scrolled state to signal.
 
 (() => {
-  const root = document.documentElement;
-  const nav = document.querySelector('nav');
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // ── preloader (entrance) ─────────────────────────────────────────
@@ -71,30 +69,6 @@
     // safety: if the IO never fires (background/hidden tab, non-scrolling
     // crawler) resolve the figure to visible anyway so it never ships blank.
     setTimeout(() => archFig.classList.add('in'), 1800);
-  }
-
-  // ── scroll signal ────────────────────────────────────────────────
-  // One job now. The old build also wrote --scroll-y to :root on every frame
-  // for a parallax cue that no stylesheet ever read; the aurora it was meant
-  // to drift is gone, so the write is gone with it — a custom-property set on
-  // <html> invalidates style for the whole document, which is a real cost for
-  // a value nobody consumes.
-  //
-  // `nav.scrolled` DOES have a job now: styles.css:794 deepens the bar's
-  // shadow to --shadow-lg once you are past the hero. On the old glass bar the
-  // class was toggled and styled by nothing.
-  let ticking = false;
-  const onScroll = () => {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(() => {
-      if (nav) nav.classList.toggle('scrolled', window.scrollY > 80);
-      ticking = false;
-    });
-  };
-  if (nav) {
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
   }
 
   // ── typewriter ───────────────────────────────────────────────────
