@@ -1,0 +1,14 @@
+---
+const { current } = Astro.props;
+---
+<nav>
+  <div class="bar">
+    <a class="brand" href="/"><img class="brand-mark" src="/logo/metaflux-mark.svg" alt="" aria-hidden="true"><span class="b-word"><span class="b-meta">Meta</span><span class="b-flux">Flux</span></span></a>
+    <ul>
+      <li><a href="whitepaper.html" aria-current={current === "whitepaper" ? "page" : undefined}>Whitepaper</a></li>
+      <li><a href="https://docs.mtf.exchange/" target="_blank">Docs ↗</a></li>
+      <li><a href="https://docs.mtf.exchange/evm" target="_blank">Ecosystem ↗</a></li>
+    </ul>
+    <a class="nav-cta" href="https://app.mtf.exchange/" target="_blank" rel="noopener">Devnet →</a>
+  </div>
+</nav>

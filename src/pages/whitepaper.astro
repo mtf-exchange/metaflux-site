@@ -1,271 +1,64 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<title>MetaFlux Whitepaper — print</title>
-<style>
-/* ────────────────────────────────────────────────────────────────
-   whitepaper-print.html — GENERATED FILE, do not edit by hand.
-   Plain black-on-white academic layout for the PDF edition.
-   Rebuild with:  python3 tools/build-print.py
-   Render with:   node tools/render-pdf.mjs "$PWD/whitepaper-print.html" "$PWD/whitepaper.pdf"
-   ──────────────────────────────────────────────────────────────── */
-:root {
-  --ink: #000;
-  --ink-mid: #1a1a1a;
-  --ink-dim: #555;
-  --rule: #999;
-  --rule-light: #ccc;
-  --serif: Georgia, "Times New Roman", "Nimbus Roman", serif;
-  --mono: "Menlo", "Consolas", "Courier New", monospace;
-}
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-body {
-  font-family: var(--serif);
-  color: var(--ink-mid);
-  background: #fff;
-  font-size: 10pt;
-  line-height: 1.55;
-}
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+---
+<Base
+  title="MetaFlux Whitepaper — Derivatives, on first principles."
+  description="The MetaFlux whitepaper: an independent L1 derivatives exchange. MetaFluxBFT consensus, a parallel EVM, cross-asset portfolio margin, MEV-resistant matching, permissionless market deploy."
+  canonical="https://mtf.exchange/whitepaper.html"
+  ogType="article"
+  bodyClass="paper"
+>
+<Nav current="whitepaper" />
 
-@page {
-  size: A4;
-  margin: 24mm 22mm 26mm;
-  @bottom-center {
-    content: counter(page);
-    font-family: Georgia, serif;
-    font-size: 9pt;
-    color: #333;
-  }
-}
-@page :first { @bottom-center { content: counter(page); } }
+<header class="paper-hero">
+  <div class="wrap">
+    <div class="paper-kicker">/ MetaFlux whitepaper · v1.0 · 2026</div>
+    <h1>Derivatives,<br>on <span class="accent">first principles</span>.</h1>
+    <p class="paper-sub">MetaFlux is an independent Layer 1 blockchain whose state machine <em>is</em> a derivatives exchange. The order book and clearinghouse execute inside consensus, a parallel EVM shares every block for programmable strategies, and a validator-cosigned bridge moves assets under the same trust assumption as the chain itself. This paper specifies the protocol.</p>
+    <div class="paper-meta">
+      <span><span class="k">Authorship</span> MetaFlux Foundation</span>
+      <span><span class="k">Edition</span> v1.0 · July 2026</span>
+      <span><span class="k">PDF</span> <a href="whitepaper.pdf" download>Download whitepaper.pdf ↓</a></span>
+    </div>
+  </div>
+</header>
 
-/* ── title block ─────────────────────────────────────────────── */
-.titleblock { text-align: center; margin: 6mm 0 10mm; }
-.titleblock h1 {
-  font-size: 19pt;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-  color: var(--ink);
-  margin-bottom: 5mm;
-}
-.titleblock .authors { font-size: 11pt; color: var(--ink); margin-bottom: 1.5mm; }
-.titleblock .affil {
-  font-size: 9.5pt;
-  color: var(--ink-dim);
-  margin-bottom: 1mm;
-}
-.titleblock .edition { font-size: 9.5pt; color: var(--ink-dim); }
-.titlerule { border: 0; border-top: 1px solid var(--ink); margin: 8mm 0 7mm; }
+<div class="paper-body wrap">
 
-/* ── contents ────────────────────────────────────────────────── */
-.contents { margin: 0 0 9mm; }
-.contents .c-title {
-  font-size: 11pt; font-weight: 700; color: var(--ink);
-  margin-bottom: 3mm;
-}
-.contents ol { list-style: none; counter-reset: toc; column-count: 2; column-gap: 10mm; }
-.contents li { counter-increment: toc; }
-.contents li a {
-  display: flex; align-items: baseline; gap: 2.5mm;
-  padding: 1.1mm 0;
-  color: var(--ink-mid); text-decoration: none;
-  font-size: 9pt;
-  break-inside: avoid;
-}
-.contents li a::before {
-  content: counter(toc);
-  min-width: 4mm;
-  color: var(--ink-dim);
-  font-size: 8.5pt;
-}
-.contents li a::after {
-  content: target-counter(attr(href), page);
-  margin-left: auto;
-  color: var(--ink-dim);
-  font-size: 8.5pt;
-}
+  <aside class="toc" aria-label="Table of contents">
+    <div class="toc-label">Contents</div>
+    <ol>
+      <li><a href="#abstract">Abstract</a></li>
+      <li><a href="#introduction">Introduction</a></li>
+      <li><a href="#consensus">Consensus</a></li>
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#microstructure">Market structure</a></li>
+      <li><a href="#risk">Risk &amp; margin</a></li>
+      <li><a href="#vm">Execution layer</a></li>
+      <li><a href="#bridge">MetaBridge</a></li>
+      <li><a href="#markets">Markets &amp; listing</a></li>
+      <li><a href="#economics">Economics</a></li>
+      <li><a href="#security">Security model</a></li>
+      <li><a href="#conclusion">Conclusion</a></li>
+      <li><a href="#references">References</a></li>
+    </ol>
+  </aside>
 
-/* ── sections ────────────────────────────────────────────────── */
-section.ps { margin-bottom: 7mm; }
-.ps-num { display: none; }
-h2 {
-  font-size: 13.5pt;
-  font-weight: 700;
-  color: var(--ink);
-  margin: 7mm 0 3mm;
-  break-after: avoid;
-}
-h3 {
-  font-size: 11pt;
-  font-weight: 700;
-  color: var(--ink);
-  margin: 5mm 0 2mm;
-  break-after: avoid;
-}
-p { margin-bottom: 2.8mm; text-align: justify; hyphens: auto; }
-p.lead { font-size: 10pt; }
-strong { color: var(--ink); font-weight: 700; }
-em { font-style: italic; }
-.mono { font-family: var(--mono); font-size: 0.85em; color: var(--ink); }
-a { color: inherit; text-decoration: none; }
+  <article class="paper-content">
 
-/* ── axis blocks → plain definition paragraphs ───────────────── */
-.axes { margin: 3mm 0 3.5mm; }
-.axis { margin: 0 0 2.5mm 6mm; break-inside: avoid; }
-.axis-tag {
-  font-size: 9pt; font-weight: 700; color: var(--ink);
-  text-transform: none; margin-bottom: 0.5mm;
-}
-.axis p { margin: 0; font-size: 9.5pt; }
-
-/* ── tables ──────────────────────────────────────────────────── */
-.spec-table { margin: 3.5mm 0 4mm; break-inside: avoid; }
-.spec-table table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 8.6pt;
-  border-top: 1.2px solid var(--ink);
-  border-bottom: 1.2px solid var(--ink);
-}
-.spec-table th, .spec-table td {
-  text-align: left;
-  padding: 1.8mm 2.6mm;
-  border-bottom: 0.6px solid var(--rule-light);
-  vertical-align: top;
-  line-height: 1.45;
-  color: var(--ink-mid);
-}
-.spec-table tr { break-inside: avoid; }
-.spec-table th {
-  font-weight: 700;
-  font-size: 8.4pt;
-  color: var(--ink);
-  border-bottom: 0.8px solid var(--ink);
-}
-.spec-table td.fn { color: var(--ink); font-weight: 700; white-space: nowrap; }
-.spec-table td.fn .mono { white-space: normal; font-weight: 400; }
-.spec-table tr:last-child td { border-bottom: none; }
-.spec-table td.yes, .spec-table td.nope { font-family: var(--mono); font-size: 8pt; color: var(--ink); }
-.spec-table .mono { font-size: 7.8pt; }
-
-/* ── fee split → plain ruled rows ────────────────────────────── */
-.split { margin: 3.5mm 0 4mm; break-inside: avoid; border-top: 1.2px solid var(--ink); border-bottom: 1.2px solid var(--ink); }
-.split-row {
-  display: flex; align-items: baseline; gap: 5mm;
-  padding: 2.2mm 0;
-  border-bottom: 0.6px solid var(--rule-light);
-}
-.split-row:last-child { border-bottom: none; }
-.split-pct { font-size: 12pt; font-weight: 700; color: var(--ink); width: 14mm; flex-shrink: 0; }
-.split-label { font-size: 9.3pt; color: var(--ink-mid); text-align: justify; }
-
-/* ── threats list ────────────────────────────────────────────── */
-.threats { list-style: none; margin: 2mm 0 3mm; }
-.threats li {
-  padding: 1.6mm 0 1.6mm 5mm;
-  position: relative;
-  font-size: 9.5pt;
-  line-height: 1.5;
-  text-align: justify;
-  hyphens: auto;
-}
-.threats li::before { content: "–"; position: absolute; left: 0.5mm; color: var(--ink); }
-.threats .t-name { color: var(--ink); font-weight: 700; }
-
-/* ── references ──────────────────────────────────────────────── */
-.refs { list-style: none; counter-reset: ref; margin: 2mm 0; }
-.refs li {
-  counter-increment: ref;
-  position: relative;
-  padding: 0.8mm 0 0.8mm 8mm;
-  font-size: 9pt;
-  line-height: 1.5;
-  text-align: justify;
-}
-.refs li::before {
-  content: "[" counter(ref) "]";
-  position: absolute; left: 0;
-  color: var(--ink);
-}
-
-.closing {
-  margin-top: 5mm;
-  font-style: italic;
-  color: var(--ink);
-  text-align: left !important;
-}
-
-/* ── display equations ───────────────────────────────────────── */
-.eq {
-  position: relative;
-  margin: 3.2mm 0 3.4mm;
-  padding: 0 14mm;
-  text-align: center;
-  color: var(--ink);
-  font-size: 9.8pt;
-  line-height: 1.5;
-  break-inside: avoid;
-}
-.eq i { font-style: italic; }
-.eq .rm { font-style: normal; }
-.eq .mono { font-size: 0.8em; }
-.eq sub, .eq sup { font-size: 0.62em; }
-.eq .eqno {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  font-style: normal;
-  font-size: 8.5pt;
-  color: #333;
-}
-</style>
-</head>
-<body>
-
-<div class="titleblock">
-  <h1>MetaFlux: A Layer-1 Derivatives Exchange</h1>
-  <div class="authors">MetaFlux Foundation</div>
-  <div class="affil">hello@mtf.exchange &nbsp;·&nbsp; mtf.exchange</div>
-  <div class="edition">Whitepaper v1.0 &nbsp;·&nbsp; 2026</div>
-</div>
-<hr class="titlerule">
-
-<div class="contents">
-  <div class="c-title">Contents</div>
-  <ol>
-    <li><a href="#abstract">Abstract</a></li>
-    <li><a href="#introduction">Introduction</a></li>
-    <li><a href="#consensus">Consensus: MetaFluxBFT</a></li>
-    <li><a href="#architecture">Architecture</a></li>
-    <li><a href="#microstructure">Market structure</a></li>
-    <li><a href="#risk">Risk &amp; margin</a></li>
-    <li><a href="#vm">Execution layer</a></li>
-    <li><a href="#bridge">MetaBridge</a></li>
-    <li><a href="#markets">Markets &amp; permissionless listing</a></li>
-    <li><a href="#economics">Economics</a></li>
-    <li><a href="#security">Security model</a></li>
-    <li><a href="#conclusion">Conclusion</a></li>
-    <li><a href="#references">References</a></li>
-  </ol>
-</div>
-<hr class="titlerule">
-
-<article>
-<!-- 1 ABSTRACT -->
+    <!-- 1 ABSTRACT -->
     <section id="abstract" class="ps">
-      <div class="ps-num">1</div>
-      <h2>1.&nbsp; Abstract</h2>
+      <div class="ps-num">01</div>
+      <h2>Abstract</h2>
       <p class="lead">MetaFlux is an independent Layer 1 blockchain built for a single purpose: operating a derivatives exchange. A central limit order book and clearinghouse execute deterministically inside Byzantine-fault-tolerant consensus; an inline EVM shares each block, so smart contracts and exchange actions settle together with immediate finality; MetaFlux&#8217;s own bridge, MetaBridge, moves assets across chains under a two-thirds validator co-signature — the chain&#8217;s exact trust assumption, with no administrative key; and a single gateway serves the exchange wire protocol alongside standard EVM JSON-RPC. The native token MTF secures the network through proof of stake, and protocol revenue funds an open-market buyback whose purchased tokens are locked permanently in a keyless address.</p>
       <p>The design pursues five properties that general-purpose chains cannot deliver together: immediate and absolute finality, so liquidations, funding, and bridge releases never model a reorg; deterministic execution, enforced mechanically down to the prohibition of floating point in the consensus path; cross-asset capital efficiency through scenario-based portfolio margin; resistance to ordering-based value extraction through batch auctions, private quotation, and encrypted order intents; and permissionless market listing through burned-bid auctions. Each mechanism is specified below with its governing parameters.</p>
     </section>
 
     <!-- 2 INTRODUCTION -->
     <section id="introduction" class="ps">
-      <div class="ps-num">2</div>
-      <h2>2.&nbsp; Introduction</h2>
+      <div class="ps-num">02</div>
+      <h2>Introduction</h2>
       <p>Existing on-chain derivatives venues compete primarily on price: marginal reductions in taker fees, volume subsidies funded by token emissions, and replicated liquidity programs. Competition of this kind converges to zero margin and rewards whichever operator can subsidize losses longest. MetaFlux is designed on a different premise: professional trading flow is won on structural capability rather than on fees.</p>
       <p>The properties that determine venue selection for a professional desk are structural. Whether a hedged portfolio margins as one exposure or as several, whether a large order can execute without revealing itself to the market, and whether an on-chain program can read canonical market state at native cost are all set by protocol design, not by a fee schedule. The design effort therefore concentrates on three axes:</p>
       <div class="axes">
@@ -287,8 +80,8 @@ a { color: inherit; text-decoration: none; }
 
     <!-- 3 CONSENSUS -->
     <section id="consensus" class="ps">
-      <div class="ps-num">3</div>
-      <h2>3.&nbsp; Consensus: MetaFluxBFT</h2>
+      <div class="ps-num">03</div>
+      <h2>Consensus: MetaFluxBFT</h2>
       <p>MetaFlux is secured by MetaFluxBFT, a Byzantine-fault-tolerant proof-of-stake engine in the HotStuff / Jolteon family of pipelined BFT protocols [1, 2] — the research line that also produced DiemBFT [3]. It is leader-based and partially synchronous, with a pipelined two-chain commit rule. The engine is a MetaFlux-native implementation built on those published foundations rather than a fork, in order to satisfy the determinism requirements imposed by the rest of the system. The choice is deliberate on both sides: an exchange whose clearinghouse lives inside consensus cannot afford a novel commit rule, and it equally cannot afford a general-purpose engine whose execution semantics it does not control end to end.</p>
       <div class="spec-table">
         <table>
@@ -329,8 +122,8 @@ a { color: inherit; text-decoration: none; }
 
     <!-- 4 ARCHITECTURE -->
     <section id="architecture" class="ps">
-      <div class="ps-num">4</div>
-      <h2>4.&nbsp; Architecture</h2>
+      <div class="ps-num">04</div>
+      <h2>Architecture</h2>
       <p>MetaFlux Core is a single deterministic state machine: matching engine, clearinghouse, pricing, risk, and economics are one program whose state transitions are agreed by consensus. There is no off-chain matcher posting settlements back on-chain, and no privileged sequencer. Beside the Core, in the same block, runs a general-purpose EVM.</p>
       <h3>4.1 The unified block</h3>
       <p>Each consensus round produces exactly one block at sub-second cadence, and exchange actions and EVM transactions execute together inside it — there is no separate slow lane for contract deployment and no second fee market. Value moves between the two domains as deterministic system transactions: EVM-to-Core transfers dispatch through a system contract, and Core-to-EVM credits materialize in the next block, exactly once, in FIFO order within each round. The EVM fee market is a single EIP-1559 mechanism [9] whose base fee is burned; the block&#8217;s gas budget is elastic — widening under load, shrinking when idle — above a hard floor, with per-transaction caps sized so that contract deployment confirms in the next block without displacing trading flow.</p>
@@ -354,15 +147,15 @@ a { color: inherit; text-decoration: none; }
 
     <!-- 5 MARKET STRUCTURE -->
     <section id="microstructure" class="ps">
-      <div class="ps-num">5</div>
-      <h2>5.&nbsp; Market structure</h2>
+      <div class="ps-num">05</div>
+      <h2>Market structure</h2>
       <p>The base market is a central limit order book with strict price-time priority, matched deterministically inside the block. On top of it the protocol addresses the two questions market microstructure decides: how information is incorporated into price, and whether transaction ordering can be exploited for value extraction.</p>
       <h3>5.1 Order set</h3>
       <p>Orders carry a time-in-force of GTC, IOC, or FOK, or rest as ALO post-only orders that cancel rather than cross and never pay taker fees. Market orders are IOC orders bounded by a band around the committed mark price, so no single order can sweep the book beyond a bounded distance from the mark. Trigger orders — stop-loss, take-profit, and their limit variants — arm against the mark price, survive restarts, and evaluate on every commit. Grouping links an entry to its bracket (one-cancels-other) or attaches take-profit/stop-loss to the position itself, surviving partial closes. TWAP execution slices a parent order into scheduled IOC children with randomized timing jitter; scale orders ladder a size across a price range in flat, linear, or geometric shapes. Five self-trade-prevention modes govern what happens when an account would cross itself, down to <span class="mono">DecrementAndCancel</span>, which nets the overlap without printing a trade. Reduce-only orders are re-validated at commit time against committed state, not at admission.</p>
       <h3>5.2 Price formation</h3>
       <p>Three prices govern every market, each with a distinct failure model.</p>
       <p>The <strong>oracle price</strong> <i>o<sub>t</sub></i> is a weighted median over up to ten external spot venues, recomputed every block from consensus timestamps:</p>
-      <div class="eq"><span><i>o<sub>t</sub></i> = <span class="rm">wmedian</span>{ (<i>p</i><sub><i>v</i>,<i>t</i></sub>, <i>w<sub>v</sub></i>) : <i>v</i> ∈ <i>V<sub>t</sub></i> }</span><span class="eqno">(4)</span></div>
+      <div class="eq"><span><i>o<sub>t</sub></i> = <span class="rm">wmedian</span>&#123; (<i>p</i><sub><i>v</i>,<i>t</i></sub>, <i>w<sub>v</sub></i>) : <i>v</i> ∈ <i>V<sub>t</sub></i> &#125;</span><span class="eqno">(4)</span></div>
       <p>where <i>V<sub>t</sub></i> is the set of surviving feeds: a quote older than a staleness bound (60 seconds by default) is dropped, a quote deviating more than 5% from the cross-venue median is rejected, and if the surviving weight falls below half the configured total the oracle holds its previous value rather than update from thin evidence.</p>
       <p>The <strong>mark price</strong> — the price at which margin, liquidation, funding, and triggers are evaluated — is the median of three independent components:</p>
       <div class="eq"><span><i>m<sub>t</sub></i> = <span class="rm">median</span>( <i>o<sub>t</sub></i> + <span class="rm">EMA</span><sub><i>β</i></sub>(<i>mid<sub>t</sub></i> − <i>o<sub>t</sub></i>),&nbsp; (<i>b<sub>t</sub></i> + <i>a<sub>t</sub></i>)/2,&nbsp; <span class="rm">median</span>(external perp mids) )</span><span class="eqno">(5)</span></div>
@@ -391,8 +184,8 @@ a { color: inherit; text-decoration: none; }
 
     <!-- 6 RISK -->
     <section id="risk" class="ps">
-      <div class="ps-num">6</div>
-      <h2>6.&nbsp; Risk &amp; margin</h2>
+      <div class="ps-num">06</div>
+      <h2>Risk &amp; margin</h2>
       <p>Margin, liquidation, and loss allocation are protocol design surfaces, each specified as a deterministic function over exact fixed-point state. This section defines the margin system, the liquidation ladder, and the loss-allocation mechanism in turn.</p>
       <h3>6.1 Margin system</h3>
       <p>Each position margins in one of three modes: <strong>cross</strong>, against the account&#8217;s pooled collateral; <strong>isolated</strong>, against a pre-allocated bucket that caps the position&#8217;s maximum loss; or <strong>strict-isolated</strong>, which additionally excludes the position from any portfolio netting. Governance can also place an entire market under strict isolation — a containment tool for a market in distress that takes effect without cancelling a single resting order. Hedge mode lets an account hold long and short legs of the same market simultaneously, each leg margined independently. Initial margin on a position of price <i>p</i> and size <i>s</i> is notional over leverage, rounded up:</p>
@@ -401,7 +194,7 @@ a { color: inherit; text-decoration: none; }
       <div class="eq"><span><i>H</i> = <span class="rm">AV</span> / <span class="rm">MM</span>,&nbsp;&nbsp; <span class="rm">MM</span> = Σ<sub><i>i</i></sub> |<i>N<sub>i</sub></i>| · <i>ρ<sub>i</sub></i></span><span class="eqno">(10)</span></div>
       <p>with per-asset maintenance ratios <i>ρ<sub>i</sub></i> (300 bps baseline) that step up in the same notional bands. Health is evaluated at every block boundary after the mark update and again after every account-touching action. The bands are governed on-chain and auto-tune from 30-day realized volatility, as does a per-asset funding multiplier, so risk parameters track prevailing market conditions without manual intervention.</p>
       <h3>6.2 Cross-asset portfolio margin</h3>
-      <p>For multi-asset books, a SPAN-style scenario engine [6] replaces the per-asset maintenance sum. The portfolio is revalued across the scenario grid <i>G</i> = {±5%, ±10%, ±20%} × {±20%, ±50%} — six price shocks crossed with four volatility shocks, 24 scenarios — and margined on the worst case plus a concentration penalty <i>π</i>:</p>
+      <p>For multi-asset books, a SPAN-style scenario engine [6] replaces the per-asset maintenance sum. The portfolio is revalued across the scenario grid <i>G</i> = &#123;±5%, ±10%, ±20%&#125; × &#123;±20%, ±50%&#125; — six price shocks crossed with four volatility shocks, 24 scenarios — and margined on the worst case plus a concentration penalty <i>π</i>:</p>
       <div class="eq"><span><span class="rm">PM</span> = <span class="rm">max</span>( 0, −<span class="rm">min</span><sub>(<i>δp</i>,<i>δσ</i>)∈<i>G</i></sub> Σ<sub><i>i</i></sub> [ <i>s<sub>i</sub></i><i>m<sub>i</sub></i> · <i>δp</i> + ½ |<i>s<sub>i</sub></i>|<i>m<sub>i</sub></i> <i>σ<sub>i</sub></i> · <i>δσ</i> · <i>δp</i>² ] ) + <i>π</i></span><span class="eqno">(11)</span></div>
       <div class="eq"><span><i>π</i> = 0.10 · <span class="rm">max</span>( 0, <span class="rm">max</span><sub><i>i</i></sub> |<i>N<sub>i</sub></i>| − ½ <i>V</i> )</span><span class="eqno">(12)</span></div>
       <p>where <i>s<sub>i</sub></i>, <i>m<sub>i</sub></i>, <i>σ<sub>i</sub></i>, <i>N<sub>i</sub></i> are position size, mark, implied volatility, and notional, and <i>V</i> is the portfolio&#8217;s net value: each scenario sums a linear (delta) and a convex (gamma) term per position, and 10% of any single-asset notional above half of net value is charged on top. A portfolio long one correlated asset and short another therefore margins on the residual exposure rather than paying full isolated margin on each leg; typical capital efficiency for a hedged, multi-leg book is 2–5× the classical requirement. Enrollment is opt-in and reversible above a 100,000 USDC equity floor, and the same engine is exposed to smart contracts through a precompile (§7.2), so on-chain programs compute margin with the same arithmetic the clearinghouse applies.</p>
@@ -440,8 +233,8 @@ a { color: inherit; text-decoration: none; }
 
     <!-- 7 VM -->
     <section id="vm" class="ps">
-      <div class="ps-num">7</div>
-      <h2>7.&nbsp; Execution layer</h2>
+      <div class="ps-num">07</div>
+      <h2>Execution layer</h2>
       <p>The EVM is the prevailing execution environment for on-chain strategies, but a serial, general-purpose EVM is a poor fit for a high-throughput derivatives chain. MetaFlux retains full EVM compatibility — existing wallets, hardware signers, and trading frameworks work unmodified — and makes the execution layer parallel and derivatives-aware.</p>
       <h3>7.1 Parallel execution</h3>
       <p>Transactions execute optimistically in parallel under a Block-STM executor [4]. Every node derives the same conflict partition from transaction content, runs non-conflicting strata concurrently, and catches any mis-estimated access set by read-set re-validation and re-execution. The committed result is byte-identical to a serial execution of the same block; the partition is advisory, so correctness never depends on it. A contract call does not queue behind unrelated transactions, and throughput scales with the block&#8217;s parallel width rather than a single lane.</p>
@@ -462,8 +255,8 @@ a { color: inherit; text-decoration: none; }
 
     <!-- 8 BRIDGE -->
     <section id="bridge" class="ps">
-      <div class="ps-num">8</div>
-      <h2>8.&nbsp; MetaBridge</h2>
+      <div class="ps-num">08</div>
+      <h2>MetaBridge</h2>
       <p>Assets enter and leave MetaFlux through MetaBridge — all of them, including USDC. There is deliberately no third-party bridge and no external attestation service on the critical path: the bridge&#8217;s trust assumption is exactly the chain&#8217;s own two-thirds of stake, enforced by the same secp256k1 keys that sign consensus. There is no admin account anywhere in the design.</p>
       <h3>8.1 Deposits</h3>
       <p>A deposit on a source chain — EVM corridors such as Base and Arbitrum, or the Solana corridor — is observed by every validator, but only once the source chain reports it <em>finalized</em>: a reorged deposit can never mint an unbacked balance. Validators attest independently, and the credit lands when attestations reach a two-thirds stake-weighted quorum. Every transfer carries a deterministic message id</p>
@@ -476,8 +269,8 @@ a { color: inherit; text-decoration: none; }
 
     <!-- 9 MARKETS -->
     <section id="markets" class="ps">
-      <div class="ps-num">9</div>
-      <h2>9.&nbsp; Markets &amp; permissionless listing</h2>
+      <div class="ps-num">09</div>
+      <h2>Markets &amp; permissionless listing</h2>
       <p>Every perpetual is a linear, USDC-margined contract with no expiry, funded trader-to-trader. Spot markets trade token-for-token on the same book machinery with escrowed resting orders and no leverage. Spot margin extends spot with leverage funded by the Earn lending pool, isolated per pair, liquidated by the same floored-close discipline as perpetuals. Options and credit-protection markets are designed as later instrument classes on the same clearing stack — the order book, margin engine, and liquidation ladder are instrument-agnostic by construction.</p>
       <h3>9.1 The MIP suite</h3>
       <p>Market listing is a protocol mechanism rather than an operator decision. The MetaFlux Improvement Proposals define the market-creation surface:</p>
@@ -501,7 +294,7 @@ a { color: inherit; text-decoration: none; }
     <!-- 10 ECONOMICS -->
     <section id="economics" class="ps">
       <div class="ps-num">10</div>
-      <h2>10.&nbsp; Economics</h2>
+      <h2>Economics</h2>
       <p class="lead">MTF is the native token: it secures the chain through staking, it is the unit in which validators and their delegators are paid, and protocol revenue routes back to holders through an open-market buyback. The design rests on three mechanisms — a supply that tracks an external reference rather than an arbitrary cap, a fee engine that converts net revenue into buy pressure, and a staking ladder that weights committed stake over raw balance.</p>
 
       <h3>10.1 Supply: population-pegged</h3>
@@ -578,7 +371,7 @@ a { color: inherit; text-decoration: none; }
     <!-- 11 SECURITY -->
     <section id="security" class="ps">
       <div class="ps-num">11</div>
-      <h2>11.&nbsp; Security model</h2>
+      <h2>Security model</h2>
       <p>MetaFlux is a stake-weighted BFT chain: the relevant adversary thresholds are one-third and two-thirds of stake, not a Nakamoto 51%. There is no probabilistic finality and no reorg window.</p>
       <div class="spec-table">
         <table>
@@ -603,7 +396,7 @@ a { color: inherit; text-decoration: none; }
     <!-- 12 CONCLUSION -->
     <section id="conclusion" class="ps">
       <div class="ps-num">12</div>
-      <h2>12.&nbsp; Conclusion</h2>
+      <h2>Conclusion</h2>
       <p>We have specified a Layer 1 blockchain that is an exchange in its state machine rather than in its application layer. Consensus finality is the settlement guarantee; the order book, clearinghouse, and risk engine are one deterministic program; a parallel EVM gives on-chain strategies the same primitives the protocol uses to police them; and a validator-cosigned bridge extends the chain&#8217;s own trust assumption to external assets rather than importing a third party&#8217;s. The economics are mechanical throughout: protocol revenue purchases the token and removes it from circulation, validators and their delegators are paid from revenue rather than from dilution, and market listing is priced by burned-bid auction.</p>
       <p>The premise throughout is that derivatives infrastructure is won on capability — market structure that resists extraction, margin that recognizes hedges, liquidation that bounds cascades — and that each of these capabilities must be a property of the protocol, provable from its rules, rather than a commitment by its operator.</p>
       <p class="closing">Derivatives, on first principles.</p>
@@ -612,7 +405,7 @@ a { color: inherit; text-decoration: none; }
     <!-- 13 REFERENCES -->
     <section id="references" class="ps">
       <div class="ps-num">13</div>
-      <h2>13.&nbsp; References</h2>
+      <h2>References</h2>
       <ol class="refs">
         <li>M. Yin, D. Malkhi, M. K. Reiter, G. Golan-Gueta, and I. Abraham. &#8220;HotStuff: BFT Consensus with Linearity and Responsiveness.&#8221; In <em>Proceedings of the ACM Symposium on Principles of Distributed Computing (PODC)</em>, 2019.</li>
         <li>R. Gelashvili, L. Kokoris-Kogias, A. Sonnino, A. Spiegelman, and Z. Xiang. &#8220;Jolteon and Ditto: Network-Adaptive Efficient Consensus with Asynchronous Fallback.&#8221; In <em>Financial Cryptography and Data Security (FC)</em>, 2022.</li>
@@ -625,8 +418,55 @@ a { color: inherit; text-decoration: none; }
         <li>V. Buterin, E. Conner, R. Dudley, M. Slipper, I. Norden, and A. Bakhta. &#8220;EIP-1559: Fee Market Change for ETH 1.0 Chain.&#8221; Ethereum Improvement Proposals, 2019.</li>
       </ol>
     </section>
-</article>
 
-<script src="paged.polyfill.js"></script>
-</body>
-</html>
+  </article>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a class="brand" href="/"><img class="brand-mark" src="logo/metaflux-mark.svg" alt="" aria-hidden="true"><span class="b-word"><span class="b-meta">Meta</span><span class="b-flux">Flux</span></span></a>
+        <p style="color: var(--content-prose); font-size: 14px; max-width: 36ch; margin-top: 24px; line-height: 1.55;">An L1 derivatives chain. Independent, EVM-compatible, built from first principles for traders who care about market structure.</p>
+        <p style="font-family: var(--font-num); font-size: 11px; color: var(--content-label); margin-top: 20px; letter-spacing: 0.05em; text-transform: uppercase;">A MetaFlux Foundation product</p>
+      </div>
+      <div>
+        <h5>Protocol</h5>
+        <ul>
+          <li><a href="https://docs.mtf.exchange/">Docs</a></li>
+          <li><a href="whitepaper.html" aria-current="page">Whitepaper</a></li>
+          <li><a href="https://docs.mtf.exchange/api">API reference</a></li>
+          <li><a href="https://docs.mtf.exchange/mip">MIP-3 deploy</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Build</h5>
+        <ul>
+          <li><a href="https://docs.mtf.exchange/integration/migrating-from-hl">Migration guide</a></li>
+          <li><a href="https://docs.mtf.exchange/integration/signing">Signing</a></li>
+          <li><a href="https://docs.mtf.exchange/concepts/agent-wallets">Agent wallets</a></li>
+          <li><a href="https://app.mtf.exchange" target="_blank" rel="noopener">Testnet access</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Connect</h5>
+        <ul>
+          <li><a href="https://github.com/mtf-exchange">GitHub</a></li>
+          <li><a href="mailto:hello@mtf.exchange?subject=Hello%2C%20MetaFlux&body=Who%20you%20are%3A%0D%0A%0D%0AWhat%20you%27re%20reaching%20out%20about%3A%0D%0A">hello@mtf.exchange</a></li>
+          <li><a href="mailto:builders@mtf.exchange?subject=Testnet%20access%20request&body=Team%20%2F%20project%3A%0D%0A%0D%0AWhat%20you%27re%20building%3A%0D%0A%0D%0AMarkets%20you%20trade%3A%0D%0A%0D%0AStack%20%28language%20%C2%B7%20venues%20%C2%B7%20wire%20protocol%29%3A%0D%0A%0D%0AExpected%20volume%3A%0D%0A">builders@mtf.exchange</a></li>
+          <li><a href="mailto:validators@mtf.exchange?subject=Validator%20inquiry&body=Operator%20%2F%20entity%3A%0D%0A%0D%0AOn-chain%20ops%20experience%3A%0D%0A%0D%0AInfrastructure%20%28regions%20%C2%B7%20hardware%29%3A%0D%0A%0D%0AOther%20networks%20you%20validate%3A%0D%0A%0D%0AContact%3A%0D%0A">validators@mtf.exchange</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© MetaFlux Foundation. MetaFlux is a MetaFlux Foundation series product. Pre-launch. · <a href="terms.html">Terms</a> · <a href="privacy.html">Privacy</a></span>
+      <span class="pride-swatches">
+        <span class="sw" style="background: var(--pride-blue);"></span>
+        <span class="sw" style="background: var(--pride-pink);"></span>
+        <span class="sw" style="background: var(--pride-white);"></span>
+        &nbsp;mtf.exchange
+      </span>
+    </div>
+  </div>
+</footer>
+</Base>

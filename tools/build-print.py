@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 """Build whitepaper-print.html (plain black-on-white academic layout)
-from the canonical whitepaper.html article content. Run from repo root:
+from the canonical src/pages/whitepaper.astro article content. Run from repo root:
     python3 tools/build-print.py
 Then render the PDF:
-    node tools/render-pdf.mjs "$PWD/whitepaper-print.html" "$PWD/whitepaper.pdf"
+    node tools/render-pdf.mjs "$PWD/public/whitepaper-print.html" "$PWD/public/whitepaper.pdf"
 """
 import re, pathlib
 
 root = pathlib.Path(__file__).resolve().parent.parent
-src = (root / "whitepaper.html").read_text()
+src = (root / "src" / "pages" / "whitepaper.astro").read_text()
 
 m = re.search(r'<article class="paper-content">(.*)</article>', src, re.S)
 if not m:
-    raise SystemExit("could not locate <article class=\"paper-content\"> in whitepaper.html")
+    raise SystemExit("could not locate <article class=\"paper-content\"> in src/pages/whitepaper.astro")
 content = m.group(1).strip()
 
 # Hard-code section numbers into the h2 headings from each section's ps-num
@@ -33,7 +33,7 @@ HEAD = """<!doctype html>
    whitepaper-print.html — GENERATED FILE, do not edit by hand.
    Plain black-on-white academic layout for the PDF edition.
    Rebuild with:  python3 tools/build-print.py
-   Render with:   node tools/render-pdf.mjs "$PWD/whitepaper-print.html" "$PWD/whitepaper.pdf"
+   Render with:   node tools/render-pdf.mjs "$PWD/public/whitepaper-print.html" "$PWD/public/whitepaper.pdf"
    ──────────────────────────────────────────────────────────────── */
 :root {
   --ink: #000;
@@ -290,5 +290,5 @@ TAIL = """
 """
 
 out = HEAD + content + TAIL
-(root / "whitepaper-print.html").write_text(out)
-print(f"wrote whitepaper-print.html ({len(out)} bytes)")
+(root / "public" / "whitepaper-print.html").write_text(out)
+print(f"wrote public/whitepaper-print.html ({len(out)} bytes)")

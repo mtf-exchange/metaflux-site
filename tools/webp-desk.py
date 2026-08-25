@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Derive shots/desk.webp from shots/desk.png, and report what the page must say.
+"""Derive public/shots/desk.webp from public/shots/desk.png, and report what the page must say.
 
 shoot-desk.mjs writes the PNG at devicePixelRatio 2, so the file is twice the
 CSS size the <img> declares. Both formats ship: the WebP is what nearly every
@@ -15,7 +15,7 @@ import os
 from PIL import Image
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SHOTS = os.path.join(os.path.dirname(HERE), "shots")
+SHOTS = os.path.join(os.path.dirname(HERE), "public", "shots")
 
 png = os.path.join(SHOTS, "desk.png")
 im = Image.open(png).convert("RGB")

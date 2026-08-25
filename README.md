@@ -1,33 +1,52 @@
 # mtf.exchange — official site
 
-Static site, no build step, no framework. Four pages sharing one stylesheet:
+Astro, static output. Four pages sharing one layout — Astro is here only to
+stop the `<head>`, the nav and the footer from being copy-pasted four times;
+every page is still plain HTML written by hand, and the build emits plain
+static HTML with no client-side framework.
 
 ```
-index.html        # the landing page — loads no JavaScript at all
-whitepaper.html   # the protocol paper, with a scroll-spy TOC
-terms.html        # legal
-privacy.html      # legal
-redesign.css      # the one stylesheet all four pages load
-main.js           # one job: the whitepaper's TOC scroll-spy (no-op elsewhere)
-arch.svg          # the architecture figure, referenced by index.html
-shots/desk.webp   # the hero photograph — the devnet desk, actually running
+src/layouts/Base.astro       # the one <head>: meta, OG, fonts, icons
+src/components/Nav.astro     # the nav bar — whitepaper + legal pages
+src/components/LegalFooter.astro
+src/pages/index.astro        # the landing page — loads no JavaScript at all
+src/pages/whitepaper.astro   # the protocol paper, with a scroll-spy TOC
+src/pages/terms.astro        # legal
+src/pages/privacy.astro      # legal
+public/redesign.css          # the stylesheet the other three pages share
+public/index.css             # the landing page's own stylesheet
+public/main.js               # one job: the whitepaper's TOC scroll-spy
+public/arch.svg              # the architecture figure
+public/shots/desk.webp       # the hero photograph — the devnet desk, running
 ```
+
+Output URLs are unchanged (`/whitepaper.html`, not `/whitepaper/`) — that is
+what `build.format: 'file'` in `astro.config.mjs` is for.
+
+Literal `{` and `}` in page prose must be written `&#123;` / `&#125;`; Astro
+reads a bare brace as a JavaScript expression.
 
 ## Run locally
 
 ```bash
-python3 -m http.server 8000
-# open http://localhost:8000
+npm install
+npm run dev      # http://localhost:4321
+npm run build    # → dist/
 ```
 
-Or just open `index.html` in a browser directly.
+`dist/` is what ships. After changing a page, check that the rendered body
+still matches the hand-written original:
+
+```bash
+npm run build && python3 tools/check-parity.py
+```
 
 ## Deploy
 
-The repo serves directly via any static host. Recommended:
+Build first (`npm run build`), then serve `dist/` from any static host:
 
-- **Vercel** — drag-and-drop, sets up `mtf.exchange` via the dashboard
-- **Cloudflare Pages** — `wrangler pages deploy .`
+- **Vercel** — detects Astro; sets up `mtf.exchange` via the dashboard
+- **Cloudflare Pages** — `wrangler pages deploy dist`
 - **GitHub Pages** — repo Settings → Pages → main branch
 
 DNS points `mtf.exchange` apex + `www` at the host's IP / CNAME per their docs.

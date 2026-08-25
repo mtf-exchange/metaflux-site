@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Re-shoot shots/desk.png — the product photograph in the home page's hero.
+ * Re-shoot public/shots/desk.png — the product photograph in the home page's hero.
  *
  *   node tools/shoot-desk.mjs                  # assumes metaflux-web on :5210
  *   MFW=http://localhost:5173 node tools/…     # or point it somewhere else
@@ -49,7 +49,7 @@ const { chromium } = require(
 );
 
 const BASE = process.env.MFW ?? 'http://localhost:5210';
-const OUT = new URL('../shots/', import.meta.url).pathname;
+const OUT = new URL('../public/shots/', import.meta.url).pathname;
 
 const POSITIONS = [
 	// coin, side, size, entry, mark, leverage, liq, funding
@@ -203,5 +203,5 @@ const shot = await page.screenshot({
 await browser.close();
 
 writeFileSync(`${OUT}desk.png`, shot);
-console.log(`shots/desk.png — 1860x${height}  (cuts: ${JSON.stringify(cut)})`);
+console.log(`public/shots/desk.png — 1860x${height}  (cuts: ${JSON.stringify(cut)})`);
 console.log('now: python3 tools/webp-desk.py');

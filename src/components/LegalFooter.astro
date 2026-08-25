@@ -1,0 +1,24 @@
+---
+const { current } = Astro.props;
+---
+<footer class="legal-foot">
+  <div class="wrap">
+    <a class="brand" href="/"><img class="brand-mark" src="/logo/metaflux-mark.svg" alt="" aria-hidden="true"><span class="b-word"><span class="b-meta">Meta</span><span class="b-flux">Flux</span></span></a>
+    <nav class="legal-links" aria-label="Footer">
+      <a href="/">Home</a>
+      <a href="whitepaper.html">Whitepaper</a>
+      <a href="https://docs.mtf.exchange/">Docs</a>
+      <a href="terms.html" aria-current={current === "terms" ? "page" : undefined}>Terms</a>
+      <a href="privacy.html" aria-current={current === "privacy" ? "page" : undefined}>Privacy</a>
+    </nav>
+    <div class="foot-bottom">
+      <span>© MetaFlux Foundation, established in England &amp; Wales. MetaFlux is a MetaFlux Foundation product. Pre-launch.</span>
+      <span class="pride-swatches">
+        <span class="sw" style="background: var(--pride-blue);"></span>
+        <span class="sw" style="background: var(--pride-pink);"></span>
+        <span class="sw" style="background: var(--pride-white);"></span>
+        &nbsp;mtf.exchange
+      </span>
+    </div>
+  </div>
+</footer>

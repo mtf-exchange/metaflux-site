@@ -1,33 +1,14 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="color-scheme" content="light">
-<meta name="theme-color" content="#ffffff">
-<title>Privacy Policy — MetaFlux</title>
-<meta name="description" content="Privacy Policy for the MetaFlux website, operated by MetaFlux Foundation (England and Wales) under UK GDPR. On-chain data is public and immutable.">
-<meta name="robots" content="all">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,500;0,600;0,700;0,800;1,500&family=Geist:wght@500&family=Geist+Mono:wght@400;500&family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="redesign.css">
-</head>
-<body>
-
-
-<nav>
-  <div class="bar">
-    <a class="brand" href="/"><img class="brand-mark" src="logo/metaflux-mark.svg" alt="" aria-hidden="true"><span class="b-word"><span class="b-meta">Meta</span><span class="b-flux">Flux</span></span></a>
-    <ul>
-      <li><a href="whitepaper.html">Whitepaper</a></li>
-      <li><a href="https://docs.mtf.exchange/" target="_blank">Docs ↗</a></li>
-      <li><a href="https://docs.mtf.exchange/evm" target="_blank">Ecosystem ↗</a></li>
-    </ul>
-    <a class="nav-cta" href="https://app.mtf.exchange/" target="_blank" rel="noopener">Devnet →</a>
-  </div>
-</nav>
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import LegalFooter from '../components/LegalFooter.astro';
+---
+<Base
+  title="Privacy Policy — MetaFlux"
+  description="Privacy Policy for the MetaFlux website, operated by MetaFlux Foundation (England and Wales) under UK GDPR. On-chain data is public and immutable."
+  canonical="https://mtf.exchange/privacy.html"
+>
+<Nav />
 
 <main class="legal">
   <div class="kicker">Legal</div>
@@ -177,28 +158,5 @@
 
 </main>
 
-<footer class="legal-foot">
-  <div class="wrap">
-    <a class="brand" href="/"><img class="brand-mark" src="logo/metaflux-mark.svg" alt="" aria-hidden="true"><span class="b-word"><span class="b-meta">Meta</span><span class="b-flux">Flux</span></span></a>
-    <nav class="legal-links" aria-label="Footer">
-      <a href="/">Home</a>
-      <a href="whitepaper.html">Whitepaper</a>
-      <a href="https://docs.mtf.exchange/">Docs</a>
-      <a href="terms.html">Terms</a>
-      <a href="privacy.html" aria-current="page">Privacy</a>
-    </nav>
-    <div class="foot-bottom">
-      <span>© MetaFlux Foundation, established in England &amp; Wales. MetaFlux is a MetaFlux Foundation product. Pre-launch.</span>
-      <span class="pride-swatches">
-        <span class="sw" style="background: var(--pride-blue);"></span>
-        <span class="sw" style="background: var(--pride-pink);"></span>
-        <span class="sw" style="background: var(--pride-white);"></span>
-        &nbsp;mtf.exchange
-      </span>
-    </div>
-  </div>
-</footer>
-
-<script src="main.js"></script>
-</body>
-</html>
+<LegalFooter current="privacy" />
+</Base>
