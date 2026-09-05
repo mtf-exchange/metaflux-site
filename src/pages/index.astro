@@ -14,7 +14,10 @@ import Nav from '../components/Nav.astro';
 <Nav />
 
 <header class="hero">
-  <h1 class="rise">Derivatives, on<br><em>first principles</em>.</h1>
+  <div>
+    <div class="status rise"><i></i>Independent L1 · devnet live</div>
+    <h1 class="rise">Derivatives, on<br><em>first principles</em>.</h1>
+  </div>
   <div class="side rise d1">
     <p>An independent L1 whose state machine is a derivatives exchange. Perpetuals and spot from one account with one margin number, and finality in a single block.</p>
     <div class="row">
@@ -27,12 +30,13 @@ import Nav from '../components/Nav.astro';
 <div class="field rise d2" aria-hidden="true">
   <div class="fallback"></div>
   <canvas></canvas>
+  <div class="legend"><i></i><b>Block committed</b> · final, no confirmations</div>
 </div>
 
 <div class="wrap">
   <div class="stats">
     <div><b>0</b><span>confirmations to finality</span></div>
-    <div><b>⅔</b><span>of stake behind every block</span></div>
+    <div><b>2<small>/</small>3</b><span>of stake behind every block</span></div>
     <div><b>1 tx</b><span>to list a market</span></div>
     <div><b>1</b><span>margin number per account</span></div>
   </div>
