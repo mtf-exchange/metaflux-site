@@ -4,22 +4,20 @@ import Nav from '../components/Nav.astro';
 ---
 <Base
   title="MetaFlux — Derivatives, on first principles."
-  description="An independent L1 derivatives exchange. Perpetuals and spot from one account with one margin number, finality in a single block, a parallel EVM in every block."
+  description="An independent L1 derivatives exchange. Perpetuals, spot and options from one account with one margin number, finality in a single block, a parallel EVM in every block."
   canonical="https://mtf.exchange/"
   script={false}
 >
 <Fragment slot="head">
-<script src="/hero.js" is:inline defer></script>
+<script src="/home.js" is:inline defer></script>
 </Fragment>
 <Nav />
 
 <header class="hero">
-  <div>
-    <div class="status rise">Independent L1 · testnet live</div>
-    <h1 class="rise">Derivatives, on<br><em>first principles</em>.</h1>
-  </div>
+  <div class="status rise">Independent L1 · testnet live</div>
+  <h1 class="rise">Derivatives, on<br><em>first principles</em>.</h1>
   <div class="side rise d1">
-    <p>An independent L1 whose state machine is a derivatives exchange. Perpetuals and spot from one account with one margin number, and finality in a single block.</p>
+    <p>Perpetuals, spot and options from one account with one margin number. The matching engine and the clearinghouse run inside consensus — final in a single block.</p>
     <div class="row">
       <a class="btn" href="https://app.mtf.exchange/" target="_blank" rel="noopener">Trade →</a>
       <a class="more" href="/whitepaper.html">Whitepaper</a>
@@ -27,44 +25,30 @@ import Nav from '../components/Nav.astro';
   </div>
 </header>
 
-<div class="field rise d2" aria-hidden="true">
-  <div class="fallback"></div>
+<div class="stream rise d2" aria-hidden="true">
   <canvas></canvas>
-  <div class="legend"><i></i><b>Block committed</b> · final, no confirmations</div>
 </div>
 
 <div class="wrap">
-  <section class="sec reveal" id="desk">
-    <div class="kicker">The desk</div>
-    <h2>Trade perpetuals and spot from a single account, against one margin number.</h2>
-    <p class="lead">A SPAN-style scenario engine values your whole book at once, so a hedge stops paying margin twice. The book, the ticket, the blotter and the account summary run live off the testnet today.</p>
+  <section class="sec reveal" id="trade">
+    <div class="kicker">Trade everything in one place</div>
+    <h2>BTC, ETH, SOL and more — perpetuals, spot and options — from a single account, against one margin number.</h2>
     <div class="cta"><a class="btn" href="https://app.mtf.exchange/" target="_blank" rel="noopener">Trade →</a></div>
+    <ul class="assets" aria-label="Markets, live off the testnet"></ul>
     <div class="shot-wrap"><div class="shot"><img src="/shots/desk.webp" alt="The MetaFlux testnet trading desk: a BTC-USDC perpetual with its candle chart, live order book, order ticket, a four-position blotter and the account summary." loading="lazy"></div></div>
   </section>
 
-  <section class="sec reveal" id="why">
-    <div class="kicker">Why a chain, not a contract</div>
-    <h2>Matching, margin, liquidation and settlement run inside consensus.</h2>
-    <div class="pillars">
-      <div>
-        <div class="kicker">Risk</div>
-        <h3>One number, not three.</h3>
-        <p>Cross-asset portfolio margin values the book as a whole. Same three positions, same equity — only the maintenance margin moves.</p>
-        <a class="more" href="/whitepaper.html#risk">How the engine values a book →</a>
-      </div>
-      <div>
-        <div class="kicker">Liquidation</div>
-        <h3>A warning before a liquidation.</h3>
-        <p>The engine reports a band, not a verdict. The first tier cancels resting orders and touches no position — a block to react, not a tick.</p>
-        <a class="more" href="/whitepaper.html#risk">The four tiers →</a>
-      </div>
-      <div>
-        <div class="kicker">Execution</div>
-        <h3>The EVM, made parallel.</h3>
-        <p>Your contract call never queues behind a market it doesn't touch. Portfolio margin, ADL pricing and vault NAV are native precompiles, not 80,000-gas Solidity.</p>
-        <a class="more" href="/whitepaper.html#vm">The execution layer →</a>
-      </div>
-    </div>
+  <section class="sec reveal" id="products">
+    <div class="kicker">Products</div>
+    <ul class="list">
+      <li><a href="https://docs.mtf.exchange/products/perpetuals"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 12c0-2.2 1.6-4 3.6-4 2.4 0 3.4 4 5.8 4 2 0 3.6-1.8 3.6-4s-1.6-4-3.6-4c-2.4 0-3.4 4-5.8 4C8.6 8 7 9.8 7 12z" transform="translate(-1.5 4)"/></svg><b>Perpetuals</b><span>Leveraged long and short, no expiry, hourly funding. Cross or isolated margin, hedge mode.</span><i>→</i></a></li>
+      <li><a href="https://docs.mtf.exchange/products/spot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h14l-3-3M20 15H6l3 3"/></svg><b>Spot</b><span>Token-for-token on a central limit order book, settled against your balance.</span><i>→</i></a></li>
+      <li><a href="https://docs.mtf.exchange/products/options"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h5l3-6 3 12 3-6h2"/></svg><b>Options</b><span>European puts and calls, fully collateralized, quoted through RFQ.</span><i>→</i></a></li>
+      <li><a href="https://docs.mtf.exchange/concepts/order-types"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18l4-4 3 3 5-8 3 4 3-5"/><path d="M3 21h18" opacity=".4"/></svg><b>Trailing stops</b><span>A stop that follows the mark by a fixed distance and only ever tightens.</span><i>→</i></a></li>
+      <li><a href="https://docs.mtf.exchange/concepts/order-types"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4v16M18 4v16M6 8h12M6 12h12M6 16h12"/></svg><b>Scaled TP / SL</b><span>Ladder your exits across a price range — placed and cancelled as one.</span><i>→</i></a></li>
+      <li><a href="https://docs.mtf.exchange/concepts/order-types"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg><b>TWAP &amp; chase</b><span>Slice a large order over time, or chase the touch without crossing the spread. In the engine, not your client.</span><i>→</i></a></li>
+      <li><a href="https://docs.mtf.exchange/concepts/portfolio-margin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8l8-4 8 4-8 4-8-4z"/><path d="M4 12l8 4 8-4M4 16l8 4 8-4"/></svg><b>Portfolio margin</b><span>One maintenance number for the whole book, so a hedge stops paying margin twice.</span><i>→</i></a></li>
+    </ul>
   </section>
 </div>
 
@@ -85,29 +69,6 @@ import Nav from '../components/Nav.astro';
     <figure class="arch"><img src="/arch.svg" alt="MetaFlux architecture: clients, access layer, clearing core, execution, MetaFluxBFT consensus" loading="lazy"></figure>
   </section>
 
-  <section class="sec reveal" id="build">
-    <div class="kicker">Builders</div>
-    <div class="integrate">
-      <div>
-        <h2>Integrate MetaFlux.</h2>
-        <p class="lead">One gateway serves <span class="mono">POST /info</span>, <span class="mono">POST /exchange</span>, WebSocket and EVM JSON-RPC. Orders are signed in a standard EIP-712 envelope, so hardware signers and browser wallets work unmodified. Agent wallets sign every order and never hold withdrawal authority. Deploying a market is one transaction under MIP-3.</p>
-        <div class="links">
-          <a class="more" href="https://docs.mtf.exchange/">Docs →</a>
-          <a class="more" href="https://docs.mtf.exchange/integration/migrating-from-hl">Migration guide →</a>
-          <a class="more" href="https://docs.mtf.exchange/mip/mip-3">MIP-3 →</a>
-        </div>
-      </div>
-<pre class="code"><code><span class="k">import</span> &#123; MetaFluxClient &#125; <span class="k">from</span> <span class="s">"@metaflux/sdk"</span>;
-<span class="c">// one gateway, one chain id — testnet is open today</span>
-<span class="k">const</span> client = <span class="k">new</span> MetaFluxClient(&#123;
-  gateway: <span class="s">"https://api.testnet.mtf.exchange"</span>,
-  chainId: 114514,
-  signer, <span class="c">// agent wallet — never withdrawal authority</span>
-&#125;);
-<span class="k">await</span> client.exchange.submitOrder(order); <span class="c">// same strategy, new wire</span></code></pre>
-    </div>
-  </section>
-
   <section class="sec reveal" id="faq">
     <div class="kicker">FAQ</div>
     <div class="faq">
@@ -125,7 +86,7 @@ import Nav from '../components/Nav.astro';
       </details>
       <details>
         <summary>What does integration look like?</summary>
-        <p>MetaFlux speaks its own MTF-native protocol — one gateway serving POST /info, POST /exchange, WebSocket, and EVM JSON-RPC. The SDKs (TypeScript and Rust, preview) absorb the wire rewrite; agent wallets, sub-accounts, vaults, cross and isolated margin and client order ids map one to one.</p>
+        <p>One gateway serves POST /info, POST /exchange, WebSocket and EVM JSON-RPC. Orders are signed in a standard EIP-712 envelope, so hardware signers and browser wallets work unmodified; agent wallets sign every order and never hold withdrawal authority. The SDKs (TypeScript and Rust, preview) map agent wallets, sub-accounts, vaults, cross and isolated margin and client order ids one to one. <a href="https://docs.mtf.exchange/">Docs →</a></p>
       </details>
       <details>
         <summary>Who is the testnet for?</summary>
@@ -136,12 +97,11 @@ import Nav from '../components/Nav.astro';
 </div>
 
 <footer class="foot">
-  <div class="wordmark" aria-hidden="true">Meta<em>Flux</em></div>
   <div class="wrap">
     <div class="foot-grid">
       <div>
         <a class="brand" href="/"><img class="brand-mark" src="/logo/metaflux-mark.svg" alt="" aria-hidden="true"><span class="b-word"><span class="b-meta">Meta</span><span class="b-flux">Flux</span></span></a>
-        <p>An independent L1 derivatives exchange — perpetuals and spot. EVM-compatible, built from first principles for traders who care about market structure.</p>
+        <p>An independent L1 derivatives exchange — perpetuals, spot and options. EVM-compatible, built from first principles for traders who care about market structure.</p>
       </div>
       <div>
         <h5>Learn</h5>
@@ -176,5 +136,6 @@ import Nav from '../components/Nav.astro';
       <span>mtf.exchange</span>
     </div>
   </div>
+  <div class="wordmark reveal" aria-hidden="true">Meta<em>Flux</em></div>
 </footer>
 </Base>
