@@ -1,0 +1,27 @@
+<!doctype html>
+<!-- The Open Graph card. Copy to public/, open /og.html on the dev server at
+     1200×630 @2x, screenshot to public/og.png, delete the copy. The sky is the
+     home page's own home.js drawing into .stream. -->
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=PT+Serif:ital@1&display=swap">
+<style>
+  html,body{margin:0;background:#04141f}
+  .card{position:relative;width:1200px;height:630px;overflow:hidden;background:#04141f;color:#e8f1f5;font-family:Geist,sans-serif}
+  .stream{position:absolute;inset:0}
+  .stream canvas{position:absolute;inset:0;width:100%;height:100%}
+  .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,20,31,.55) 0%,rgba(4,20,31,.05) 45%,rgba(4,20,31,.75) 100%)}
+  .brand{position:absolute;left:64px;top:56px;display:flex;align-items:center;gap:12px;font-size:26px;font-weight:500;letter-spacing:-.02em;color:#fff}
+  .brand img{height:30px}
+  .brand em{font-family:'PT Serif',serif;font-style:italic;font-weight:400;font-size:1.05em;color:#F5A9B8}
+  h1{position:absolute;left:64px;bottom:120px;margin:0;font-family:'Instrument Serif',serif;font-weight:400;font-size:96px;line-height:.98;letter-spacing:-.02em;color:#fff}
+  h1 em{font-style:italic;color:#5BCEFA}
+  .foot{position:absolute;left:64px;right:64px;bottom:56px;display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:#9fb3bf}
+</style>
+<div class="card">
+  <div class="stream"><canvas></canvas></div>
+  <div class="shade"></div>
+  <div class="brand"><img src="/logo/metaflux-mark.svg" alt=""><span>Meta<em>Flux</em></span></div>
+  <h1>Derivatives, on<br><em>first principles</em>.</h1>
+  <div class="foot"><span>Independent L1 · perpetuals · spot · options</span><span>mtf.exchange</span></div>
+</div>
+<script src="/home.js" defer></script>

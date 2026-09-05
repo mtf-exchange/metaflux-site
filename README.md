@@ -13,11 +13,11 @@ src/pages/index.astro        # the landing page
 src/pages/whitepaper.astro   # the protocol paper, with a scroll-spy TOC
 src/pages/terms.astro        # legal
 src/pages/privacy.astro      # legal
-public/site.css              # the one stylesheet, all four pages
+src/styles/site.css          # the one stylesheet, inlined into every page at build
 public/home.js               # the landing page: WebGL2 sky, live testnet prices, reveals — no library
 public/main.js               # one job: the whitepaper's TOC scroll-spy
 public/arch.svg              # the architecture figure
-public/shots/desk.webp       # the hero photograph — the devnet desk, running
+public/shots/desk.webp       # the desk screenshot — the testnet desk, running
 ```
 
 Output URLs are unchanged (`/whitepaper.html`, not `/whitepaper/`) — that is
@@ -65,7 +65,9 @@ the band. Raw WebGL2, no library; a single frame under
 `POST /info {"type":"markets"}` and the `markets` WebSocket channel, and runs
 the IntersectionObserver reveals.
 
-All tokens live in `:root` at the top of `site.css`.
+All tokens live in `:root` at the top of `src/styles/site.css`. Astro inlines
+it (`inlineStylesheets: 'always'`), so first paint waits on no CSS request;
+the Google Fonts stylesheet is preloaded and applied without blocking.
 
 ## Logo & brand assets
 
@@ -90,25 +92,10 @@ PNG and no radius is.
 
 ## Open Graph image
 
-`og.svg` is the source; **`og.png` (1200×630) is generated locally and
-committed to the repo.** Do **not** generate it at deploy time — the card
-uses Geist + PT Serif + Cormorant Garamond, and those fonts aren't guaranteed
-on a build host, so deploy-time rasterisers (rsvg etc.) silently fall back to
-the wrong fonts.
-
-Regenerate after editing `og.svg` by rendering it through a browser that
-actually loads the webfonts: wrap `og.svg` in an HTML file that `<link>`s the
-Google Fonts, then screenshot at 1200×630 with headless Chrome (render at 2×
-and downscale for crisp text):
-
-```bash
-# _og.html = the Google-Fonts <link>s + inline og.svg, on a 1200×630 page
-chrome --headless=new --window-size=1200,630 --force-device-scale-factor=2 \
-       --screenshot=og@2x.png http://localhost:8000/_og.html
-sips -z 630 1200 og@2x.png --out og.png      # macOS; or any image tool
-```
-
-Then commit `og.png`. The HTML references `/og.png`.
+`tools/og.html` is the source; `public/og.png` (1200×630) is the render. The
+card is the home page's own sky: copy `tools/og.html` into `public/`, open
+`/og.html` on the dev server in a 1200×630 viewport, wait a few seconds for
+the fonts and the canvas, screenshot to `public/og.png`, delete the copy.
 
 ## Generated artefacts (tools/)
 
