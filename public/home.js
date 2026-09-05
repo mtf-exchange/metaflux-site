@@ -23,8 +23,10 @@
   const gl = canvas && canvas.getContext('webgl2', { antialias: false, alpha: true, premultipliedAlpha: true });
   if (gl) {
     const vs = `#version 300 es
-    in vec4 a;                       // u0, v (gaussian), seed, kind (0 band, 1 field)
+    in vec4 a;                       // u0, v (gaussian), seed, kind (0 band, 1 field, 2 meteor)
     uniform float t, dpr, pass; uniform vec2 res, mouse;
+    uniform vec4 meteor;             // x, y, dx, dy of the current streak
+    uniform float mprog;             // 0..1 along it, <0 when none is flying
     out float haze; out float warm; out float star; out float seed;
     float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7)))*43758.5453); }
     float vnoise(vec2 p){
@@ -51,10 +53,21 @@
       q += mouse*vec2(0.02, 0.015)*(1.0 + a.w);
       q.x *= res.y/res.x*1.9;
       q.y *= 1.15;
-      gl_Position = vec4(q, 0.0, 1.0);
       float big = step(0.93, a.z);
       float sz = (0.9 + fract(a.z*17.0)*1.6 + big*1.6)*dpr*(1.0 - a.w*0.3);
-      gl_PointSize = pass < 0.5 ? res.y*0.10*(0.5 + fract(a.z*7.0)*0.7) : sz;
+      float glow = res.y*0.10*(0.5 + fract(a.z*7.0)*0.7);
+      if (a.w > 1.5) {
+        // a meteor: the point sits a.x of the way back along the streak's tail
+        float back = a.x*0.16;
+        q = meteor.xy + meteor.zw*(mprog - back);
+        float on = step(0.0, mprog)*step(mprog, 1.0)*step(back, mprog);
+        haze = 0.0; warm = 0.0; seed = a.z;
+        star = on*(1.0 - a.x)*(1.0 - a.x)*2.4;
+        sz = (3.4 - a.x*2.8)*dpr*on;
+        glow = 0.0;
+      }
+      gl_Position = vec4(q, 0.0, 1.0);
+      gl_PointSize = pass < 0.5 ? glow : sz;
     }`;
     const fs = `#version 300 es
     precision highp float;
@@ -87,7 +100,8 @@
     gl.useProgram(prog);
     // Deterministic pseudo-random so every visitor sees the same sky.
     let seed = 7; const rnd = () => (seed = (seed*16807) % 2147483647)/2147483647;
-    const N = 16000, pts = new Float32Array(N*4);
+    const N = 16000, M = 40, pts = new Float32Array((N + M)*4);
+    for (let i = N; i < N + M; i++) { pts[i*4] = (i - N)/M; pts[i*4 + 2] = rnd(); pts[i*4 + 3] = 2; }
     for (let i = 0; i < N; i++) {
       const field = i % 4 === 0 ? 1 : 0;
       const g = (rnd() + rnd() + rnd() + rnd())/2 - 1;       // roughly gaussian, -1..1
@@ -102,7 +116,18 @@
     gl.vertexAttribPointer(loc, 4, gl.FLOAT, false, 0, 0);
     gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE);     // additive: light adds up
     const U = (n) => gl.getUniformLocation(prog, n);
-    const uT = U('t'), uDpr = U('dpr'), uRes = U('res'), uMouse = U('mouse'), uPass = U('pass');
+    const uT = U('t'), uDpr = U('dpr'), uRes = U('res'), uMouse = U('mouse'), uPass = U('pass'), uMeteor = U('meteor'), uProg = U('mprog');
+    // One meteor every few seconds, from a seeded corner of the sky, crossing
+    // in about a second. The period is irregular so it never reads as a loop.
+    const h = (n) => { const x = Math.sin(n*12.9898)*43758.5453; return x - Math.floor(x); };
+    const meteor = (t) => {
+      const cycle = Math.floor(t/4.7), ph = (t - cycle*4.7)/4.7, gap = 0.3 + h(cycle + 0.5)*0.4;
+      const dur = 0.18 + h(cycle + 0.2)*0.08;
+      const x = -0.9 + h(cycle)*1.6, y = 0.2 + h(cycle + 0.1)*0.7, len = 0.5 + h(cycle + 0.3)*0.5;
+      const ang = -0.9 - h(cycle + 0.4)*0.9;
+      gl.uniform4f(uMeteor, x, y, Math.cos(ang)*len, Math.sin(ang)*len);
+      gl.uniform1f(uProg, ph > gap && ph < gap + dur ? (ph - gap)/dur : -1);
+    };
     const dpr = Math.min(devicePixelRatio || 1, 2);
     const target = [0, 0], cur = [0, 0];
     addEventListener('pointermove', (e) => { target[0] = (e.clientX/innerWidth)*2 - 1; target[1] = 1 - (e.clientY/innerHeight)*2; }, { passive: true });
@@ -119,9 +144,9 @@
         gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
         cur[0] += (target[0] - cur[0])*0.03; cur[1] += (target[1] - cur[1])*0.03;
         gl.uniform2f(uMouse, cur[0], cur[1]);
-        gl.uniform1f(uT, ms/1000);
+        gl.uniform1f(uT, ms/1000); meteor(ms/1000);
         gl.uniform1f(uPass, 0); gl.drawArrays(gl.POINTS, 0, N);
-        gl.uniform1f(uPass, 1); gl.drawArrays(gl.POINTS, 0, N);
+        gl.uniform1f(uPass, 1); gl.drawArrays(gl.POINTS, 0, N + M);
       }
       if (!still) requestAnimationFrame(frame);
     };
@@ -141,7 +166,8 @@
     let r = rows.get(m.coin);
     if (!r) {
       r = { li: document.createElement('li'), last: null };
-      r.li.dataset.c = m.coin.replace(/\/.*/, '').slice(0, 1); r.li.innerHTML = `<b>${m.coin}</b><span class="num price"></span><span class="num chg"></span>`;
+      const base = m.coin.replace(/\/.*/, ''), perp = (m.kind || 'perp') === 'perp';
+      r.li.innerHTML = `<a href="${perp ? APP + 'trade/perp/' + base + '-USDC' : APP}" target="_blank" rel="noopener"><img src="${APP}symbols/${base}.svg" alt="" width="28" height="28" loading="lazy"><b>${m.coin}</b><span class="num price"></span><span class="num chg"></span></a>`;
       rows.set(m.coin, r); chips.appendChild(r.li);
     }
     {

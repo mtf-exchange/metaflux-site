@@ -78,8 +78,9 @@ nav.site .actions .btn{padding:9px 16px;font-size:11px}
 
 /* live asset chips — rows land here from home.js */
 .assets{list-style:none;margin:56px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:12px 40px;min-height:44px}
-.assets li{display:flex;align-items:center;gap:10px;font-size:14px}
-.assets li::before{content:attr(data-c);display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--deep);color:var(--aurora);font-family:var(--mono);font-size:11px;font-weight:500}
+.assets li a{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink);padding:6px 10px 6px 6px;margin:-6px -10px -6px -6px;border-radius:var(--pill);transition:background .15s}
+.assets li a:hover{background:#fff}
+.assets li img{width:28px;height:28px;border-radius:50%;display:block}
 .assets li b{font-weight:500;letter-spacing:-.01em}
 .assets li .price{color:var(--ink)}
 .assets li .chg{font-size:12.5px}
@@ -90,9 +91,10 @@ nav.site .actions .btn{padding:9px 16px;font-size:11px}
 /* products list */
 .list{list-style:none;margin:32px 0 0;padding:0;border-top:1px solid var(--line)}
 .list li{border-bottom:1px solid var(--line)}
-.list a{display:grid;grid-template-columns:44px 200px 1fr auto;gap:24px;align-items:center;padding:18px 0;color:var(--ink);transition:padding-left .3s cubic-bezier(.2,.7,.2,1)}
-.list svg{width:44px;height:44px;padding:10px;border-radius:12px;background:#fff;border:1px solid var(--line);color:var(--aurora-deep);transition:background .2s,color .2s,border-color .2s}
-.list a:hover svg{background:var(--deep);color:var(--aurora);border-color:var(--deep)}
+.list a{display:grid;grid-template-columns:36px 200px 1fr auto;gap:24px;align-items:center;padding:18px 0;color:var(--ink);transition:padding-left .3s cubic-bezier(.2,.7,.2,1)}
+.list svg{width:36px;height:36px;color:var(--ink);overflow:visible}
+.list svg .t{fill:var(--aurora);opacity:.55;transition:opacity .2s}
+.list a:hover svg .t{opacity:1}
 .list a:hover{padding-left:12px}
 .list b{font-size:18px;font-weight:500;letter-spacing:-.01em}
 .list span{color:var(--prose);font-size:15px}
@@ -158,7 +160,7 @@ nav.site .actions .btn{padding:9px 16px;font-size:11px}
 @media(max-width:900px){
   .hero{grid-template-columns:1fr;gap:32px;padding:56px 20px 44px;align-items:start}
   .hero h1{font-size:clamp(44px,12vw,72px)}
-  .list a{grid-template-columns:44px 1fr;gap:8px 16px}
+  .list a{grid-template-columns:36px 1fr;gap:8px 16px}
   .list span{grid-column:2}
   .list i{display:none}
   .foot-grid{grid-template-columns:1fr 1fr}
