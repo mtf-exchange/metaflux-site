@@ -15,7 +15,7 @@ import Nav from '../components/Nav.astro';
 
 <header class="hero">
   <div>
-    <div class="status rise"><i></i>Independent L1 · devnet live</div>
+    <div class="status rise">Independent L1 · testnet live</div>
     <h1 class="rise">Derivatives, on<br><em>first principles</em>.</h1>
   </div>
   <div class="side rise d1">
@@ -44,9 +44,9 @@ import Nav from '../components/Nav.astro';
   <section class="sec reveal" id="desk">
     <div class="kicker">The desk</div>
     <h2>Trade perpetuals and spot from a single account, against one margin number.</h2>
-    <p class="lead">A SPAN-style scenario engine values your whole book at once, so a hedge stops paying margin twice. The book, the ticket, the blotter and the account summary run live off the devnet today.</p>
+    <p class="lead">A SPAN-style scenario engine values your whole book at once, so a hedge stops paying margin twice. The book, the ticket, the blotter and the account summary run live off the testnet today.</p>
     <div class="cta"><a class="btn" href="https://app.mtf.exchange/" target="_blank" rel="noopener">Trade →</a></div>
-    <div class="shot-wrap"><div class="shot"><img src="/shots/desk.webp" alt="The MetaFlux devnet trading desk: a BTC-USDC perpetual with its candle chart, live order book, order ticket, a four-position blotter and the account summary." loading="lazy"></div></div>
+    <div class="shot-wrap"><div class="shot"><img src="/shots/desk.webp" alt="The MetaFlux testnet trading desk: a BTC-USDC perpetual with its candle chart, live order book, order ticket, a four-position blotter and the account summary." loading="lazy"></div></div>
   </section>
 
   <section class="sec reveal" id="why">
@@ -105,10 +105,10 @@ import Nav from '../components/Nav.astro';
         </div>
       </div>
 <pre class="code"><code><span class="k">import</span> &#123; MetaFluxClient &#125; <span class="k">from</span> <span class="s">"@metaflux/sdk"</span>;
-<span class="c">// one gateway, one chain id — devnet is open today</span>
+<span class="c">// one gateway, one chain id — testnet is open today</span>
 <span class="k">const</span> client = <span class="k">new</span> MetaFluxClient(&#123;
   gateway: <span class="s">"https://api.devnet.mtf.exchange"</span>,
-  chainId: 31337,
+  chainId: 114514,
   signer, <span class="c">// agent wallet — never withdrawal authority</span>
 &#125;);
 <span class="k">await</span> client.exchange.submitOrder(order); <span class="c">// same strategy, new wire</span></code></pre>
@@ -124,18 +124,18 @@ import Nav from '../components/Nav.astro';
       </details>
       <details>
         <summary>Which parts of this are shipping today?</summary>
-        <p>Components ship across phased testnet milestones — devnet runs the clearing core, the parallel EVM and the book; the rest lands on the sequence the whitepaper sets out. Where this site describes something that isn't live yet, the whitepaper says when.</p>
+        <p>Components ship across phased testnet milestones — the testnet runs the clearing core, the parallel EVM and the book; the rest lands on the sequence the whitepaper sets out. Where this site describes something that isn't live yet, the whitepaper says when.</p>
       </details>
       <details>
         <summary>When does mainnet launch?</summary>
-        <p>Mainnet follows audit and testnet milestones, not calendar dates. Devnet is live and open for integration now; a six-month public testnet precedes the TGE, with phased validator onboarding and the bridge audit as the explicit gating item.</p>
+        <p>Mainnet follows audit and testnet milestones, not calendar dates. The testnet is live and open for integration now; six months of public testnet precede the TGE, with phased validator onboarding and the bridge audit as the explicit gating item.</p>
       </details>
       <details>
         <summary>What does integration look like?</summary>
         <p>MetaFlux speaks its own MTF-native protocol — one gateway serving POST /info, POST /exchange, WebSocket, and EVM JSON-RPC. The SDKs (TypeScript and Rust, preview) absorb the wire rewrite; agent wallets, sub-accounts, vaults, cross and isolated margin and client order ids map one to one.</p>
       </details>
       <details>
-        <summary>Who is the devnet for?</summary>
+        <summary>Who is the testnet for?</summary>
         <p>Anyone — there is no application and no allow-list. Take test USDC from the faucet, point your client at the gateway, and trade. We especially want to hear from market makers and teams shipping production trading systems: <a href="mailto:builders@mtf.exchange">builders@mtf.exchange</a>.</p>
       </details>
     </div>
@@ -165,7 +165,7 @@ import Nav from '../components/Nav.astro';
           <li><a href="https://docs.mtf.exchange/integration/migrating-from-hl">Migration guide</a></li>
           <li><a href="https://docs.mtf.exchange/integration/signing">Signing</a></li>
           <li><a href="https://docs.mtf.exchange/concepts/agent-wallets">Agent wallets</a></li>
-          <li><a href="https://app.mtf.exchange/" target="_blank" rel="noopener">Devnet</a></li>
+          <li><a href="https://app.mtf.exchange/" target="_blank" rel="noopener">Testnet</a></li>
         </ul>
       </div>
       <div>
