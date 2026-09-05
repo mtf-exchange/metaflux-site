@@ -1,4 +1,4 @@
-// The home page's one script: the WebGL field behind the hero, the live
+// The home page's one script: the WebGL sky under the hero, the live
 // markets (REST snapshot, then the `markets` WebSocket channel) feeding the
 // asset row, and the scroll reveals. Raw WebGL2, raw
 // fetch, raw WebSocket — no library.
@@ -13,48 +13,66 @@
   }), { rootMargin: '0px 0px -12% 0px' });
   document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
 
-  /* ── the stream ──────────────────────────────────────────────────────── */
-  // A diagonal stream of points, bottom-left to top-right, the way a galaxy
-  // arm reads: sparse, sizes mixed, drifting along the band. Each point
-  // carries (u along the band, v across it, size, speed) and the vertex
-  // shader does the rest.
+  /* ── the sky ─────────────────────────────────────────────────────────── */
+  // The Milky Way from the ground: a wide band of stars running corner to
+  // corner, a brighter bulge toward the centre, dust lanes cutting the haze,
+  // and a scatter of field stars around it. The sky drifts slowly along the
+  // band, as it does over a night. Two additive passes: a wide soft one that
+  // builds the haze, a tight one for the stars.
   const canvas = document.querySelector('.stream canvas');
   const gl = canvas && canvas.getContext('webgl2', { antialias: false, alpha: true, premultipliedAlpha: true });
   if (gl) {
     const vs = `#version 300 es
-    in vec4 a;                       // u, v, size, speed
-    uniform float t, dpr; uniform vec2 res, mouse;
-    out float fade; out float big;
+    in vec4 a;                       // u0, v (gaussian), seed, kind (0 band, 1 field)
+    uniform float t, dpr, pass; uniform vec2 res, mouse;
+    out float haze; out float warm; out float star; out float seed;
     float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7)))*43758.5453); }
     float vnoise(vec2 p){
       vec2 i = floor(p), f = fract(p); f = f*f*(3.0 - 2.0*f);
-      return mix(mix(hash(i), hash(i + vec2(1,0)), f.x), mix(hash(i + vec2(0,1)), hash(i + vec2(1,1)), f.x), f.y)*2.0 - 1.0;
+      return mix(mix(hash(i), hash(i + vec2(1,0)), f.x), mix(hash(i + vec2(0,1)), hash(i + vec2(1,1)), f.x), f.y);
     }
     void main(){
-      float u = fract(a.x + t*a.w*0.012);          // drift along the band, wraps
-      float v = a.y;                               // -1..1 across the band
-      // the spine: a gentle S from bottom-left to top-right
-      vec2 c = vec2(mix(-1.25, 1.25, u), mix(-1.05, 0.85, u) + sin(u*3.1416)*0.18 - sin(u*6.2832)*0.06);
-      vec2 n = normalize(vec2(-(1.9 + cos(u*3.1416)*0.56), 2.5));   // approximate normal
-      float width = 0.22 + 0.16*sin(u*3.1416);     // thinner at the ends
-      vec2 pos = c + n*v*width;
-      pos += vec2(vnoise(vec2(u*6.0, a.z*7.0) + t*0.05), vnoise(vec2(a.z*5.0, u*6.0) - t*0.04))*0.03;
-      pos.x += mouse.x*0.02; pos.y += mouse.y*0.015;
-      pos.x *= res.y/res.x*1.6;                    // keep the band diagonal at any aspect
-      gl_Position = vec4(pos, 0.0, 1.0);
-      big = step(0.80, a.z);
-      float size = mix(2.2, 5.5, a.z) + big*mix(5.0, 11.0, fract(a.z*37.0));
-      gl_PointSize = size*dpr;
-      fade = (1.0 - abs(v)*abs(v))*(0.7 + 0.3*sin(t*0.7 + a.z*40.0));
+      float drift = t*0.006;
+      float u = mod(a.x + drift + 1.5, 3.0) - 1.5;              // along the band, wraps
+      float bulge = exp(-pow((u - 0.25)*1.6, 2.0));            // the galactic centre, right of middle
+      float width = 0.20 + 0.16*bulge;
+      float v = a.y*width;                                     // across the band
+      vec2 p = mix(vec2(u, v), vec2(a.x*2.6 - 1.3 + drift*0.3, a.y*1.1), a.w);
+      // dust: dark lanes through the haze, denser near the plane
+      float lane = vnoise(vec2(u*4.0 + 3.0, a.y*2.2)) * vnoise(vec2(u*9.0, a.y*4.0 + 7.0));
+      float dust = smoothstep(0.22, 0.42, lane)*smoothstep(1.0, 0.2, abs(a.y));
+      haze = (1.0 - a.w)*(0.35 + 0.65*bulge)*(1.0 - dust*0.85)*(1.0 - abs(a.y)*abs(a.y)*0.6);
+      warm = bulge;
+      seed = a.z;
+      star = 1.0 - dust*0.5*(1.0 - a.w);
+      // tilt the band across the frame
+      float ang = 0.42 + mouse.y*0.01;
+      vec2 q = vec2(p.x*cos(ang) - p.y*sin(ang), p.x*sin(ang) + p.y*cos(ang));
+      q += mouse*vec2(0.02, 0.015)*(1.0 + a.w);
+      q.x *= res.y/res.x*1.9;
+      q.y *= 1.15;
+      gl_Position = vec4(q, 0.0, 1.0);
+      float big = step(0.93, a.z);
+      float sz = (0.9 + fract(a.z*17.0)*1.6 + big*1.6)*dpr*(1.0 - a.w*0.3);
+      gl_PointSize = pass < 0.5 ? res.y*0.10*(0.5 + fract(a.z*7.0)*0.7) : sz;
     }`;
     const fs = `#version 300 es
-    precision mediump float;
-    in float fade; in float big; out vec4 o;
+    precision highp float;
+    in float haze; in float warm; in float star; in float seed;
+    uniform float pass, t; out vec4 o;
     void main(){
-      float r = length(gl_PointCoord - 0.5);
-      float a = smoothstep(0.5, 0.32, r)*fade;
-      vec3 c = mix(vec3(0.45, 0.85, 0.99), vec3(0.80, 0.95, 1.0), big*0.7);
-      o = vec4(c*a, a);
+      float d = length(gl_PointCoord - 0.5);
+      vec3 cool = vec3(0.42, 0.78, 1.0), cream = vec3(1.0, 0.86, 0.80), rose = vec3(0.96, 0.66, 0.72);
+      if (pass < 0.5) {
+        vec3 c = mix(cool, mix(cream, rose, 0.45), warm*0.9);
+        float a = exp(-d*d*14.0)*0.020*haze;
+        o = vec4(c*a, a);
+      } else {
+        float tw = 0.7 + 0.3*sin(t*(1.0 + fract(seed*3.0)*2.0) + seed*80.0);
+        vec3 c = mix(vec3(0.85, 0.93, 1.0), cream, step(0.72, fract(seed*11.0)));
+        float a = smoothstep(0.5, 0.1, d)*tw*star*(0.5 + 0.5*fract(seed*29.0));
+        o = vec4(c*a, a);
+      }
     }`;
     const sh = (type, src) => {
       const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
@@ -64,22 +82,27 @@
     const prog = gl.createProgram();
     gl.attachShader(prog, sh(gl.VERTEX_SHADER, vs));
     gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, fs));
-    gl.linkProgram(prog); gl.useProgram(prog);
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
+    gl.useProgram(prog);
     // Deterministic pseudo-random so every visitor sees the same sky.
     let seed = 7; const rnd = () => (seed = (seed*16807) % 2147483647)/2147483647;
-    const N = 720, pts = new Float32Array(N*4);
+    const N = 16000, pts = new Float32Array(N*4);
     for (let i = 0; i < N; i++) {
-      const g = (rnd() + rnd() + rnd())/1.5 - 1;   // roughly gaussian across the band
-      pts[i*4] = rnd(); pts[i*4 + 1] = g; pts[i*4 + 2] = rnd(); pts[i*4 + 3] = 0.6 + rnd();
+      const field = i % 4 === 0 ? 1 : 0;
+      const g = (rnd() + rnd() + rnd() + rnd())/2 - 1;       // roughly gaussian, -1..1
+      pts[i*4] = field ? rnd() : rnd()*3.0 - 1.5;
+      pts[i*4 + 1] = field ? rnd()*2 - 1 : g;
+      pts[i*4 + 2] = rnd(); pts[i*4 + 3] = field;
     }
     gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
     gl.bufferData(gl.ARRAY_BUFFER, pts, gl.STATIC_DRAW);
     const loc = gl.getAttribLocation(prog, 'a');
     gl.enableVertexAttribArray(loc);
     gl.vertexAttribPointer(loc, 4, gl.FLOAT, false, 0, 0);
-    gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+    gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE);     // additive: light adds up
     const U = (n) => gl.getUniformLocation(prog, n);
-    const uT = U('t'), uDpr = U('dpr'), uRes = U('res'), uMouse = U('mouse');
+    const uT = U('t'), uDpr = U('dpr'), uRes = U('res'), uMouse = U('mouse'), uPass = U('pass');
     const dpr = Math.min(devicePixelRatio || 1, 2);
     const target = [0, 0], cur = [0, 0];
     addEventListener('pointermove', (e) => { target[0] = (e.clientX/innerWidth)*2 - 1; target[1] = 1 - (e.clientY/innerHeight)*2; }, { passive: true });
@@ -94,10 +117,11 @@
     const frame = (ms) => {
       if (visible) {
         gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
-        cur[0] += (target[0] - cur[0])*0.04; cur[1] += (target[1] - cur[1])*0.04;
+        cur[0] += (target[0] - cur[0])*0.03; cur[1] += (target[1] - cur[1])*0.03;
         gl.uniform2f(uMouse, cur[0], cur[1]);
         gl.uniform1f(uT, ms/1000);
-        gl.drawArrays(gl.POINTS, 0, N);
+        gl.uniform1f(uPass, 0); gl.drawArrays(gl.POINTS, 0, N);
+        gl.uniform1f(uPass, 1); gl.drawArrays(gl.POINTS, 0, N);
       }
       if (!still) requestAnimationFrame(frame);
     };

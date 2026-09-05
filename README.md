@@ -14,7 +14,7 @@ src/pages/whitepaper.astro   # the protocol paper, with a scroll-spy TOC
 src/pages/terms.astro        # legal
 src/pages/privacy.astro      # legal
 public/site.css              # the one stylesheet, all four pages
-public/hero.js               # the landing page's WebGL2 point field — raw GL, no library
+public/home.js               # the landing page: WebGL2 sky, live testnet prices, reveals — no library
 public/main.js               # one job: the whitepaper's TOC scroll-spy
 public/arch.svg              # the architecture figure
 public/shots/desk.webp       # the hero photograph — the devnet desk, running
@@ -57,11 +57,13 @@ and **PT Serif** italic only where the brand already uses it: the *Flux* in
 the wordmark and the italic phrase in a headline. Rules are 1px hairlines in
 `--line`; there are no drop shadows apart from the desk screenshot's.
 
-The hero band is `hero.js`: a 220×90 grid of `gl.POINTS` displaced by summed
-sines, with a white-hot front sweeping across every four seconds (one block)
-and a little mouse parallax. It is raw WebGL2 — no library — and honours
-`prefers-reduced-motion` by drawing a single frame. Every other motion is
-CSS: `animation-timeline: view()` reveals, guarded by `@supports`.
+The dark band under the hero is `home.js`: the Milky Way as seen from the
+ground — 16,000 `gl.POINTS` in two additive passes (a wide soft pass builds
+the haze and dust lanes, a tight pass draws the stars), drifting slowly along
+the band. Raw WebGL2, no library; a single frame under
+`prefers-reduced-motion`. The same file pulls live prices from
+`POST /info {"type":"markets"}` and the `markets` WebSocket channel, and runs
+the IntersectionObserver reveals.
 
 All tokens live in `:root` at the top of `site.css`.
 
