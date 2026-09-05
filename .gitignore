@@ -20,3 +20,4 @@ out/
 public/shots/desk.png
 dist/
 .astro/
+.playwright-mcp/

@@ -7,14 +7,14 @@ static HTML with no client-side framework.
 
 ```
 src/layouts/Base.astro       # the one <head>: meta, OG, fonts, icons
-src/components/Nav.astro     # the nav bar — whitepaper + legal pages
+src/components/Nav.astro     # the nav bar, every page
 src/components/LegalFooter.astro
-src/pages/index.astro        # the landing page — loads no JavaScript at all
+src/pages/index.astro        # the landing page
 src/pages/whitepaper.astro   # the protocol paper, with a scroll-spy TOC
 src/pages/terms.astro        # legal
 src/pages/privacy.astro      # legal
-public/redesign.css          # the stylesheet the other three pages share
-public/index.css             # the landing page's own stylesheet
+public/site.css              # the one stylesheet, all four pages
+public/hero.js               # the landing page's WebGL2 point field — raw GL, no library
 public/main.js               # one job: the whitepaper's TOC scroll-spy
 public/arch.svg              # the architecture figure
 public/shots/desk.webp       # the hero photograph — the devnet desk, running
@@ -34,36 +34,36 @@ npm run dev      # http://localhost:4321
 npm run build    # → dist/
 ```
 
-`dist/` is what ships. After changing a page, check that the rendered body
-still matches the hand-written original:
-
-```bash
-npm run build && python3 tools/check-parity.py
-```
+`dist/` is what ships.
 
 ## Deploy
 
 Build first (`npm run build`), then serve `dist/` from any static host:
 
 - **Vercel** — detects Astro; sets up `mtf.exchange` via the dashboard
-- **Cloudflare Pages** — `wrangler pages deploy dist`
+- **Cloudflare Pages** — the live host. Project `metaflux-site`, build
+  `npm run build`, output `dist`, `NODE_VERSION=22`; deploys on push to main
 - **GitHub Pages** — repo Settings → Pages → main branch
 
 DNS points `mtf.exchange` apex + `www` at the host's IP / CNAME per their docs.
 
 ## The design, in brief
 
-A spec sheet, not a brochure: a warm paper ground (`#faf9f5`), ink hairline
-rules, and small tint accents. Type is **Schibsted Grotesk** for text with
-**Geist Mono** carrying the uppercase chrome — labels, nav, numbers. The deep
-blue `#0a5f86` and rose `#cd5870` are the two accent voices; the flag's own
-hexes (`#5BCEFA` / `#F5A9B8` / `#FFFFFF`) appear at full saturation only in
-the brand mark and the preloader's pride strip.
+One idea per screen, in the manner of hyperliquid.xyz: a cool off-white
+sheet (`#f4f6f7`), one deep ink (`#062232`) for the dark bands, and aurora
+blue `#5BCEFA` as the single accent. Type is **Geist** 400/500 for everything
+readable, **Geist Mono** for the uppercase chrome — labels, nav, numbers —
+and **PT Serif** italic only where the brand already uses it: the *Flux* in
+the wordmark and the italic phrase in a headline. Rules are 1px hairlines in
+`--line`; there are no drop shadows apart from the desk screenshot's.
 
-All of it lives in `redesign.css` (tokens in `:root` at the top). The home
-page's entrance preloader is pure CSS — a `plhide` keyframe animation that
-draws the lockup and auto-hides at ~2.7s, with `pointer-events: none` so it
-can never trap a visitor, script or no script.
+The hero band is `hero.js`: a 220×90 grid of `gl.POINTS` displaced by summed
+sines, with a white-hot front sweeping across every four seconds (one block)
+and a little mouse parallax. It is raw WebGL2 — no library — and honours
+`prefers-reduced-motion` by drawing a single frame. Every other motion is
+CSS: `animation-timeline: view()` reveals, guarded by `@supports`.
+
+All tokens live in `:root` at the top of `site.css`.
 
 ## Logo & brand assets
 
@@ -76,7 +76,7 @@ into `logo/` (byte-identical copies — update there, then re-copy):
 | `logo/metaflux-mark-animated.svg` | Self-contained climb-on animation (standalone use) |
 
 The on-page wordmark sets **`Meta`** in Geist 500 and **`Flux`** in PT Serif
-italic (`.b-meta` / `.b-flux` in `redesign.css`), per the brand spec — never
+italic (`.b-meta` / `.b-flux` in `site.css`), per the brand spec — never
 swap or both-bold them.
 
 `favicon.svg` is the square mark on a **transparent** ground, the same asset

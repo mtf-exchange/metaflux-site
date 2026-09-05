@@ -11,8 +11,8 @@ const {
   ogType = 'website',
   ogTitle = title,
   ogDescription = description,
-  themeColor = '#ffffff',
-  stylesheet = '/redesign.css',
+  themeColor = '#f4f6f7',
+  stylesheet = '/site.css',
   bodyClass,
   script = true,
 } = Astro.props;
@@ -59,7 +59,7 @@ const {
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,500;0,600;0,700;0,800;1,500&family=Geist:wght@500&family=Geist+Mono:wght@400;500&family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono:wght@400;500&family=PT+Serif:ital@1&display=swap" rel="stylesheet">
 {stylesheet && <link rel="stylesheet" href={stylesheet} />}
 <slot name="head" />
 </head>
