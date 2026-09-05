@@ -74,7 +74,9 @@ nav.site .actions .btn{padding:9px 16px;font-size:11px}
 .sec{padding:120px 0 0}
 .sec h2{margin:14px 0 0;font-size:clamp(28px,3vw,40px);font-weight:400;line-height:1.15;letter-spacing:-.03em;max-width:26ch}
 .sec .lead{margin:20px 0 0;font-size:16.5px;line-height:1.6;color:var(--prose);max-width:62ch}
-.sec .cta{margin-top:28px}
+.sec .head{display:flex;justify-content:space-between;align-items:flex-end;gap:40px}
+.sec .head .btn{flex:none;margin-bottom:6px}
+@media(max-width:760px){.sec .head{flex-direction:column;align-items:flex-start;gap:24px}}
 
 /* live asset chips — rows land here from home.js */
 .assets{list-style:none;margin:56px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:12px 40px;min-height:44px}
