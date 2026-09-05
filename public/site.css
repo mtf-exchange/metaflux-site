@@ -67,12 +67,6 @@ nav.site .actions .btn{padding:9px 16px;font-size:11px}
 .field .legend b{font-weight:400;color:var(--on-deep)}
 @keyframes commit{0%,3%{background:#fff;box-shadow:0 0 0 4px rgba(91,206,250,.35)}12%,100%{background:var(--aurora);box-shadow:0 0 0 0 rgba(91,206,250,0)}}
 .field .legend .r{position:absolute;right:48px;bottom:26px;left:auto}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--line)}
-.stats div{padding:32px 24px;border-right:1px solid var(--line)}
-.stats div:last-child{border-right:none}
-.stats b{display:block;font-family:var(--mono);font-weight:400;font-size:30px;letter-spacing:-.02em;color:var(--ink)}
-.stats b small{font-size:.6em;color:var(--mid);margin-left:2px}
-.stats span{display:block;margin-top:8px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
 .sec{padding:120px 0 0}
 .sec h2{margin:14px 0 0;font-size:clamp(28px,3vw,40px);font-weight:400;line-height:1.15;letter-spacing:-.03em;max-width:26ch}
 .sec .lead{margin:20px 0 0;font-size:16.5px;line-height:1.6;color:var(--prose);max-width:62ch}
@@ -140,9 +134,6 @@ pre.code .k{color:var(--aurora)} pre.code .s{color:#f5c9d3} pre.code .c{color:va
 }
 @media(max-width:900px){
   .hero{grid-template-columns:1fr;gap:32px;padding:64px 20px 48px;align-items:start}
-  .stats{grid-template-columns:1fr 1fr}
-  .stats div:nth-child(2){border-right:none}
-  .stats div:nth-child(-n+2){border-bottom:1px solid var(--line)}
   .pillars{grid-template-columns:1fr}
   .pillars div{padding:28px 0}
   .pillars div+div{padding-left:0;border-left:none;border-top:1px solid var(--line)}
