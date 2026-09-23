@@ -166,8 +166,7 @@
     let r = rows.get(m.coin);
     if (!r) {
       r = { li: document.createElement('li'), last: null };
-      const base = m.coin.replace(/\/.*/, ''), perp = (m.kind || 'perp') === 'perp';
-      r.li.innerHTML = `<a href="${perp ? APP + 'trade/perp/' + base + '-USDC' : APP}" target="_blank" rel="noopener"><img src="${APP}symbols/${base}.svg" alt="" width="28" height="28" loading="lazy"><b>${m.coin}</b><span class="num price"></span><span class="num chg"></span></a>`;
+      r.li.innerHTML = `<a href="${APP}trade/perp/${m.coin}-USDC" target="_blank" rel="noopener"><img src="${APP}symbols/${m.coin}.svg" alt="" width="28" height="28" loading="lazy"><b>${m.coin}</b><span class="num price"></span><span class="num chg"></span></a>`;
       rows.set(m.coin, r); chips.appendChild(r.li);
     }
     {
@@ -183,8 +182,10 @@
     r.last = m.mark_px;
   };
   const apply = (data) => {
-    const list = Array.isArray(data) ? data : data.perp || Object.values(data).find(Array.isArray) || [];
-    list.filter((m) => m && m.coin && m.mark_px && !m.halted).forEach(paint);
+    // Perps only: the snapshot sends { perp, spot } but a socket frame can be
+    // one flat list, and a spot pair slipping in read as a second MTF chip.
+    const list = Array.isArray(data) ? data : data.perp || [];
+    list.filter((m) => m && m.coin && m.mark_px && !m.halted && (m.kind || 'perp') === 'perp').forEach(paint);
   };
 
   const snapshot = () => fetch(API + '/info', { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{"type":"markets"}' })
@@ -199,7 +200,8 @@
     try { ws = new WebSocket(API.replace('https', 'wss') + '/ws'); } catch { poll = setInterval(snapshot, 5000); return; }
     ws.onopen = () => { clearInterval(poll); ws.send(JSON.stringify({ method: 'subscribe', subscription: { type: 'markets' } })); };
     ws.onmessage = (e) => { try { const f = JSON.parse(e.data); if (f.channel === 'markets') apply(f.data); } catch {} };
-    ws.onclose = () => { poll = setInterval(snapshot, 5000); setTimeout(live, 15000); };
+    // Clear before re-arming: each failed reconnect used to stack another poll.
+    ws.onclose = () => { clearInterval(poll); poll = setInterval(snapshot, 5000); setTimeout(live, 15000); };
     ws.onerror = () => ws.close();
   };
   live();

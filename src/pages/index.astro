@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
 ---
 <Base
   title="MetaFlux — Derivatives, on first principles."
@@ -9,6 +10,7 @@ import Nav from '../components/Nav.astro';
   script={false}
 >
 <Fragment slot="head">
+<script is:inline>document.documentElement.classList.add('js')</script>
 <script src="/home.js" is:inline defer></script>
 </Fragment>
 <Nav />
@@ -17,7 +19,7 @@ import Nav from '../components/Nav.astro';
   <div class="status rise">Independent L1 · testnet live</div>
   <h1 class="rise">Derivatives, on<br><em>first principles</em>.</h1>
   <div class="side rise d1">
-    <p>Perpetuals, spot and options from one account with one margin number. The matching engine and the clearinghouse run inside consensus — final in a single block.</p>
+    <p>Perpetuals, spot and options from one account with one margin number. The matching engine and the clearinghouse run inside consensus, so every trade is final in a single block.</p>
     <div class="row">
       <a class="btn" href="https://app.mtf.exchange/" target="_blank" rel="noopener">Trade →</a>
       <a class="more" href="/whitepaper.html">Whitepaper</a>
@@ -33,10 +35,11 @@ import Nav from '../components/Nav.astro';
   <section class="sec reveal" id="trade">
     <div class="kicker">Trade everything in one place</div>
     <div class="head">
-      <h2>BTC, ETH, SOL and more — perpetuals, spot and options — from a single account, against one margin number.</h2>
+      <h2>Trade BTC, ETH, SOL and more from one account.</h2>
       <a class="btn" href="https://app.mtf.exchange/" target="_blank" rel="noopener">Trade →</a>
     </div>
     <ul class="assets" aria-label="Markets, live off the testnet"></ul>
+    <p class="assets-note">Live marks from the testnet</p>
     <div class="shot-wrap"><div class="shot"><img src="/shots/desk.webp" width="3720" height="2392" decoding="async" alt="The MetaFlux testnet trading desk: a BTC-USDC perpetual with its candle chart, live order book, order ticket, a four-position blotter and the account summary." loading="lazy"></div></div>
   </section>
 
@@ -46,9 +49,7 @@ import Nav from '../components/Nav.astro';
       <li><a href="https://docs.mtf.exchange/products/perpetuals"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle class="t" cx="8" cy="12" r="6"/><path d="M8 6a6 6 0 1 0 0 12c4 0 5-6 8-6a3 3 0 1 1 0 6c-2 0-3-2-4-3"/></svg><b>Perpetuals</b><span>Leveraged long and short, no expiry, hourly funding. Cross or isolated margin, hedge mode.</span><i>→</i></a></li>
       <li><a href="https://docs.mtf.exchange/products/spot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="t" d="M4 9h13l-3-4h3l4 4-4 4h-3l3-4z" stroke="none"/><path d="M20 15H7l3 4"/><path d="M4 9h13"/></svg><b>Spot</b><span>Token-for-token on a central limit order book, settled against your balance.</span><i>→</i></a></li>
       <li><a href="https://docs.mtf.exchange/products/options"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="t" d="M3 17l6-10 4 8 4-4 4 6z" stroke="none"/><path d="M3 17l6-10 4 8 4-4 4 6"/></svg><b>Options</b><span>European puts and calls, fully collateralized, quoted through RFQ.</span><i>→</i></a></li>
-      <li><a href="https://docs.mtf.exchange/concepts/order-types"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="t" d="M3 16h5v-4h5v-3h5V6h3v13H3z" stroke="none"/><path d="M3 19l5-3 5-4 5-3 3-3"/></svg><b>Trailing stops</b><span>A stop that follows the mark by a fixed distance and only ever tightens.</span><i>→</i></a></li>
-      <li><a href="https://docs.mtf.exchange/concepts/order-types"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="t" d="M7 4h10v3H7zM7 10h10v3H7zM7 16h10v3H7z" stroke="none"/><path d="M7 4v16M17 4v16"/></svg><b>Scaled TP / SL</b><span>Ladder your exits across a price range — placed and cancelled as one.</span><i>→</i></a></li>
-      <li><a href="https://docs.mtf.exchange/concepts/order-types"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path class="t" d="M12 4a8 8 0 0 1 8 8h-8z" stroke="none"/><path d="M12 8v4l3 2"/></svg><b>TWAP &amp; chase</b><span>Slice a large order over time, or chase the touch without crossing the spread. In the engine, not your client.</span><i>→</i></a></li>
+      <li><a href="https://docs.mtf.exchange/concepts/order-types"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="t" d="M3 16h5v-4h5v-3h5V6h3v13H3z" stroke="none"/><path d="M3 19l5-3 5-4 5-3 3-3"/></svg><b>Order types</b><span>Trailing stops, scale ladders, TWAP and chase, all run by the matching engine.</span><i>→</i></a></li>
       <li><a href="https://docs.mtf.exchange/concepts/portfolio-margin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="t" d="M4 9l8-5 8 5-8 5z" stroke="none"/><path d="M4 9l8-5 8 5-8 5-8-5z"/><path d="M4 13l8 5 8-5M4 17l8 5 8-5" opacity=".5"/></svg><b>Portfolio margin</b><span>One maintenance number for the whole book, so a hedge stops paying margin twice.</span><i>→</i></a></li>
     </ul>
   </section>
@@ -57,8 +58,8 @@ import Nav from '../components/Nav.astro';
 <section class="vision">
   <div class="wrap">
     <p class="reveal">MetaFlux starts from one premise: a derivatives exchange should be a chain, <em>not a contract on one</em>.</p>
-    <p class="reveal">When the clearing engine is the state machine, the rules of the market are the rules of the ledger — deterministic, auditable, final in one block.</p>
-    <p class="reveal">The EVM shares every block, so strategies, vaults and market listings are programs, not permissions. Anyone can list a market; the winning bid is burned, and nobody is paid to approve you.</p>
+    <p class="reveal">The clearing engine is the chain itself, so the rules of the market are enforced by consensus and anyone can check them.</p>
+    <p class="reveal">An EVM runs in the same blocks, so vaults, strategies and new markets are ordinary contracts. Anyone can list a market by winning an auction, and the winning bid is burned.</p>
     <p class="reveal">Components ship across phased testnet milestones. Where this site describes something not yet live, the whitepaper says when.</p>
   </div>
 </section>
@@ -66,9 +67,8 @@ import Nav from '../components/Nav.astro';
 <div class="wrap">
   <section class="sec reveal" id="security">
     <div class="kicker">Security</div>
-    <h2>MetaFlux is secured by MetaFluxBFT, a stake-weighted BFT protocol with immediate finality.</h2>
-    <p class="lead">A quorum certificate needs two-thirds of bonded stake, so safety holds unconditionally against any adversary below one-third. Leadership rotates every round; a faulty leader costs one round, never the chain. Double-signing is self-evidencing from two conflicting signed votes and slashes 5% of stake. Floating point, unordered iteration and wall-clock reads are prohibited in the consensus path.</p>
-    <figure class="arch"><img src="/arch.svg" width="1000" height="600" decoding="async" alt="MetaFlux architecture: clients, access layer, clearing core, execution, MetaFluxBFT consensus" loading="lazy"></figure>
+    <h2>A committed block is final.</h2>
+    <p class="lead">MetaFlux runs its own consensus, MetaFluxBFT. A block commits when validators holding two-thirds of the stake sign it, and as long as less than a third of the stake is dishonest, a committed block cannot be reverted. The leader changes every round, so one bad validator costs one round. Signing two conflicting blocks costs a validator 5% of its stake.</p>
   </section>
 
   <section class="sec reveal" id="faq">
@@ -80,7 +80,7 @@ import Nav from '../components/Nav.astro';
       </details>
       <details>
         <summary>Which parts of this are shipping today?</summary>
-        <p>Components ship across phased testnet milestones — the testnet runs the clearing core, the parallel EVM and the book; the rest lands on the sequence the whitepaper sets out. Where this site describes something that isn't live yet, the whitepaper says when.</p>
+        <p>The testnet runs the clearing core, the parallel EVM and the book today. The rest lands in the order the whitepaper sets out, milestone by milestone.</p>
       </details>
       <details>
         <summary>When does mainnet launch?</summary>
@@ -92,52 +92,11 @@ import Nav from '../components/Nav.astro';
       </details>
       <details>
         <summary>Who is the testnet for?</summary>
-        <p>Anyone — there is no application and no allow-list. Take test USDC from the faucet, point your client at the gateway, and trade. We especially want to hear from market makers and teams shipping production trading systems: <a href="mailto:builders@mtf.exchange">builders@mtf.exchange</a>.</p>
+        <p>Anyone. There is no application and no allow-list. Take test USDC from the faucet, point your client at the gateway, and trade. We especially want to hear from market makers and teams shipping production trading systems: <a href="mailto:builders@mtf.exchange">builders@mtf.exchange</a>.</p>
       </details>
     </div>
   </section>
 </div>
 
-<footer class="foot">
-  <div class="wrap">
-    <div class="foot-grid">
-      <div>
-        <a class="brand" href="/"><img class="brand-mark" src="/logo/metaflux-mark.svg" alt="" aria-hidden="true"><span class="b-word"><span class="b-meta">Meta</span><span class="b-flux">Flux</span></span></a>
-        <p>An independent L1 derivatives exchange — perpetuals, spot and options. EVM-compatible, built from first principles for traders who care about market structure.</p>
-      </div>
-      <div>
-        <h5>Learn</h5>
-        <ul>
-          <li><a href="/whitepaper.html">Whitepaper</a></li>
-          <li><a href="https://docs.mtf.exchange/">Docs</a></li>
-          <li><a href="https://docs.mtf.exchange/api">API reference</a></li>
-          <li><a href="https://docs.mtf.exchange/mip">MIP-3 deploy</a></li>
-        </ul>
-      </div>
-      <div>
-        <h5>Build</h5>
-        <ul>
-          <li><a href="https://docs.mtf.exchange/integration/migrating-from-hl">Migration guide</a></li>
-          <li><a href="https://docs.mtf.exchange/integration/signing">Signing</a></li>
-          <li><a href="https://docs.mtf.exchange/concepts/agent-wallets">Agent wallets</a></li>
-          <li><a href="https://app.mtf.exchange/" target="_blank" rel="noopener">Testnet</a></li>
-        </ul>
-      </div>
-      <div>
-        <h5>Connect</h5>
-        <ul>
-          <li><a href="https://x.com/MetaFluxDex" target="_blank" rel="noopener">X / Twitter</a></li>
-          <li><a href="https://github.com/mtf-exchange" target="_blank" rel="noopener">GitHub</a></li>
-          <li><a href="mailto:hello@mtf.exchange">hello@mtf.exchange</a></li>
-          <li><a href="mailto:validators@mtf.exchange?subject=Validator%20inquiry">Validator inquiry</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="foot-bottom">
-      <span>© 2026 MetaFlux Foundation, established in England &amp; Wales. Pre-launch. · <a href="/terms.html">Terms</a> · <a href="/privacy.html">Privacy</a></span>
-      <span>mtf.exchange</span>
-    </div>
-  </div>
-  <div class="wordmark reveal" aria-hidden="true">Meta<em>Flux</em></div>
-</footer>
+<Footer />
 </Base>

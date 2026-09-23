@@ -1,9 +1,7 @@
-// TOC scroll-spy — the one script the site still runs.
-//
-// Loaded by whitepaper.html (where the .toc lives) and by the legal pages
-// (where it no-ops). Highlights the table-of-contents link for the section
-// currently in view; redesign.css styles the .active state. index.html loads
-// no JavaScript at all — its preloader is pure CSS.
+// TOC scroll-spy. Loaded by whitepaper.html (where the .toc lives) and by the
+// legal pages (where it no-ops). Highlights the table-of-contents link for the
+// section currently in view; site.css styles the .active state. The home page
+// runs home.js instead.
 
 (() => {
   const tocLinks = Array.from(document.querySelectorAll('.toc a[href^="#"]'));

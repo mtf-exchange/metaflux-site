@@ -8,7 +8,7 @@ static HTML with no client-side framework.
 ```
 src/layouts/Base.astro       # the one <head>: meta, OG, fonts, icons
 src/components/Nav.astro     # the nav bar, every page
-src/components/LegalFooter.astro
+src/components/Footer.astro     # the footer, every page
 src/pages/index.astro        # the landing page
 src/pages/whitepaper.astro   # the protocol paper, with a scroll-spy TOC
 src/pages/terms.astro        # legal
@@ -16,7 +16,6 @@ src/pages/privacy.astro      # legal
 src/styles/site.css          # the one stylesheet, inlined into every page at build
 public/home.js               # the landing page: WebGL2 sky, live testnet prices, reveals — no library
 public/main.js               # one job: the whitepaper's TOC scroll-spy
-public/arch.svg              # the architecture figure
 public/shots/desk.webp       # the desk screenshot — the testnet desk, running
 ```
 
@@ -52,9 +51,9 @@ DNS points `mtf.exchange` apex + `www` at the host's IP / CNAME per their docs.
 One idea per screen, in the manner of hyperliquid.xyz: a cool off-white
 sheet (`#f4f6f7`), one deep ink (`#062232`) for the dark bands, and aurora
 blue `#5BCEFA` as the single accent. Type is **Geist** 400/500 for everything
-readable, **Geist Mono** for the uppercase chrome — labels, nav, numbers —
-and **PT Serif** italic only where the brand already uses it: the *Flux* in
-the wordmark and the italic phrase in a headline. Rules are 1px hairlines in
+readable, **Geist Mono** for the uppercase chrome (labels, nav), **Inter**
+tabular for prices, **Instrument Serif** for the display headlines, and
+**PT Serif** italic only for the *Flux* in the wordmark. Rules are 1px hairlines in
 `--line`; there are no drop shadows apart from the desk screenshot's.
 
 The dark band under the hero is `home.js`: the Milky Way as seen from the

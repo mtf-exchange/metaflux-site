@@ -7,11 +7,21 @@ const { current } = Astro.props;
     <ul>
       <li><a href="/whitepaper.html" aria-current={current === "whitepaper" ? "page" : undefined}>Whitepaper</a></li>
       <li><a href="https://docs.mtf.exchange/" target="_blank">Docs</a></li>
-      <li><a href="https://docs.mtf.exchange/evm" target="_blank">Ecosystem</a></li>
+      <li><a href="https://docs.mtf.exchange/evm" target="_blank">EVM</a></li>
     </ul>
     <div class="actions">
-      <a class="btn ghost" href="https://docs.mtf.exchange/" target="_blank">Build</a>
+      <a class="btn ghost" href="https://docs.mtf.exchange/integration/quickstart" target="_blank">Build</a>
       <a class="btn" href="https://app.mtf.exchange/" target="_blank" rel="noopener">Trade</a>
     </div>
+    <!-- Below 760px the links above are hidden; this is how they are reached. No script. -->
+    <details class="menu">
+      <summary><span class="o">Menu</span><span class="c">Close</span></summary>
+      <ul>
+        <li><a href="/whitepaper.html">Whitepaper</a></li>
+        <li><a href="https://docs.mtf.exchange/" target="_blank">Docs</a></li>
+        <li><a href="https://docs.mtf.exchange/evm" target="_blank">EVM</a></li>
+        <li><a href="https://docs.mtf.exchange/integration/quickstart" target="_blank">Build</a></li>
+      </ul>
+    </details>
   </div>
 </nav>
