@@ -6,7 +6,7 @@
  *   MFW=http://localhost:5173 node tools/…     # or point it somewhere else
  *
  * The image on the site is not a drawing of the trading desk, it IS the desk:
- * metaflux-web running against the devnet, photographed. This script exists so
+ * metaflux-web running against the testnet, photographed. This script exists so
  * that stays true — when the app's chrome moves, re-run it rather than
  * touching the picture.
  *
@@ -24,7 +24,7 @@
  *      liquidation band. Nothing here is drawn by the marketing site.
  *
  *      The socket would clear them on the next commit (an unknown wallet's
- *      account_state is empty), so account frames are dropped at the WebSocket
+ *      account is empty), so account frames are dropped at the WebSocket
  *      while the camera is up — see the init script below for why re-seeding
  *      instead was a mistake.
  *
@@ -53,10 +53,11 @@ const OUT = new URL('../public/shots/', import.meta.url).pathname;
 
 const POSITIONS = [
 	// coin, side, size, entry, mark, leverage, liq, funding
-	['BTC', 'long', 3.25, 63480.0, 63862.7, 20, 52140.5, -38.2, '3.25'],
-	['ETH', 'short', 42.0, 3196.4, 3158.9, 20, 3842.7, 12.44, '42.00'],
-	['SOL', 'short', 1250, 146.2, 147.5, 20, 179.4, 21.06, '1250'],
-	['MTF', 'long', 850000, 0.1352, 0.13657, 20, 0.09512, -6.35, '850000']
+	// marks are the testnet's at the time of the shot; re-take them when re-shooting
+	['BTC', 'long', 2.4, 85910.0, 86429.8, 20, 70538.5, -38.2],
+	['ETH', 'short', 48.0, 2791.6, 2754.1, 20, 3355.5, 12.44],
+	['SOL', 'short', 1550, 117.2, 118.38, 20, 143.8, 21.06],
+	['MTF', 'long', 940000, 0.1219, 0.12318, 20, 0.08577, -6.35]
 ];
 
 const browser = await chromium.launch();
@@ -77,11 +78,17 @@ const page = await browser.newPage({
 // highlight. Instead: once __holdAccount is set, account_state frames are
 // dropped at the socket. Market data keeps flowing; the account is ours; no
 // value ever changes twice; nothing flashes.
+//
+// Three channels carry the account now, and all three are held: `account_state`
+// (equity, free collateral), `clearinghouse_state` (the position table — it left
+// account_state, and letting it through empties the blotter), and
+// `active_asset_data` (the ticket's leverage and available-to-trade, which an
+// unknown wallet answers with zeros).
 await page.addInitScript(() => {
+	const HELD = /"(account_state|clearinghouse_state|active_asset_data)"/;
 	const strip = (handler) =>
 		function (ev) {
-			if (window.__holdAccount && typeof ev.data === 'string' && ev.data.includes('account_state'))
-				return;
+			if (window.__holdAccount && typeof ev.data === 'string' && HELD.test(ev.data)) return;
 			return handler.call(this, ev);
 		};
 	const desc = Object.getOwnPropertyDescriptor(WebSocket.prototype, 'onmessage');
@@ -95,14 +102,19 @@ await page.addInitScript(() => {
 	};
 });
 
-await page.goto(`${BASE}/trade/perp/BTC-USDC`, { waitUntil: 'networkidle' });
+// ?cluster=testnet: an explicit cluster beats a VITE_MTF_API pinned in the app's
+// .env.local, so the header chip and the data are the testnet's whatever the dev
+// server was started with.
+await page.goto(`${BASE}/trade/perp/BTC-USDC?cluster=testnet`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(3500); // let the book, the chart and the ticker fill
 
 // 1 — the wallet
 await page.evaluate(async () => {
 	const w = await import('/src/lib/wallet.svelte.ts');
 	w.wallet.address = '0x7A4fC2b19E5cD3a1B8e6F0d27c9A45E3B1d8F62c';
-	w.wallet.chainId = '31337';
+	// the testnet's id (114514) in the hex form the app stores; anything else
+	// reads as a wrong-network wallet (isWrongChain)
+	w.wallet.chainId = '0x1bf52';
 	w.wallet.connector = 'injected';
 });
 await page.waitForTimeout(1500);
@@ -112,17 +124,18 @@ await page.evaluate(async (rows) => {
 	const m = await import('/src/lib/stores/index.ts');
 	const a = m.account;
 	const build = () =>
-		rows.map(([coin, side, size, entry, mark, lev, liq, funding, sizeStr]) => {
+		rows.map(([coin, side, size, entry, mark, lev, liq, funding]) => {
 			const abs = Math.abs(size);
 			const value = abs * mark;
 			const pnl = (side === 'long' ? 1 : -1) * (mark - entry) * abs;
 			const margin = value / lev;
 			return {
 				coin,
+				dex: '', // core book; a non-empty name tags the row as a deployer dex
 				leverage: lev,
 				mode: 'cross',
 				side,
-				size: sizeStr,
+				size: `${abs} ${coin}`, // the wire's display string, as account.svelte.ts builds it
 				value,
 				entry,
 				mark,
@@ -130,6 +143,7 @@ await page.evaluate(async (rows) => {
 				roe: (pnl / margin) * 100,
 				liq,
 				margin,
+				maintMargin: null, // null → AccountSummary recomputes it from the market's tier
 				marginMode: 'cross',
 				funding
 			};
@@ -142,6 +156,9 @@ await page.evaluate(async (rows) => {
 		// 0.00 USDC" — that was the other thing wrong with the first shot.
 		a.availableUsd = 74393;
 		a.accountValue = equity;
+		// the Liquidation-risk band is the node's word, carried by account_state,
+		// which is held — so say it for the node, or the row reads a bare dash
+		a.riskTier = 'Safe';
 		a.leverage = ps.reduce((s, p) => s + p.value, 0) / equity;
 		// …and the ticket does NOT read availableUsd when the node has answered:
 		// OrderEntry prefers `activeAsset.availableToTrade` (long, short) and only
@@ -169,6 +186,12 @@ await page.waitForTimeout(2200);
 await page.waitForFunction(() => document.querySelectorAll('.row-flash').length === 0, {
 	timeout: 10000
 });
+// An empty book reads "spread 0 · 0%". The feed clears the book when it
+// re-subscribes (depth grouping), and a quiet testnet book may not re-send for a
+// few seconds — so wait for a ladder rather than shoot a blank column.
+await page.waitForFunction(() => !/spread 0 ·/.test(document.body.innerText), null, {
+	timeout: 60000
+});
 await page.waitForTimeout(200);
 
 // 3 — measure the crop off the right column, never a fixed y
@@ -177,9 +200,10 @@ const cut = await page.evaluate(() => {
 		/Liquidation risk/.test(e.textContent ?? '') && e.children.length <= 3
 	);
 	const rightBottom = el ? el.getBoundingClientRect().bottom : 1040;
-	const ticker = [...document.querySelectorAll('*')].find((e) =>
-		/^\s*\d+ms/.test(e.textContent ?? '')
-	);
+	// TickerTape's <footer>. Not by its "NNms" latency text: that reads "—"
+	// until the first ping lands, the match fails, and the fallback y slices
+	// the account panel's last row.
+	const ticker = document.querySelector('footer:has(.marquee)');
 	const tickerTop = ticker ? ticker.getBoundingClientRect().top : 1180;
 	// the blotter's last row — the left column's own finish line
 	const rows = [...document.querySelectorAll('tr')];
