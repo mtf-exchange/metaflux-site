@@ -105,7 +105,7 @@ const dLabels = seasons.map((x) => {
   const p = D.b.at((x.f0 + x.f1) / 2);
   const out = x.n === 1 ? -78 : 66;
   const style = D.pct({ x: p.x + p.nx * out, y: p.y + p.ny * out });
-  return { ...x, style: x.n === 1 ? style.replace(/left:([\d.]+)%/, 'left:max($1%,88px)') : style };
+  return { ...x, style: x.n === 1 ? style.replace(/left:([\d.]+)%/, 'left:max($1%,100px)') : style };
 });
 
 const client = JSON.stringify({ GENESIS, W1_END, TGE, seasons: seasons.map(({ n, name, start }) => ({ n, name, start })) });
@@ -138,7 +138,7 @@ const client = JSON.stringify({ GENESIS, W1_END, TGE, seasons: seasons.map(({ n,
     <div class="target mfoot"><span class="nm">Gimle</span><span class="k">TGE target</span><span class="date">1 March 2027</span><span class="may">The date may move.</span></div>
   </div>
   <div class="copy">
-    <p class="status">Testnet points · counted from genesis</p>
+    <p class="status"><span>Testnet points</span><span class="sep"> · </span><span>counted from genesis</span></p>
     <h1>MTF <em>Points</em></h1>
     <p class="lede">Trade on the testnet and earn points each week, counted from genesis. At the TGE, your points convert to&nbsp;MTF.</p>
     <p class="week"><span data-week>Weeks cut Wednesday 00:00 UTC</span><span class="cut" data-cut></span></p>
@@ -152,7 +152,7 @@ const client = JSON.stringify({ GENESIS, W1_END, TGE, seasons: seasons.map(({ n,
 <main class="wrap">
   <section class="part" id="seasons" aria-labelledby="seasons-h">
     <h2 id="seasons-h">Four seasons, then Gimle.</h2>
-    <p class="intro">A week closes every Wednesday at 00:00 UTC, and each week shares a pool of 1,000,000 points. Season 1 counts back from genesis and closes at the first weekly cut after this page went live. Season 4 ends at the TGE snapshot, so its last week is partial and its pool is 1,000,000 × hours / 168.</p>
+    <p class="intro">A week closes every Wednesday at 00:00 UTC, and each week shares a pool of 1,000,000 points. Season 1 counts back from genesis and closes at the first weekly cut after this page went live. Season 4 ends at the TGE snapshot, so its last week is partial and its pool is 1,000,000 × whole hours / 168.</p>
     <p class="intro">The names come from Norse myth: the void, the world tree, the bridge, the end. The number is what the API and the tables use.</p>
 
     <table class="seasons">
@@ -320,23 +320,21 @@ const client = JSON.stringify({ GENESIS, W1_END, TGE, seasons: seasons.map(({ n,
     </div>
 
     <h3>Published weeks</h3>
-    <p class="aside">A published week never changes. Each one lists every address with raw volume, qualifying volume and points, with the SHA-256 of that table, so anyone can recompute a row. Gap blocks are blocks the archive misses in that week. The pool stays the same.</p>
+    <p class="aside">A published week never changes. Its table has a row for each root account with raw volume, except excluded accounts. Download a week to get that table. The file is the exact text that the table SHA-256 covers, and the page compares the two when the download ends. The <a href="https://docs.mtf.exchange/concepts/points#how-to-check">docs</a> show how to recompute a row. Gap blocks are blocks the archive misses in that week. The pool stays the same.</p>
     <table class="weeks">
       <thead><tr><th scope="col">Week ending</th><th scope="col">Season</th><th scope="col" class="r">Qualifying volume</th><th scope="col" class="r">Issued points</th><th scope="col" class="r">Gap blocks</th><th scope="col">Table SHA-256</th></tr></thead>
       <tbody data-weeks><tr class="st"><td colspan="6">Reading the archive…</td></tr></tbody>
     </table>
   </section>
 
-  <section class="part gimle-sec" id="gimle" aria-labelledby="gimle-h">
+  <section class="part" id="gimle" aria-labelledby="gimle-h">
     <h2 id="gimle-h">Gimle, the claim.</h2>
-    <div class="cols">
-      <p class="when"><span class="k">TGE target</span><span class="date">1 March 2027</span><span class="may">The date may move.</span></p>
-      <div class="prose">
-        <p>Gimle opens at the TGE, on mainnet. Each root account claims the MTF for its points.</p>
-        <p>The rate is set at the TGE. It never exceeds the season ceiling divided by the season's possible points. The points allocation is fully claimable at the TGE, with an optional lock bonus that the <a href="https://docs.mtf.exchange/concepts/tokenomics">tokenomics</a> describe.</p>
-        <p>Before payment, each claim is screened against sanctions lists and the <a href="/terms.html">Terms</a>.</p>
-        <a class="btn" href="https://app.mtf.exchange/" target="_blank" rel="noopener">Trade on testnet <span aria-hidden="true">→</span></a>
-      </div>
+    <div class="prose">
+      <p class="when">TGE target: <time datetime="2027-03-01">1 March 2027</time>. The date may move.</p>
+      <p>Gimle opens at the TGE, on mainnet. Each root account claims the MTF for its points.</p>
+      <p>The rate is set at the TGE. It never exceeds the season ceiling divided by the season's possible points. The points allocation is fully claimable at the TGE, with an optional lock bonus that the <a href="https://docs.mtf.exchange/concepts/tokenomics">tokenomics page</a> describes.</p>
+      <p>Before payment, each claim is screened against sanctions lists and the <a href="/terms.html">Terms</a>.</p>
+      <a class="btn" href="https://app.mtf.exchange/" target="_blank" rel="noopener">Trade on testnet <span aria-hidden="true">→</span></a>
     </div>
   </section>
 </main>
@@ -349,7 +347,7 @@ const client = JSON.stringify({ GENESIS, W1_END, TGE, seasons: seasons.map(({ n,
   --night:#04141f;
   --glass:rgba(10,44,63,.32);
   --ring:inset 0 1px 0 rgba(255,255,255,.09),inset 0 -1px 0 rgba(255,255,255,.02),0 0 0 1px rgba(255,255,255,.06),0 24px 60px -16px rgba(0,0,0,.55);
-  --sig:'Iowan Old Style',Cambria,Georgia,serif;
+  --sig:'Iowan Old Style',Cambria,Georgia,'Times New Roman','Liberation Serif','DejaVu Serif',serif;
   background:var(--night); color:var(--on-deep); color-scheme:dark;
   scrollbar-color:var(--on-deep-line) var(--night);
 }
@@ -416,7 +414,7 @@ html:has(body.tge){background:#04141f}
 .tge .part{padding-top:150px}
 .tge h2{margin:0;font-family:var(--serif);font-weight:400;font-size:clamp(40px,4.6vw,64px);line-height:1;letter-spacing:-.02em;color:#fff;max-width:20ch;text-wrap:balance}
 .tge h3{margin:64px 0 0;font-size:19px;font-weight:500;letter-spacing:-.01em;color:#fff}
-.tge h4{margin:0;font-family:var(--serif);font-weight:400;font-size:28px;line-height:1.1;color:#fff}
+.tge h4{margin:0;font-size:16px;font-weight:500;color:#fff}
 .tge .intro{margin:24px 0 0;max-width:64ch;font-size:17px;line-height:1.6;color:var(--on-deep-mid)}
 .tge .intro+.intro{margin-top:14px}
 .tge .aside{margin:18px 0 0;max-width:68ch;font-size:15px;line-height:1.6;color:var(--on-deep-mid)}
@@ -502,8 +500,7 @@ html:has(body.tge){background:#04141f}
 .tge .cols h3{margin-top:44px}
 .tge .steps{margin:20px 0 0;padding:0;list-style:none;counter-reset:st}
 .tge .steps li{counter-increment:st;position:relative;padding:14px 0 14px 40px;border-bottom:1px solid var(--on-deep-line);font-size:15px;line-height:1.6;color:var(--on-deep)}
-.tge .steps li::before{content:counter(st);position:absolute;left:0;top:14px;font-family:var(--mono);font-size:12px;color:var(--aurora)}
-.tge .cols>div:nth-child(2) .steps li::before{color:var(--rose)}
+.tge .steps li::before{content:counter(st);position:absolute;left:0;top:14px;font-family:var(--mono);font-size:12px;color:var(--on-deep-mid)}
 .tge .rules-h{margin-top:80px}
 .tge .rules{margin:20px 0 0;border-top:1px solid var(--on-deep-line)}
 .tge .rules div{display:grid;grid-template-columns:200px 1fr;gap:24px;padding:18px 0;border-bottom:1px solid var(--on-deep-line)}
@@ -533,18 +530,19 @@ html:has(body.tge){background:#04141f}
 .tge .weeks th,.tge .weeks td,.tge .mine th,.tge .mine td{padding:12px 16px 12px 0;border-bottom:1px solid var(--on-deep-line);text-align:left;white-space:nowrap}
 .tge .weeks thead th,.tge .mine thead th{font-family:var(--mono);font-weight:400;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--on-deep-mid)}
 .tge .weeks .r,.tge .mine .r{text-align:right}
+.tge .weeks th:last-child,.tge .weeks td.hash{padding-left:32px}
 .tge .weeks .hash{font-family:var(--mono);font-size:12.5px;color:var(--on-deep-mid)}
+.tge .weeks .hash .h{display:inline-block;max-width:13ch;overflow:hidden;text-overflow:ellipsis;vertical-align:bottom}
+.tge .save{margin-left:14px;padding:0;border:0;background:none;font:inherit;font-family:var(--sans);font-size:13px;color:var(--aurora);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.tge .save:hover{color:#fff}
+.tge .save:disabled{cursor:progress;color:var(--on-deep-mid)}
+.tge .weeks tr.sub td{color:#fff}
 .tge .weeks tr.st td{white-space:normal;padding:22px 0;color:var(--on-deep);font-size:15px}
 .tge .mine tfoot td{color:#fff;border-bottom:none}
 
 /* gimle */
-.tge .gimle-sec{position:relative}
-.tge .gimle-sec::before{content:"";position:absolute;left:-8%;top:120px;width:70%;height:520px;pointer-events:none;background:radial-gradient(closest-side at 30% 55%,rgba(255,255,255,.07),transparent),radial-gradient(closest-side at 62% 60%,rgba(245,169,184,.10),transparent)}
-.tge .gimle-sec .cols{position:relative;margin-top:44px;align-items:start}
-.tge .when{margin:0;display:flex;flex-direction:column;gap:14px}
-.tge .when .date{font-family:var(--serif);font-size:clamp(48px,6vw,88px);line-height:.95;letter-spacing:-.02em;color:#fff}
-.tge .when .date::before{content:"";display:inline-block;width:12px;height:12px;margin:0 22px 0 4px;vertical-align:.32em;border-radius:50%;background:#fff;box-shadow:0 0 0 6px rgba(255,255,255,.08),0 0 36px 8px rgba(255,255,255,.28)}
-.tge .when .may{font-size:14px;color:var(--on-deep-mid)}
+.tge .prose{margin-top:32px}
+.tge .prose .when{color:#fff}
 .tge .prose p{margin:0 0 18px;max-width:58ch;font-size:16px;line-height:1.65;color:var(--on-deep-mid)}
 .tge .prose .btn{margin-top:10px}
 
@@ -605,9 +603,17 @@ html:has(body.tge){background:#04141f}
   .tge .mine thead th{font-size:10px;letter-spacing:.04em}
   .tge .weeks td[data-k]::before{content:attr(data-k) " ";color:var(--on-deep-mid)}
   .tge .weeks td.r{text-align:left}
-  .tge .weeks td.hash{grid-column:1/-1;white-space:normal;word-break:break-all}
+  .tge .weeks td.hash{grid-column:1/-1;padding-left:0;white-space:normal;word-break:break-all}
+  .tge .weeks .hash .h{display:inline;max-width:none}
+  .tge .save{display:block;margin:6px 0 0}
+  .tge .weeks tr.sub td:nth-child(2){grid-column:1/-1}
   .tge .weeks tr.st{display:block}
   .tge .weeks tr.st td{display:block;padding:8px 0}
+}
+@media(max-width:480px){
+  .tge .status span{display:block}
+  .tge .status .sep{display:none}
+  .tge .ctas{width:min(100%,260px);margin-inline:auto}
 }
 @media(max-width:900px) and (min-width:761px){
   .tge .copy{width:min(460px,70%)}

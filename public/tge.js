@@ -57,19 +57,61 @@
   const int = (v) => Number(v).toLocaleString('en-US');
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const short = (a) => `${String(a).slice(0, 6)}…${String(a).slice(-4)}`;
+  const millionths = (v) => { const [a, b = ''] = String(v).split('.'); return String(BigInt(a + (b + '000000').slice(0, 6))); };
+  const hex = (buf) => [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
   const stateRow = (text) => `<tr class="st"><td colspan="6">${esc(text)}</td></tr>`;
+
+  // The lines that table_sha256 covers: address,raw,qv,points in millionths, sorted by address.
+  async function table(w) {
+    const lines = [];
+    for (let offset = 0; ; offset += 1000) {
+      const page = (await info({ type: 'points_leaderboard', season: w.season, week: w.week, offset })).rows || [];
+      for (const r of page) lines.push(`${r.address},${millionths(r.raw_volume)},${millionths(r.qualifying_volume)},${millionths(r.points)}\n`);
+      if (page.length < 1000) return lines.sort().join('');
+    }
+  }
 
   const weeks = document.querySelector('[data-weeks]');
   info({ type: 'points_weeks' }).then((d) => {
     const rows = d.rows || [];
-    weeks.innerHTML = rows.length ? rows.map((w) => `<tr>
+    if (!rows.length) { weeks.innerHTML = stateRow('No week is published yet.'); return; }
+    weeks.innerHTML = rows.map((w, i) => {
+      const row = `<tr>
       <td class="num">${esc(dayTxt(w.week_end))}</td>
       <td class="num" data-k="Season">${esc(w.season)}</td>
       <td class="num r" data-k="Qualifying volume">${esc(usd(w.total_qualifying_volume))}</td>
       <td class="num r" data-k="Issued">${esc(pts(w.issued_points))} of ${esc(pts(w.pool))}</td>
       <td class="num r" data-k="Gap blocks">${esc(int(w.gap_blocks))}</td>
-      <td class="hash" title="${esc(w.table_sha256)}">${esc(String(w.table_sha256).slice(0, 12))}…</td></tr>`).join('')
-      : stateRow('No week is published yet.');
+      <td class="hash"><span class="h" title="${esc(w.table_sha256)}">${esc(w.table_sha256)}</span><button type="button" class="save" data-i="${i}">Download</button></td></tr>`;
+      if (rows[i + 1] && rows[i + 1].season === w.season) return row;
+      const season = rows.filter((x) => x.season === w.season);
+      const sum = (k) => season.reduce((a, x) => a + micro(x[k]), 0) / 1e6;
+      return row + `<tr class="sub"><td colspan="3">Season ${esc(w.season)}, ${season.length} published week${season.length === 1 ? '' : 's'}</td>
+      <td class="num r" data-k="Issued">${esc(pts(sum('issued_points')))} of ${esc(pts(sum('pool')))}</td><td colspan="2"></td></tr>`;
+    }).join('');
+    weeks.addEventListener('click', async (ev) => {
+      const b = ev.target.closest('button.save');
+      if (!b) return;
+      const w = rows[b.dataset.i];
+      b.disabled = true;
+      b.title = '';
+      b.textContent = 'Reading…';
+      try {
+        const text = await table(w);
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([text], { type: 'text/csv' }));
+        a.download = `points-week-${w.week}.csv`;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 60000);
+        const got = crypto.subtle ? hex(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text))) : '';
+        b.textContent = !got ? 'Saved' : got === w.table_sha256 ? 'Saved. The hash matches.' : 'Saved. The hash does not match.';
+      } catch (e) {
+        b.textContent = 'Not read. Try again.';
+        b.title = e.message === NOT_LIVE ? 'The archive does not serve points_leaderboard yet.' : why(e);
+      } finally {
+        b.disabled = false;
+      }
+    });
   }).catch((e) => {
     weeks.innerHTML = stateRow(e.message === NOT_LIVE
       ? 'Not live yet. The archive does not serve points_weeks yet. Points still count from genesis, so no week is lost.'
@@ -89,7 +131,7 @@
     button.disabled = true;
     info({ type: 'points_user', address, season: s }).then((d) => {
       const rows = d.rows || [];
-      if (!rows.length) return say(`No points for this address in Season ${s}. An excluded account reads the same as an account with no qualifying volume.`);
+      if (!rows.length) return say(`Nothing is published for this address in Season ${s}. This has three causes: the account has no raw volume, no week is published yet, or the account is excluded.`);
       const total = rows.reduce((a, w) => a + micro(w.points), 0) / 1e6;
       const as = d.root && d.root !== address ? `<p title="${esc(d.root)}">The root account ${esc(short(d.root))} earns for this address.</p>` : '';
       out.className = 'out';
