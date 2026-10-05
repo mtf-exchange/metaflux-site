@@ -296,24 +296,26 @@ import Footer from '../components/Footer.astro';
     <section id="economics" class="ps">
       <div class="ps-num">10</div>
       <h2>Economics</h2>
-      <p class="lead">MTF is the native token: it secures the chain through staking, it is the unit in which validators and their delegators are paid, and protocol revenue routes back to holders through an open-market buyback. The design rests on three mechanisms — a supply that tracks an external reference rather than an arbitrary cap, a fee engine that converts net revenue into buy pressure, and a staking ladder that weights committed stake over raw balance.</p>
+      <p class="lead">MTF is the native token: it secures the chain through staking, it is the unit in which validators and their delegators are paid, and protocol revenue routes back to holders through an open-market buyback. The design rests on three mechanisms — a fixed supply with no mint function, a fee engine that converts net revenue into buy pressure, and a staking ladder that weights committed stake over raw balance.</p>
 
-      <h3>10.1 Supply: population-pegged</h3>
-      <p>MTF has neither a fixed maximum supply nor an open-ended emission schedule. Total supply is pegged to the population of China: genesis supply is <strong>1,404,890,000 MTF</strong> — one token per person counted in the 2026 population — re-pegged once a year. In year <i>y</i> the reference figure <i>P<sub>y</sub></i> is the median across multiple authoritative Chinese central-government data sources, so no single source&#8217;s revision can move the peg, and the validator set votes to settle the difference against the current supply target:</p>
-      <div class="eq"><span><i>ΔS<sub>y</sub></i> = <i>P<sub>y</sub></i> − <i>S</i><sub><i>y</i>−1</sub>,&nbsp;&nbsp; minted to the treasury if positive, burned from it if negative</span><span class="eqno">(19)</span></div>
-      <p> The adjustment touches only the governed treasury pool — never user, contributor, or staker balances — and at under one percent a year against a billion-token base, circulating supply is effectively stable while remaining anchored to an external, publicly verifiable reference. The peg is not a yield mechanism; the protocol does not fund rewards through perpetual inflation.</p>
+      <h3>10.1 Supply: fixed</h3>
+      <p>Total supply is <strong>1,000,000,000 MTF</strong>, fixed at genesis. On mainnet there is no mint function, and governance has no lever over supply. The only operation that changes supply is the buyback lock of §10.3, and it can only reduce the circulating supply. There is no emission schedule: staking rewards come from allocated tokens and from fee revenue, never from new issuance. The testnet runs under different rules, so its supply does not show this design.</p>
 
       <h3>10.2 Allocation</h3>
       <div class="spec-table">
         <table>
           <thead><tr><th>Allocation</th><th>Share</th><th>Terms</th></tr></thead>
           <tbody>
-            <tr><td class="fn">TGE airdrop</td><td><span class="mono">30%</span></td><td>421,467,000 MTF, distributed at the token generation event to active traders, market makers, and points holders.</td></tr>
-            <tr><td class="fn">Core contributors</td><td><span class="mono">20%</span></td><td>280,978,000 MTF. One-year cliff with zero unlock, then six-year linear vesting. No contributor tokens unlock during the first year, and none can be sold into the airdrop.</td></tr>
-            <tr><td class="fn">Treasury · community · validators</td><td><span class="mono">50%</span></td><td>702,445,000 MTF. A single governed pool funding grants, liquidity programs, validator-reward bootstrap, and the supply re-peg reserve.</td></tr>
+            <tr><td class="fn">Community airdrop</td><td><span class="mono">30%</span></td><td>300,000,000 MTF, fully claimable at the TGE on mainnet, with an optional lock bonus. The <a href="/tge.html">points program</a> pays at most 100,000,000 MTF of it, for testnet trading from genesis to the TGE. The other 200,000,000 MTF is reserved and unallocated.</td></tr>
+            <tr><td class="fn">Core contributors</td><td><span class="mono">20%</span></td><td>200,000,000 MTF. A 12-month cliff with zero unlock, then 72-month linear vesting. No contributor tokens unlock during the first year, and none can be sold into the airdrop.</td></tr>
+            <tr><td class="fn">Liquidity · market making</td><td><span class="mono">12%</span></td><td>120,000,000 MTF. Released by governance, at most 6% of the bucket per quarter. It seeds the protocol-owned liquidity vault and funds market-maker token loans.</td></tr>
+            <tr><td class="fn">Validator bootstrap</td><td><span class="mono">8%</span></td><td>80,000,000 MTF. Paid out on the stake-curve reward schedule of §10.3, sized to a 36-month runway, until fee revenue carries the staking yield.</td></tr>
+            <tr><td class="fn">Ecosystem · incentives</td><td><span class="mono">20%</span></td><td>200,000,000 MTF. At most 50,000,000 MTF released per year. It funds the airdrop lock bonus, builder and integrator grants, and trading incentives.</td></tr>
+            <tr><td class="fn">Treasury</td><td><span class="mono">10%</span></td><td>100,000,000 MTF. At most 30,000,000 MTF released per year. The protocol reserve, under governance control.</td></tr>
           </tbody>
         </table>
       </div>
+      <p>There is no private sale and no investor allocation. The release caps are protocol parameters that governance can lower but not raise.</p>
 
       <h3>10.3 The fee flywheel</h3>
       <p>Every protocol fee follows one mechanical path. Maker rebates, referral credits, and builder credits are paid first, off the top, so liquidity providers are compensated before any distribution occurs. The remaining net revenue is split once, three ways:</p>
@@ -322,8 +324,8 @@ import Footer from '../components/Footer.astro';
         <div class="split-row"><span class="split-pct">20%</span><span class="split-label">Validators — routed to validators, who pass it to their delegators as the staking dividend. Fees fund validators; validators fund stakers.</span></div>
         <div class="split-row"><span class="split-pct">10%</span><span class="split-label">Treasury — the governed pool that funds development, security, and ecosystem growth.</span></div>
       </div>
-      <p>The flywheel converts trading volume directly into MTF demand and float contraction while paying the stakers who secure the chain from the same revenue. Because the buyback executes on the open market and the locked address is keyless and public, fee accrual is fully auditable on-chain and cannot be diluted by off-book issuance. Before fee revenue matures, staking rewards bootstrap from the treasury on a square-root curve over total stake <i>S</i>:</p>
-      <div class="eq"><span><span class="rm">APR</span>(<i>S</i>) = 8% · √( <i>S</i><sub>0</sub> / <span class="rm">max</span>(<i>S</i>, <i>S</i><sub>0</sub>) ),&nbsp;&nbsp; <i>S</i><sub>0</sub> = 5×10<sup>7</sup> MTF</span><span class="eqno">(20)</span></div>
+      <p>The flywheel converts trading volume directly into MTF demand and float contraction while paying the stakers who secure the chain from the same revenue. Because the buyback executes on the open market and the locked address is keyless and public, fee accrual is fully auditable on-chain and cannot be diluted by off-book issuance. Before fee revenue matures, staking rewards bootstrap from the validator bootstrap allocation on a square-root curve over total stake <i>S</i>:</p>
+      <div class="eq"><span><span class="rm">APR</span>(<i>S</i>) = 8% · √( <i>S</i><sub>0</sub> / <span class="rm">max</span>(<i>S</i>, <i>S</i><sub>0</sub>) ),&nbsp;&nbsp; <i>S</i><sub>0</sub> = 5×10<sup>7</sup> MTF</span><span class="eqno">(19)</span></div>
       <p>— flat at 8% until 50M MTF is staked and decaying as the square root of stake beyond it, funded by allocation, never by new issuance.</p>
 
       <h3>10.4 Fee structure</h3>
@@ -342,7 +344,7 @@ import Footer from '../components/Footer.astro';
         </table>
       </div>
       <p>On top of the volume tiers, makers providing at least 0.5%, 1.5%, or 3% of total maker volume earn an additional rebate of 0.0010%, 0.0020%, or 0.0030% respectively, and stakers earn a taker-only discount <i>d</i> of 5% to 50% through the ladder of §10.5. The three systems compose as</p>
-      <div class="eq"><span><i>taker</i><sub>eff</sub> = <i>taker</i><sub>tier</sub> · (1 − <i>d</i>),&nbsp;&nbsp; <i>maker</i><sub>eff</sub> = <i>maker</i><sub>tier</sub> − <i>rebate</i></span><span class="eqno">(21)</span></div>
+      <div class="eq"><span><i>taker</i><sub>eff</sub> = <i>taker</i><sub>tier</sub> · (1 − <i>d</i>),&nbsp;&nbsp; <i>maker</i><sub>eff</sub> = <i>maker</i><sub>tier</sub> − <i>rebate</i></span><span class="eqno">(20)</span></div>
       <p>with the maker rebate paid off the top, before the split, so a top maker&#8217;s net fee becomes negative. Two bounded redirections complete the schedule: a referrer earns a single-level, immutably-set share carved from the protocol&#8217;s cut rather than added to the user&#8217;s price, and a builder code lets a third-party frontend charge a hard-capped per-fill fee under the trader&#8217;s explicit on-chain approval. Every redirection is capped, disclosed pre-trade, and paid before the split — the 70/20/10 division applies exactly once, to net revenue.</p>
 
       <h3>10.5 Staking: the administrative ladder</h3>
@@ -365,7 +367,7 @@ import Footer from '../components/Footer.astro';
         </table>
       </div>
       <p>Rank is determined by <strong>ve-weighted stake</strong>, not raw balance: a stake of size <i>s</i> under committed lock duration <i>ℓ</i> carries effective weight</p>
-      <div class="eq"><span><i>w</i> = <i>s</i> · <i>μ</i>(<i>ℓ</i>),&nbsp;&nbsp; <i>μ</i>(0) = 0,&nbsp; <i>μ</i>(1 mo) = 1.0,&nbsp; <i>μ</i>(6 mo) = 2.5,&nbsp; <i>μ</i>(24 mo) = 4.0</span><span class="eqno">(22)</span></div>
+      <div class="eq"><span><i>w</i> = <i>s</i> · <i>μ</i>(<i>ℓ</i>),&nbsp;&nbsp; <i>μ</i>(0) = 0,&nbsp; <i>μ</i>(1 mo) = 1.0,&nbsp; <i>μ</i>(6 mo) = 2.5,&nbsp; <i>μ</i>(24 mo) = 4.0</span><span class="eqno">(21)</span></div>
       <p>A flexible, no-lock stake carries a 0× multiplier — lowest rung, no dividend, a mode intended for market makers that require mobile capital. The multiplier applies from the moment of commitment, so a smaller stake under a long lock can outrank a larger stake that retains the option to exit. Every rung except one is an uncapped threshold; the top seat is competitive — held by the single largest holder by ve weight and reassigned in real time. The validator dividend requires at least a one-month lock, and two timing parameters — an activation delay before a new tier takes effect and an exit cooldown on unstaking — are governance-set above a hard 24-hour code floor, so no parameter change can make staking instantly reversible or a discount retroactive.</p>
     </section>
 
