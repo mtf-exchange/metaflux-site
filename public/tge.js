@@ -38,36 +38,42 @@
   });
 
   const NOT_LIVE = 'not-live';
+  const DOWN = 'The archive did not answer. Try again later.';
+  // Only UNKNOWN_TYPE means "not live yet". Any other rejection shows its own text.
   const info = (body) => fetch(API, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) })
     .then(async (r) => {
       const j = await r.json().catch(() => null);
-      if (!r.ok || !j || !j.data) throw new Error(NOT_LIVE);
-      return j.data;
+      if (r.ok && j && j.data) return j.data;
+      const e = j && j.error;
+      const msg = typeof e === 'string' ? e : (e && e.message) || '';
+      if ((e && e.code === 'UNKNOWN_TYPE') || msg.startsWith('unknown info type')) throw new Error(NOT_LIVE);
+      throw new Error(msg ? `The archive refused the read: ${msg}` : DOWN);
     });
-  const DOWN = 'The archive did not answer. Try again later.';
-  const ms = (t) => (Number(t) < 1e12 ? Number(t) * 1000 : Number(t));
-  const dayTxt = (t) => { const d = new Date(ms(t)); return `${d.getUTCDate()} ${MON[d.getUTCMonth()]} ${d.getUTCFullYear()}`; };
-  const usd = (micro) => '$' + Math.trunc(Number(micro) / 1e6).toLocaleString('en-US');
-  const pts = (micro) => (Math.trunc(Number(micro)) / 1e6).toLocaleString('en-US', { maximumFractionDigits: 6 });
+  const why = (e) => (e instanceof TypeError ? DOWN : e.message);
+  const dayTxt = (t) => { const d = new Date(Number(t)); return `${d.getUTCDate()} ${MON[d.getUTCMonth()]} ${d.getUTCFullYear()}`; };
+  const usd = (v) => '$' + Math.trunc(Number(v)).toLocaleString('en-US');
+  const pts = (v) => Number(v).toLocaleString('en-US', { maximumFractionDigits: 6 });
+  const micro = (v) => Math.round(Number(v) * 1e6);
   const int = (v) => Number(v).toLocaleString('en-US');
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const short = (a) => `${String(a).slice(0, 6)}…${String(a).slice(-4)}`;
   const stateRow = (text) => `<tr class="st"><td colspan="6">${esc(text)}</td></tr>`;
 
   const weeks = document.querySelector('[data-weeks]');
   info({ type: 'points_weeks' }).then((d) => {
-    const rows = d.weeks || [];
+    const rows = d.rows || [];
     weeks.innerHTML = rows.length ? rows.map((w) => `<tr>
-      <td class="num">${esc(dayTxt(w.week_end_ts))}</td>
+      <td class="num">${esc(dayTxt(w.week_end))}</td>
       <td class="num" data-k="Season">${esc(w.season)}</td>
-      <td class="num r" data-k="Qualifying volume">${esc(usd(w.total_qv_micro))}</td>
-      <td class="num r" data-k="Issued">${esc(int(w.issued_points))} of ${esc(int(w.pool))}</td>
+      <td class="num r" data-k="Qualifying volume">${esc(usd(w.total_qualifying_volume))}</td>
+      <td class="num r" data-k="Issued">${esc(pts(w.issued_points))} of ${esc(pts(w.pool))}</td>
       <td class="num r" data-k="Gap blocks">${esc(int(w.gap_blocks))}</td>
       <td class="hash" title="${esc(w.table_sha256)}">${esc(String(w.table_sha256).slice(0, 12))}…</td></tr>`).join('')
       : stateRow('No week is published yet.');
   }).catch((e) => {
     weeks.innerHTML = stateRow(e.message === NOT_LIVE
       ? 'Not live yet. The archive does not serve points_weeks yet. Points still count from genesis, so no week is lost.'
-      : DOWN);
+      : why(e));
   });
 
   const form = document.querySelector('[data-lookup]');
@@ -76,19 +82,20 @@
   const say = (text, bad) => { out.className = bad ? 'out bad' : 'out'; out.textContent = text; };
   form.addEventListener('submit', (ev) => {
     ev.preventDefault();
-    const user = form.user.value.trim();
+    const address = form.address.value.trim().toLowerCase();
     const s = Number(form.season.value);
-    if (!/^0x[0-9a-fA-F]{40}$/.test(user)) return say('Enter a 0x address with 40 hex characters.', true);
+    if (!/^0x[0-9a-f]{40}$/.test(address)) return say('Enter a 0x address with 40 hex characters.', true);
     say('Reading the archive…');
     button.disabled = true;
-    info({ type: 'points_user', user: user.toLowerCase(), season: s }).then((d) => {
-      const rows = d.weeks || [];
+    info({ type: 'points_user', address, season: s }).then((d) => {
+      const rows = d.rows || [];
       if (!rows.length) return say(`No points for this address in Season ${s}. An excluded account reads the same as an account with no qualifying volume.`);
-      const total = rows.reduce((a, w) => a + Math.trunc(Number(w.points_micro)), 0);
+      const total = rows.reduce((a, w) => a + micro(w.points), 0) / 1e6;
+      const as = d.root && d.root !== address ? `<p title="${esc(d.root)}">The root account ${esc(short(d.root))} earns for this address.</p>` : '';
       out.className = 'out';
-      out.innerHTML = `<div class="scroll"><table class="mine"><thead><tr><th>Week ending</th><th class="r">Raw</th><th class="r">Qualifying</th><th class="r">Points</th></tr></thead><tbody>${rows.map((w) => `<tr><td class="num">${esc(dayTxt(w.week_end_ts))}</td><td class="num r">${esc(usd(w.raw_micro))}</td><td class="num r">${esc(usd(w.qv_micro))}</td><td class="num r">${esc(pts(w.points_micro))}</td></tr>`).join('')}</tbody><tfoot><tr><td colspan="3">Season ${s}, provisional</td><td class="num r">${esc(pts(total))}</td></tr></tfoot></table></div>`;
+      out.innerHTML = `<div class="scroll"><table class="mine"><thead><tr><th>Week ending</th><th class="r">Raw</th><th class="r">Qualifying</th><th class="r">Points</th></tr></thead><tbody>${rows.map((w) => `<tr><td class="num">${esc(dayTxt(w.week_end))}</td><td class="num r">${esc(usd(w.raw_volume))}</td><td class="num r">${esc(usd(w.qualifying_volume))}</td><td class="num r">${esc(pts(w.points))}</td></tr>`).join('')}</tbody><tfoot><tr><td colspan="3">Season ${s}, provisional</td><td class="num r">${esc(pts(total))}</td></tr></tfoot></table></div>${as}`;
     }).catch((e) => {
-      say(e.message === NOT_LIVE ? 'Not live yet. The archive does not serve points_user yet.' : DOWN, e.message !== NOT_LIVE);
+      say(e.message === NOT_LIVE ? 'Not live yet. The archive does not serve points_user yet.' : why(e), e.message !== NOT_LIVE);
     }).finally(() => { button.disabled = false; });
   });
 })();
