@@ -130,12 +130,12 @@ const client = JSON.stringify({ GENESIS, W1_END, TGE, seasons: seasons.map(({ n,
     {dLabels.map((s) => (
       <div class="slab" style={s.style}><span class="sn">Season {s.n}</span><span class="nm">{s.name}</span><span class="from">{s.n === 1 ? 'From genesis, 1 Sep 2026' : `From ${day(s.start, false)}`}</span></div>
     ))}
-    <div class="target foot-d" style={D.pct(D.b.at(1))}><span class="nm">Gimle</span><span class="k">TGE target</span><span class="date">1 March 2027</span><span class="may">The date may move.</span></div>
+    <div class="target foot-d" style={D.pct(D.b.at(1))}><span class="nm">Gimle</span><span class="date">TGE target · 1 March 2027</span><span class="may">The date may move.</span></div>
   </div>
   <div class="art art-m">
     <Fragment set:html={M.svg} />
     <div class="mfoot genesis"><span class="k">Genesis</span><span class="date">1 Sep 2026</span></div>
-    <div class="target mfoot"><span class="nm">Gimle</span><span class="k">TGE target</span><span class="date">1 March 2027</span><span class="may">The date may move.</span></div>
+    <div class="target mfoot"><span class="nm">Gimle</span><span class="date">TGE target · 1 March 2027</span><span class="may">The date may move.</span></div>
   </div>
   <div class="copy">
     <p class="status"><span>Testnet points</span><span class="sep"> · </span><span>counted from genesis</span></p>
@@ -161,7 +161,7 @@ const client = JSON.stringify({ GENESIS, W1_END, TGE, seasons: seasons.map(({ n,
         {seasons.map((s) => (
           <tr class={s === current ? 'is-now' : undefined}>
             <th scope="row"><span class="sn">{s.n}</span><span class="nm">{s.name}</span><span class="st" data-status={s.n}>{status(s)}</span></th>
-            <td class="num">{s.n === 1 ? `${day(s.start)}, 15:08` : day(s.start)} → {s.n === 4 ? 'TGE snapshot' : day(s.end)}</td>
+            <td class="num">{s.n === 1 ? `${day(s.start)}, 15:08 UTC` : day(s.start)} → {s.n === 4 ? 'TGE snapshot' : day(s.end)}</td>
             <td class="num">{s.weeks ? <>{s.weeks}<span class="mo"> weeks</span></> : 'To the snapshot'}</td>
             <td class="ceil">{s.ceiling}</td>
           </tr>
@@ -263,7 +263,7 @@ const client = JSON.stringify({ GENESIS, W1_END, TGE, seasons: seasons.map(({ n,
       <div>
         <h3>A fill qualifies when all five hold</h3>
         <ol class="steps">
-          <li>The market is a governance-listed perp or spot market. Builder-deployed (MIP-3) markets, options, MTF spot and the MTF perp do not count.</li>
+          <li>The market is a governance-listed perp. Spot markets, builder-deployed (MIP-3) markets, options and the MTF perp do not count.</li>
           <li>The fill is not a liquidation.</li>
           <li>The price is inside the market's 1-minute mark bar, ±1%: <code>0.99 × low ≤ px ≤ 1.01 × high</code>. A minute with no bar uses the latest earlier bar.</li>
           <li>The two sides have different root accounts, and they are not in one cluster.</li>
@@ -284,14 +284,9 @@ const client = JSON.stringify({ GENESIS, W1_END, TGE, seasons: seasons.map(({ n,
     <h3 class="rules-h">The rules</h3>
     <dl class="rules">
       <div><dt>Scope</dt><dd>Only trading volume on the testnet earns points. Mainnet activity earns none.</dd></div>
-      <div><dt>Markets</dt><dd>Governance-listed perp and spot markets only. Builder-deployed (MIP-3) markets, options, MTF spot and the MTF perp earn nothing.</dd></div>
       <div><dt>Root account</dt><dd>A sub-account earns as its parent, and a user vault as its leader. A fill between a root and its own sub-account or vault earns nothing.</dd></div>
-      <div><dt>Exclusion</dt><dd>Protocol accounts, validators, protocol vaults and accounts operated by the MetaFlux team earn no points. A fill against an excluded account earns nothing for either side, except a taker fill against protocol vault id 1.</dd></div>
-      <div><dt>Cluster</dt><dd>Two roots are one cluster when one of these links them: a transfer between them; one agent wallet that both approve; a fill between them outside the mark band; a closed trading group, where most of each member's volume is against the other members. Faucet grants never link accounts. A fill inside a cluster earns nothing. The 25% rule counts a cluster as one counterparty.</dd></div>
-      <div><dt>Concentration</dt><dd>Volume against one counterparty cluster counts up to 25% of your weekly raw volume. Protocol vault id 1 is exempt.</dd></div>
-      <div><dt>Mark band</dt><dd>A fill more than 1% outside the market's 1-minute mark range earns nothing.</dd></div>
-      <div><dt>Liquidations</dt><dd>Liquidation fills earn nothing.</dd></div>
-      <div><dt>Minimum</dt><dd>$1,000 of qualifying volume in a week, with fills at least 24 hours apart.</dd></div>
+      <div><dt>Exclusion</dt><dd>Protocol accounts, validators, protocol vaults and accounts operated by the MetaFlux team earn no points.</dd></div>
+      <div><dt>Cluster</dt><dd>Two roots are one cluster when one of these links them: transfers in both directions between them, above a threshold; one agent wallet that signs for both; a fill between them outside the mark band; a closed trading group, where most of each member's volume is against the other members. A link one side makes alone, such as a small transfer to someone else's account, never joins two accounts. Faucet grants never link accounts. A fill inside a cluster earns nothing, and the 25% rule counts a cluster as one counterparty.</dd></div>
       <div><dt>Referrals</dt><dd>A referrer gets no share of a referee's points.</dd></div>
       <div><dt>Eligibility</dt><dd>Claims are screened at the TGE against sanctions lists and the <a href="/terms.html">Terms</a>. UK retail consumers are excluded from crypto-derivatives. IP data serves screening only, never scoring.</dd></div>
       <div><dt>Final review</dt><dd>Weekly numbers are provisional. One review at the TGE snapshot may remove points for abuse. Removed points are not paid.</dd></div>
@@ -390,15 +385,15 @@ html:has(body.tge){background:#04141f}
 @keyframes tge-in{from{opacity:0;filter:blur(6px)}to{opacity:1;filter:none}}
 
 .tge .slab{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:4px;white-space:nowrap;text-align:center;pointer-events:none}
-.tge .sn,.tge .k{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--on-deep-mid)}
+.tge .sn,.tge .k{font-family:var(--sans);font-size:13px;color:var(--on-deep-mid)}
 .tge .slab .nm{font-family:var(--serif);font-style:italic;font-size:clamp(20px,1.9vw,28px);line-height:1;color:var(--on-deep)}
 .tge .slab .from{font-family:var(--num);font-size:12.5px;color:var(--on-deep-mid)}
 .tge .target{display:flex;flex-direction:column;gap:5px;white-space:nowrap}
 .tge .target .nm{font-family:var(--serif);font-style:italic;font-size:clamp(28px,2.6vw,38px);line-height:1;color:#fff}
-.tge .target .date{font-family:var(--serif);font-size:clamp(22px,1.9vw,28px);line-height:1;color:#fff}
+.tge .target .date{font-family:var(--sans);font-size:clamp(15px,1.2vw,17px);line-height:1.2;color:#fff}
 .tge .target .may{font-size:12.5px;color:var(--on-deep-mid)}
 .tge .foot-d{position:absolute;transform:translate(28px,-62%)}
-@media(max-width:1200px){.tge .foot-d{transform:translate(calc(-100% - 24px),-62%);align-items:flex-end;text-align:right}}
+@media(max-width:1200px){.tge .foot-d{transform:translate(-100%,20px);align-items:flex-end;text-align:right}}
 
 .tge .copy{position:relative;z-index:1;justify-self:center;width:min(640px,80%);padding-top:19vw;text-align:center}
 .tge .status{margin:0;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--on-deep-mid)}
@@ -536,6 +531,8 @@ html:has(body.tge){background:#04141f}
 .tge .save{margin-left:14px;padding:0;border:0;background:none;font:inherit;font-family:var(--sans);font-size:13px;color:var(--aurora);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 .tge .save:hover{color:#fff}
 .tge .save:disabled{cursor:progress;color:var(--on-deep-mid)}
+.tge .saved{margin-left:14px;font-size:13px;color:var(--on-deep-mid)}
+.tge .saved.bad{color:var(--rose)}
 .tge .weeks tr.sub td{color:#fff}
 .tge .weeks tr.st td{white-space:normal;padding:22px 0;color:var(--on-deep);font-size:15px}
 .tge .mine tfoot td{color:#fff;border-bottom:none}

@@ -104,7 +104,11 @@
         a.click();
         setTimeout(() => URL.revokeObjectURL(a.href), 60000);
         const got = crypto.subtle ? hex(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text))) : '';
-        b.textContent = !got ? 'Saved' : got === w.table_sha256 ? 'Saved. The hash matches.' : 'Saved. The hash does not match.';
+        const out = document.createElement('span');
+        out.className = got && got !== w.table_sha256 ? 'saved bad' : 'saved';
+        out.textContent = !got ? 'Saved' : got === w.table_sha256 ? 'Saved. The hash matches.' : 'Saved. The hash does not match.';
+        b.replaceWith(out);
+        return;
       } catch (e) {
         b.textContent = 'Not read. Try again.';
         b.title = e.message === NOT_LIVE ? 'The archive does not serve points_leaderboard yet.' : why(e);

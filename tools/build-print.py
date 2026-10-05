@@ -290,5 +290,7 @@ TAIL = """
 """
 
 out = HEAD + content + TAIL
+# A PDF has no site root, so a root-relative link would open file:///.
+out = out.replace('href="/', 'href="https://mtf.exchange/')
 (root / "public" / "whitepaper-print.html").write_text(out)
 print(f"wrote public/whitepaper-print.html ({len(out)} bytes)")
