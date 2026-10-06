@@ -182,10 +182,11 @@
     r.last = m.mark_px;
   };
   const apply = (data) => {
-    // Perps only: the snapshot sends { perp, spot } but a socket frame can be
+    // Native perps only: the snapshot sends { perp, spot } but a socket frame can be
     // one flat list, and a spot pair slipping in read as a second MTF chip.
+    // A deployer dex coin ("ipo:XAU") stays off the home page.
     const list = Array.isArray(data) ? data : data.perp || [];
-    list.filter((m) => m && m.coin && m.mark_px && !m.halted && (m.kind || 'perp') === 'perp').forEach(paint);
+    list.filter((m) => m && m.coin && !m.coin.includes(':') && m.mark_px && !m.halted && (m.kind || 'perp') === 'perp').forEach(paint);
   };
 
   const snapshot = () => fetch(API + '/info', { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{"type":"markets"}' })
