@@ -1,6 +1,6 @@
 # mtf.exchange — official site
 
-Astro, static output. Four pages sharing one layout — Astro is here only to
+Astro, static output. Five pages sharing one layout — Astro is here only to
 stop the `<head>`, the nav and the footer from being copy-pasted four times;
 every page is still plain HTML written by hand, and the build emits plain
 static HTML with no client-side framework.
@@ -9,14 +9,16 @@ static HTML with no client-side framework.
 src/layouts/Base.astro       # the one <head>: meta, OG, fonts, icons
 src/components/Nav.astro     # the nav bar, every page
 src/components/Footer.astro     # the footer, every page
-src/pages/index.astro        # the landing page
+src/pages/index.astro        # the landing page; its hero point field is a Three.js script
+src/pages/tge.astro          # MTF Points: the season runestone, the formula, the lookup
 src/pages/whitepaper.astro   # the protocol paper, with a scroll-spy TOC
 src/pages/terms.astro        # legal
 src/pages/privacy.astro      # legal
 src/styles/site.css          # the one stylesheet, inlined into every page at build
-public/home.js               # the landing page: WebGL2 sky, live testnet prices, reveals — no library
+public/home.js               # the landing page: testnet prices (REST + WebSocket), the markets table, the clock
+public/tge.js                # the points page: week, countdown, archive reads, table hash check
 public/main.js               # one job: the whitepaper's TOC scroll-spy
-public/shots/desk.webp       # the desk screenshot — the testnet desk, running
+public/shots/app.webp        # the trading app on testnet, with a sample account (the caption says so)
 ```
 
 Output URLs are unchanged (`/whitepaper.html`, not `/whitepaper/`) — that is
@@ -48,21 +50,16 @@ DNS points `mtf.exchange` apex + `www` at the host's IP / CNAME per their docs.
 
 ## The design, in brief
 
-One idea per screen, in the manner of hyperliquid.xyz: a cool off-white
-sheet (`#f4f6f7`), one deep ink (`#062232`) for the dark bands, and aurora
-blue `#5BCEFA` as the single accent. Type is **Geist** 400/500 for everything
-readable, **Geist Mono** for the uppercase chrome (labels, nav), **Inter**
-tabular for prices, **Instrument Serif** for the display headlines, and
-**PT Serif** italic only for the *Flux* in the wordmark. Rules are 1px hairlines in
-`--line`; there are no drop shadows apart from the desk screenshot's.
+Monochrome, in the manner of hyperliquid.xyz: ink `#0b0c0e` bands for the
+hero, the product shot and the points, white bands for reading. Green and red
+appear only for price direction. Type is **Source Serif 4** (weight 300) for
+display headings, **Hanken Grotesk** for everything readable, and **Geist
+Mono** for data and code. There are no gradients, glows or glass.
 
-The dark band under the hero is `home.js`: the Milky Way as seen from the
-ground — 16,000 `gl.POINTS` in two additive passes (a wide soft pass builds
-the haze and dust lanes, a tight pass draws the stars), drifting slowly along
-the band. Raw WebGL2, no library; a single frame under
-`prefers-reduced-motion`. The same file pulls live prices from
-`POST /info {"type":"markets"}` and the `markets` WebSocket channel, and runs
-the IntersectionObserver reveals.
+The hero is a field of points: each row is a price distribution at one
+horizon, and the front row is the mark's own curve. It is a Three.js
+`ShaderMaterial` in `index.astro`, one still frame under
+`prefers-reduced-motion`.
 
 All tokens live in `:root` at the top of `src/styles/site.css`. Astro inlines
 it (`inlineStylesheets: 'always'`), so first paint waits on no CSS request;
@@ -75,44 +72,38 @@ into `logo/` (byte-identical copies — update there, then re-copy):
 
 | File | Used for |
 |---|---|
-| `logo/metaflux-mark.svg` | The mark (flux-gradient curve) — navbar + footer lockup |
+| `logo/metaflux-mark.svg` | The mark; the site draws it in one colour (white on ink, ink on white) |
 | `logo/metaflux-mark-animated.svg` | Self-contained climb-on animation (standalone use) |
 
-The on-page wordmark sets **`Meta`** in Geist 500 and **`Flux`** in PT Serif
-italic (`.b-meta` / `.b-flux` in `site.css`), per the brand spec — never
-swap or both-bold them.
+The on-page lockup is the one-colour mark plus "MetaFlux" in Hanken Grotesk 600.
 
-`favicon.svg` is the square mark on a **transparent** ground, the same asset
-the app serves — the mark's blue→rose gradient is mid-tone and stays legible
-on both light and dark tab strips. `apple-touch-icon.png` is the exception
-and must stay **opaque and full-bleed**: iOS composites transparent pixels
-onto black and applies its own corner mask, so the plate is baked into the
-PNG and no radius is.
+`favicon.svg` is the one-colour mark on a transparent ground; it switches
+between ink and white with the browser's colour scheme. `apple-touch-icon.png`
+and `favicon-32.png` are the white mark on an opaque ink square: iOS composites
+transparent pixels onto black and applies its own corner mask, so the plate is
+baked into the PNG and no radius is.
 
 ## Open Graph image
 
-`tools/og.html` is the source; `public/og.png` (1200×630) is the render. The
-card is the home page's own sky: copy `tools/og.html` into `public/`, open
-`/og.html` on the dev server in a 1200×630 viewport, wait a few seconds for
-the fonts and the canvas, screenshot to `public/og.png`, delete the copy.
+`tools/og.html` is the source; `public/og-2026-10.png` (1200×630) is the
+render, and `public/og.png` is a copy for old links. The card is the hero:
+the mark, the headline and the point field. Render it headless at 1200×630
+with a device scale factor of 2, wait for `body[data-ready="1"]`, screenshot,
+then downscale to 1200×630. A new image takes a new dated file name, because
+share platforms cache an image by its URL; update the three `og:image` /
+`twitter:image` tags in `Base.astro` to match.
 
 ## Generated artefacts (tools/)
 
-Two pipelines, both run locally with their outputs committed:
+One pipeline, run by hand with its output committed:
 
 - **The whitepaper PDF.** `tools/build-print.py` extracts the canonical
-  article from `whitepaper.html` into `whitepaper-print.html` (a plain
-  black-on-white academic layout with its own self-contained stylesheet),
-  then `tools/render-pdf.mjs` renders that to `whitepaper.pdf`. Because the
-  extraction is verbatim, markup changes inside
-  `<article class="paper-content">` desync the checked-in PDF — re-run the
-  pipeline after editing the paper.
-
-- **The desk photograph.** `tools/shoot-desk.mjs` re-shoots the running
-  devnet desk to `shots/desk.png` (git-ignored master), and
-  `tools/webp-desk.py` derives the `shots/desk.webp` the page actually
-  loads. Nothing in the image is drawn by this site — it is a screenshot of
-  the real app.
+  article from `src/pages/whitepaper.astro` into `public/whitepaper-print.html`
+  (a black-on-white print layout in the site's typefaces), then
+  `tools/render-pdf.mjs` renders it to `public/whitepaper.pdf` with headless
+  Chromium (Playwright). The extraction is verbatim, so a change inside
+  `<article class="paper-content">` desyncs the PDF until the pipeline runs
+  again.
 
 ## License
 

@@ -28,6 +28,7 @@ HEAD = """<!doctype html>
 <head>
 <meta charset="utf-8">
 <title>MetaFlux Whitepaper — print</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300..700&family=Hanken+Grotesk:wght@400..700&family=Geist+Mono:wght@400;500&display=swap">
 <style>
 /* ────────────────────────────────────────────────────────────────
    whitepaper-print.html — GENERATED FILE, do not edit by hand.
@@ -41,8 +42,9 @@ HEAD = """<!doctype html>
   --ink-dim: #555;
   --rule: #999;
   --rule-light: #ccc;
-  --serif: Georgia, "Times New Roman", "Nimbus Roman", serif;
-  --mono: "Menlo", "Consolas", "Courier New", monospace;
+  --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --sans: "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --mono: "Geist Mono", "Menlo", "Consolas", monospace;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -59,12 +61,15 @@ body {
   margin: 24mm 22mm 26mm;
   @bottom-center {
     content: counter(page);
-    font-family: Georgia, serif;
+    font-family: "Hanken Grotesk", sans-serif;
     font-size: 9pt;
     color: #333;
   }
 }
 @page :first { @bottom-center { content: counter(page); } }
+
+/* Headings use the site's text face; the body stays a serif for print. */
+h1, h2, h3, h4 { font-family: var(--sans); letter-spacing: -0.01em; }
 
 /* ── title block ─────────────────────────────────────────────── */
 .titleblock { text-align: center; margin: 6mm 0 10mm; }
