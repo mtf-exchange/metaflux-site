@@ -24,7 +24,7 @@
   const halves = document.querySelectorAll('#tape > div');
   const seen = new Map(); // coin -> { els: [tr, tick, tick], dp }
   const lev = new Map();
-  let filter = 'all';
+  let filter = 'Crypto';
 
   const dpOf = (v) => { const s = String(v), i = s.indexOf('.'); return i < 0 ? 0 : Math.min(s.length - i - 1, 6); };
   const fmt = (v, dp) => Number(v).toLocaleString('en-US', { minimumFractionDigits: dp, maximumFractionDigits: dp });
@@ -36,7 +36,7 @@
     const sym = coin.replace(/^ipo:/, ''), cls = classOf(coin), icon = `${APP}symbols/${sym}.svg`;
     rows.querySelector('.wait')?.remove();
     const tr = document.createElement('tr');
-    tr.dataset.c = cls; tr.dataset.r = rank(coin); tr.hidden = filter !== 'all' && filter !== cls;
+    tr.dataset.c = cls; tr.dataset.r = rank(coin); tr.hidden = filter !== cls;
     tr.innerHTML = `<td><a class="mk" href="${APP}trade/perp/${coin}-USDC"><img src="${icon}" alt="" width="34" height="34" loading="lazy"><div><b>${NAMES[coin] || sym}</b><span>${sym}-USDC</span></div></a></td><td class="r num" data-px></td><td class="r num"><span data-chg></span></td><td class="r num" data-lev>–</td><td class="mute">${LABEL[cls] || cls}</td><td class="r"><a class="go" href="${APP}trade/perp/${coin}-USDC">Trade</a></td>`;
     place(rows, tr);
     const ticks = [...halves].map((half) => {
@@ -97,7 +97,7 @@
   document.querySelectorAll('.filters button').forEach((b) => b.addEventListener('click', () => {
     filter = b.dataset.f;
     document.querySelectorAll('.filters button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-    rows.querySelectorAll('tr[data-c]').forEach((tr) => { tr.hidden = filter !== 'all' && tr.dataset.c !== filter; });
+    rows.querySelectorAll('tr[data-c]').forEach((tr) => { tr.hidden = tr.dataset.c !== filter; });
   }));
 
   const W1 = Date.UTC(2026, 8, 9), WEEK = 7 * 864e5, S1_END = Date.UTC(2026, 9, 7);

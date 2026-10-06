@@ -18,7 +18,7 @@ const APP = 'https://app.mtf.exchange';
   <div id="stage-fallback" aria-hidden="true" hidden><i class="mark"></i></div>
   <div class="wrap">
     <div>
-      <a class="announce" href="#updates"><span class="tag">New</span><span>21 stock, commodity and FX markets on the ipo dex</span><span aria-hidden="true">→</span></a>
+      <a class="announce" href="#updates"><span class="tag">New</span><span>ipo, a MIP-3 market: 21 stock, commodity and FX perpetuals</span><span aria-hidden="true">→</span></a>
       <h1 id="h1">Derivatives,<br>on first principles.</h1>
       <p class="lede">Perpetuals on crypto, US stocks, A‑shares, commodities and FX, matched and settled on MetaFlux's own L1. The testnet is open.</p>
       <div class="ctas">
@@ -49,11 +49,10 @@ const APP = 'https://app.mtf.exchange';
     <div class="label">Markets</div>
     <div class="sec-head">
       <h2 id="mh">28 perpetual markets</h2>
-      <p class="mute">Seven native crypto markets, and 21 US stock, A-share, commodity and FX markets on the ipo dex. A-shares follow the Shanghai and Shenzhen calendar. Prices come from the testnet as they change.</p>
+      <p class="mute">Seven native crypto markets, and 21 US stock, A-share, commodity and FX markets on ipo, a MIP-3 market deployed on MetaFlux. A-shares follow the Shanghai and Shenzhen calendar. Prices come from the testnet as they change.</p>
     </div>
     <div class="filters" role="group" aria-label="Filter markets">
-      <button type="button" data-f="all" aria-pressed="true">All</button>
-      <button type="button" data-f="Crypto" aria-pressed="false">Crypto</button>
+      <button type="button" data-f="Crypto" aria-pressed="true">Crypto</button>
       <button type="button" data-f="Stock" aria-pressed="false">US stocks</button>
       <button type="button" data-f="AShare" aria-pressed="false">A-shares</button>
       <button type="button" data-f="Commodity" aria-pressed="false">Commodities</button>
@@ -72,7 +71,7 @@ const APP = 'https://app.mtf.exchange';
   <div class="wrap">
     <div class="label" id="ah">Apps</div>
     <div class="list">
-      <a href={`${APP}/`}><b>ipo</b><span>US stocks, A-shares, commodities and FX as perpetuals</span><em>APP.MTF.EXCHANGE</em><i>↗</i></a>
+      <a href={`${APP}/trade/perp/ipo:AAPL-USDC`}><b>ipo</b><span>A MIP-3 market: US stocks, A-shares, commodities and FX as perpetuals</span><em>APP.MTF.EXCHANGE</em><i>↗</i></a>
       <a href="https://grad2.xyz/"><b>Grad2</b><span>Deposit native ETH to MetaFlux. BTC and SOL are next.</span><em>GRAD2.XYZ</em><i>↗</i></a>
       <a href={`${APP}/vaults`}><b>Vaults</b><span>Deposit USDC into a strategy run by a vault leader</span><em>APP.MTF.EXCHANGE/VAULTS</em><i>↗</i></a>
       <a href={`${APP}/referrals`}><b>Referrals</b><span>Share a code; traders who use it get 5% off fees</span><em>APP.MTF.EXCHANGE/REFERRALS</em><i>↗</i></a>
@@ -84,12 +83,12 @@ const APP = 'https://app.mtf.exchange';
 <section class="light sec tight" id="build" aria-labelledby="bh">
   <div class="wrap two">
     <div>
-      <div class="label">Deploy a market</div>
+      <div class="label">Deploy a market · MIP-3</div>
       <h2 id="bh">List your own markets on MetaFlux.</h2>
     </div>
     <div>
-      <p class="body">Any team can deploy perpetual markets with its own oracle and leverage caps. The deployer posts a bond in MTF and runs the price feed. MetaFlux runs matching, margin and settlement, and the markets trade from the same accounts as every other market.</p>
-      <p class="body">The ipo dex was deployed this way. It lists US stocks, A-shares, gold, oil, the euro and the pound.</p>
+      <p class="body">Under MIP-3, any team can deploy perpetual markets with its own oracle and leverage caps. The deployer posts a bond in MTF and runs the price feed. MetaFlux runs matching, margin and settlement, and the markets trade from the same accounts as every other market.</p>
+      <p class="body">ipo is a MIP-3 market deployed this way. It lists US stocks, A-shares, gold, oil, the euro and the pound.</p>
       <div class="ctas"><a class="pill solid" href="https://docs.mtf.exchange/mip/mip-3">Start building</a><a class="pill ghost" href="https://docs.mtf.exchange/api">API reference</a></div>
     </div>
   </div>
@@ -140,7 +139,7 @@ const APP = 'https://app.mtf.exchange';
   <div class="wrap">
     <div class="label" id="uh">Updates</div>
     <div class="list news">
-      <a href={`${APP}/announcements`}><span class="src">METAFLUX<br><time datetime="2026-10-05">OCT 5, 2026</time></span><b>21 stock, commodity and FX markets open on the ipo dex</b><i>↗</i></a>
+      <a href={`${APP}/announcements`}><span class="src">METAFLUX<br><time datetime="2026-10-05">OCT 5, 2026</time></span><b>ipo, a MIP-3 market, opens with 21 stock, commodity and FX perpetuals</b><i>↗</i></a>
       <a href={`${APP}/announcements`}><span class="src">METAFLUX<br><time datetime="2026-10-05">OCT 5, 2026</time></span><b>MTF Points: Season 1, Ginnungagap, counts every trade since genesis</b><i>↗</i></a>
       <a href={`${APP}/announcements`}><span class="src">METAFLUX<br><time datetime="2026-10-05">OCT 5, 2026</time></span><b>Referral codes: 5% off trading fees for referred traders</b><i>↗</i></a>
       <a href={`${APP}/announcements`}><span class="src">GRAD2<br><time datetime="2026-10-05">OCT 5, 2026</time></span><b>Grad2 opens on testnet with native ETH deposits</b><i>↗</i></a>
@@ -153,7 +152,7 @@ const APP = 'https://app.mtf.exchange';
     <div class="label" id="fh">FAQ</div>
     <div class="faq">
       <details><summary>What is MetaFlux?</summary><p>MetaFlux is a layer-1 blockchain built for derivatives. It runs perpetual futures and spot markets on order books that the validators match inside consensus, and it has its own EVM.</p></details>
-      <details><summary>What can I trade?</summary><p>Perpetuals on BTC, ETH, SOL and other crypto, and on the ipo dex, US stocks, A-shares, gold, oil and FX. A-shares follow the Shanghai and Shenzhen trading calendar.</p></details>
+      <details><summary>What can I trade?</summary><p>Perpetuals on BTC, ETH, SOL and other crypto, and on ipo, a MIP-3 market, US stocks, A-shares, gold, oil and FX. A-shares follow the Shanghai and Shenzhen trading calendar.</p></details>
       <details><summary>Is MetaFlux live?</summary><p>The testnet is live and open to everyone. Get testnet USDC from the <a href={`${APP}/faucet`}>faucet</a> and trade. Mainnet follows the audits.</p></details>
       <details><summary>What are MTF Points?</summary><p>Points for testnet trading volume, counted each week from genesis. They convert to MTF at the TGE, targeted for 1 March 2027. The formula is public on the <a href="/tge.html">points page</a>.</p></details>
       <details><summary>What is MTF?</summary><p>MTF is the native token of MetaFlux, with a fixed supply of 1,000,000,000.</p></details>

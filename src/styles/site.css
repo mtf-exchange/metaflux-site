@@ -96,3 +96,6 @@ footer.site .word{font-size:22vw;font-weight:600;letter-spacing:-.055em;line-hei
   footer.site .cols{grid-template-columns:1fr 1fr}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+/* Owner 2026-10-06: no visible scrollbars anywhere; every area still scrolls. */
+*{scrollbar-width:none}
+*::-webkit-scrollbar{display:none}
