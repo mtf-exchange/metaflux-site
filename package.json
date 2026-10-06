@@ -9,5 +9,8 @@
   },
   "devDependencies": {
     "astro": "^5.14.1"
+  },
+  "dependencies": {
+    "three": "0.169.0"
   }
 }

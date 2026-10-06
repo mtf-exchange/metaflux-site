@@ -1,5 +1,6 @@
-// The TGE page's one script: the live week from the reader's clock, the marker
-// on the bow, and the points reads from the testnet archive. No library.
+// The TGE page's one script: the live week and countdown from the reader's
+// clock, the stone and its band marker, and the points reads from the testnet
+// archive. No library.
 (() => {
   const { GENESIS, W1_END, TGE, seasons } = JSON.parse(document.getElementById('pts-cfg').textContent);
   const API = 'https://api.testnet.mtf.exchange/info';
@@ -8,34 +9,102 @@
   const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   const now = Date.now();
-  const n = now < W1_END ? 1 : Math.floor((now - W1_END) / WEEK) + 2;
-  const cut = new Date(W1_END + (n - 1) * WEEK);
   const current = [...seasons].reverse().find((s) => now >= s.start);
   const next = seasons.find((s) => now < s.start);
   const status = (s) => (s === current ? 'In progress' : now >= s.start ? 'Closed' : s.n === 4 ? 'Last' : s === next ? 'Next' : 'Later');
 
-  if (current) {
-    document.querySelectorAll('[data-week]').forEach((el) => { el.textContent = `Week ${n} · Season ${current.n}, ${current.name}`; });
+  const pad = (v) => String(v).padStart(2, '0');
+  const digits = [...document.querySelectorAll('[data-cd]')];
+  const tick = () => {
+    const t = Date.now();
+    const n = t < W1_END ? 1 : Math.floor((t - W1_END) / WEEK) + 2;
+    const cut = new Date(W1_END + (n - 1) * WEEK);
+    const cur = [...seasons].reverse().find((s) => t >= s.start);
+    if (!cur) return;
+    // n counts from week 1 of Season 1; every later season starts on a cut, so it restarts at week 1.
+    const wk = cur.start > W1_END ? n - Math.round((cur.start - W1_END) / WEEK) - 1 : n;
+    document.querySelectorAll('[data-week]').forEach((el) => { el.textContent = `Week ${wk} · Season ${cur.n}, ${cur.name}`; });
     document.querySelectorAll('[data-cut]').forEach((el) => { el.textContent = `Cuts ${DOW[cut.getUTCDay()]} ${cut.getUTCDate()} ${MON[cut.getUTCMonth()]}, 00:00 UTC`; });
-  }
+    const d = Math.max(0, cut - t);
+    const v = { d: Math.floor(d / 864e5), h: pad(Math.floor(d / 36e5) % 24), m: pad(Math.floor(d / 6e4) % 60), s: pad(Math.floor(d / 1e3) % 60) };
+    digits.forEach((el) => { el.textContent = v[el.dataset.cd]; el.closest('[hidden]')?.removeAttribute('hidden'); });
+  };
+  tick();
+  setInterval(tick, 1000);
+
   seasons.forEach((s) => {
     const el = document.querySelector(`[data-status="${s.n}"]`);
-    if (!el) return;
-    el.textContent = status(s);
-    el.closest('tr').classList.toggle('is-now', s === current);
+    if (el) {
+      el.textContent = status(s);
+      el.closest('tr').classList.toggle('is-now', s === current);
+    }
+    document.querySelector(`[data-seg="${s.n}"]`)?.classList.toggle('is-now', s === current);
   });
   const sel = document.getElementById('season');
   if (current && sel) sel.value = String(current.n);
 
   const f = Math.min(Math.max((now - GENESIS) / (TGE - GENESIS), 0), 1);
-  document.querySelectorAll('svg.bow').forEach((svg) => {
+  document.querySelectorAll('svg.band').forEach((svg) => {
+    const span = Number(svg.dataset.span) || 1;
     let p;
-    try { const path = svg.querySelector('.ahead'); p = path.getPointAtLength(f * path.getTotalLength()); } catch { return; }
-    svg.querySelector('.past').setAttribute('stroke-dasharray', `${(f * 1000).toFixed(1)} 1000`);
-    const g = svg.querySelector('.now');
-    g.setAttribute('transform', `translate(${p.x.toFixed(1)} ${p.y.toFixed(1)})`);
-    g.style.display = '';
+    try { const path = svg.querySelector('#rs-track'); p = path.getPointAtLength(f * span * path.getTotalLength()); } catch { return; }
+    svg.querySelector('.lit-mask').setAttribute('stroke-dasharray', `${(f * span * 1000).toFixed(1)} 1000`);
+    svg.querySelector('.now').setAttribute('transform', `translate(${p.x.toFixed(1)} ${p.y.toFixed(1)})`);
   });
+
+  const box = document.querySelector('.slab-box');
+  const cv = box && box.querySelector('canvas');
+  if (cv && cv.getContext && window.Path2D) {
+    const svg = box.querySelector('svg.band');
+    const slab = new Path2D(svg.querySelector('#rs-slab').getAttribute('d'));
+    const band = new Path2D(svg.querySelector('#rs-track').getAttribute('d'));
+    const ends = new Path2D([...svg.querySelectorAll('.end')].map((e) => e.getAttribute('d')).join(''));
+    const hash = (x, y) => { const v = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return v - Math.floor(v); };
+    const noise = (x, y) => {
+      const i = Math.floor(x), j = Math.floor(y), u = x - i, v = y - j;
+      const a = hash(i, j), b = hash(i + 1, j), c = hash(i, j + 1), d = hash(i + 1, j + 1);
+      const su = u * u * (3 - 2 * u), sv = v * v * (3 - 2 * v);
+      return a + (b - a) * su + (c - a) * sv + (a - b - c + d) * su * sv;
+    };
+    const draw = () => {
+      const w = box.clientWidth, h = box.clientHeight;
+      if (!w || !h) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2), k = w / 600;
+      // One offscreen pass marks inside (red), rim (green) and the cut band (blue), so each dot is a pixel read.
+      const m = document.createElement('canvas');
+      m.width = w; m.height = h;
+      const mc = m.getContext('2d');
+      mc.setTransform(k, 0, 0, k, 0, 0);
+      mc.globalCompositeOperation = 'lighter';
+      mc.fillStyle = '#f00'; mc.fill(slab);
+      mc.strokeStyle = '#0f0'; mc.lineWidth = 10; mc.stroke(slab);
+      mc.strokeStyle = '#00f'; mc.lineWidth = 60; mc.stroke(band);
+      mc.fillStyle = '#00f'; mc.fill(ends);
+      mc.lineWidth = 10; mc.stroke(ends);
+      const px = mc.getImageData(0, 0, w, h).data;
+
+      cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+      const ctx = cv.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.fillStyle = '#f3f4f6';
+      const S = 5;
+      for (let gy = 0; gy * S < h; gy++) for (let gx = 0; gx * S < w; gx++) {
+        const x = gx * S + 1 + hash(gx, gy) * 3, y = gy * S + 1 + hash(gy, gx) * 3;
+        if (x >= w || y >= h) continue;
+        const i = (Math.floor(y) * w + Math.floor(x)) * 4;
+        if (px[i] < 128 || px[i + 2] > 96) continue;
+        let a = (0.12 + 0.36 * noise(x / 26, y / 26)) * (1 - 0.4 * (y / h));
+        if (px[i + 1] > 128) a = Math.max(a, 0.6);
+        if (hash(gx + 0.5, gy) > 0.985) a = 0.85;
+        ctx.globalAlpha = a;
+        ctx.fillRect(x - 0.65, y - 0.65, 1.3, 1.3);
+      }
+    };
+    let queued = false;
+    const redraw = () => { if (!queued) { queued = true; requestAnimationFrame(() => { queued = false; draw(); }); } };
+    draw();
+    if (window.ResizeObserver) new ResizeObserver(redraw).observe(box);
+  }
 
   const NOT_LIVE = 'not-live';
   const DOWN = 'The archive did not answer. Try again later.';

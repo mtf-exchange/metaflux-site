@@ -2,105 +2,347 @@
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
+const APP = 'https://app.mtf.exchange';
 ---
 <Base
   title="MetaFlux — Derivatives, on first principles."
-  description="An independent L1 derivatives exchange. Perpetuals, spot and options from one account with one margin number, finality in a single block, a parallel EVM in every block."
+  description="Perpetuals on crypto, US stocks, A-shares, commodities and FX, matched and settled on MetaFlux's own L1. The testnet is open."
   canonical="https://mtf.exchange/"
   script={false}
 >
-<Fragment slot="head">
-<script is:inline>document.documentElement.classList.add('js')</script>
-<script src="/home.js" is:inline defer></script>
-</Fragment>
-<Nav />
+<Fragment slot="head"><script src="/home.js" is:inline defer></script></Fragment>
+<Nav current="home" overlay />
 
-<header class="hero">
-  <div class="status rise">Independent L1 · testnet live</div>
-  <h1 class="rise">Derivatives, on<br><em>first principles</em>.</h1>
-  <div class="side rise d1">
-    <p>Perpetuals, spot and options, cross-margined in one account. Matching and clearing run inside consensus, so a trade settles in the block it prints.</p>
-    <div class="row">
-      <a class="btn" href="https://app.mtf.exchange/" target="_blank" rel="noopener">Trade →</a>
-      <a class="more" href="/whitepaper.html">Whitepaper</a>
+<section class="hero dark" aria-labelledby="h1">
+  <canvas id="stage" aria-hidden="true"></canvas>
+  <div id="stage-fallback" aria-hidden="true" hidden><i class="mark"></i></div>
+  <div class="wrap">
+    <div>
+      <a class="announce" href="#updates"><span class="tag">New</span><span>21 stock, commodity and FX markets on the ipo dex</span><span aria-hidden="true">→</span></a>
+      <h1 id="h1">Derivatives,<br>on first principles.</h1>
+      <p class="lede">Perpetuals on crypto, US stocks, A‑shares, commodities and FX, matched and settled on MetaFlux's own L1. The testnet is open.</p>
+      <div class="ctas">
+        <a class="pill solid" href={`${APP}/`}>Start trading</a>
+        <a class="pill line" href="/whitepaper.html">Read the whitepaper</a>
+      </div>
     </div>
   </div>
-</header>
+  <div class="hero-tape" aria-label="Market prices from the testnet"><div class="track" id="tape"><div></div><div aria-hidden="true"></div></div></div>
+</section>
 
-<div class="stream rise d2" aria-hidden="true">
-  <canvas></canvas>
-</div>
-
-<div class="wrap">
-  <section class="sec reveal" id="trade">
-    <div class="kicker">Markets</div>
-    <div class="head">
-      <h2>BTC, ETH, SOL and more, all in one account against a single margin requirement.</h2>
-      <a class="btn" href="https://app.mtf.exchange/" target="_blank" rel="noopener">Trade →</a>
-    </div>
-    <ul class="assets" aria-label="Markets, live off the testnet"></ul>
-    <p class="assets-note">Live marks from the testnet</p>
-    <div class="shot-wrap"><div class="shot"><img src="/shots/desk.webp" width="3720" height="2392" decoding="async" alt="The MetaFlux testnet trading desk: a BTC-USDC perpetual with its candle chart, live order book, order ticket, a four-position blotter and the account summary." loading="lazy"></div></div>
-  </section>
-
-  <section class="sec reveal" id="products">
-    <div class="kicker">Products</div>
-    <ul class="list">
-      <li><a href="https://docs.mtf.exchange/products/perpetuals"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle class="t" cx="8" cy="12" r="6"/><path d="M8 6a6 6 0 1 0 0 12c4 0 5-6 8-6a3 3 0 1 1 0 6c-2 0-3-2-4-3"/></svg><b>Perpetuals</b><span>Linear, USDC-margined, no expiry. Marked to a composite mark price, with funding settled each asset&rsquo;s period. Cross or isolated, one-way or hedge mode.</span><i>→</i></a></li>
-      <li><a href="https://docs.mtf.exchange/products/spot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="t" d="M4 9h13l-3-4h3l4 4-4 4h-3l3-4z" stroke="none"/><path d="M20 15H7l3 4"/><path d="M4 9h13"/></svg><b>Spot</b><span>A price-time priority order book. Both legs of a fill settle together in the same block, delivery versus payment.</span><i>→</i></a></li>
-      <li><a href="https://docs.mtf.exchange/products/options"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="t" d="M3 17l6-10 4 8 4-4 4 6z" stroke="none"/><path d="M3 17l6-10 4 8 4-4 4 6"/></svg><b>Options</b><span>European puts and calls, fully collateralized, quoted by RFQ. Puts cash-settle in USDC; calls settle physically in the underlying.</span><i>→</i></a></li>
-      <li><a href="https://docs.mtf.exchange/concepts/order-types"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="t" d="M3 16h5v-4h5v-3h5V6h3v13H3z" stroke="none"/><path d="M3 19l5-3 5-4 5-3 3-3"/></svg><b>Order types</b><span>Trailing stops, scale ladders, TWAP and chase execution, worked by the matching engine itself.</span><i>→</i></a></li>
-      <li><a href="https://docs.mtf.exchange/concepts/portfolio-margin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="t" d="M4 9l8-5 8 5-8 5z" stroke="none"/><path d="M4 9l8-5 8 5-8 5-8-5z"/><path d="M4 13l8 5 8-5M4 17l8 5 8-5" opacity=".5"/></svg><b>Portfolio margin</b><span>Risk-based margin in the style of SPAN. The whole book is stressed across a price and volatility grid, and hedges net. For accounts above 100K USDC.</span><i>→</i></a></li>
-    </ul>
-  </section>
-</div>
-
-<section class="vision">
+<section class="light sec" id="trade" aria-labelledby="th">
   <div class="wrap">
-    <p class="reveal">MetaFlux starts from one premise: a derivatives exchange should be a chain, <em>not a contract on one</em>.</p>
-    <p class="reveal">The clearinghouse is the state machine. Margin, mark-to-market and liquidation run in consensus, on rules every counterparty can audit.</p>
-    <p class="reveal">An EVM shares every block, so vaults and strategies are contracts reading the same book. New listings go to auction, and the winning bid is burned.</p>
-    <p class="reveal">Components ship across phased testnet milestones. Where this site describes something not yet live, the whitepaper says when.</p>
+    <div class="label">Trade everything in one place</div>
+    <div class="sec-head">
+      <h2 id="th">BTC, Apple, Moutai, gold and the euro, from one account.</h2>
+      <a class="pill solid" href={`${APP}/`}>Trade</a>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="frame"><img class="shot" src="/shots/app.webp" width="3200" height="1760" loading="lazy" decoding="async" alt="The MetaFlux trading app on testnet: the BTC-USDC perpetual with its chart, order book, order ticket and an account with open positions."></div>
+    <p class="cap">The trading app on testnet. Sample account and market figures, for illustration.</p>
   </div>
 </section>
 
-<div class="wrap">
-  <section class="sec reveal" id="security">
-    <div class="kicker">Settlement</div>
-    <h2>Settlement finality in one block.</h2>
-    <p class="lead">MetaFlux runs its own consensus, MetaFluxBFT. A block commits when validators holding two-thirds of bonded stake sign it, and while less than a third is faulty, a committed block cannot be unwound. There is no reorg risk to price in and no confirmation count to wait for. The leader rotates every round, and a validator that double-signs is slashed 5% of its stake.</p>
-  </section>
-
-  <section class="sec reveal" id="faq">
-    <div class="kicker">FAQ</div>
-    <div class="faq">
-      <details>
-        <summary>What is MetaFlux, exactly?</summary>
-        <p>A derivatives venue that is its own L1, with its own validator set, its own BFT consensus and an EVM in the same blocks. Execution, clearing and settlement happen in one system instead of three.</p>
-      </details>
-      <details>
-        <summary>Which parts of this are shipping today?</summary>
-        <p>The testnet runs the clearing core, the parallel EVM and the book today. The rest lands in the order the whitepaper sets out, milestone by milestone.</p>
-      </details>
-      <details>
-        <summary>How are liquidations handled?</summary>
-        <p>On a ladder keyed to account health, equity over maintenance margin. The first tier is a margin call: resting post-only orders are pulled and the wallet is notified. Below that come partial, then full, closes at a floored limit price, then a liquidity vault as backstop. If an account still ends negative, the default waterfall runs the vault, an ADL haircut on winning positions, the insurance fund and the treasury, in that order.</p>
-      </details>
-      <details>
-        <summary>When does mainnet launch?</summary>
-        <p>The TGE target is 1 March 2027, and the date may move. Mainnet follows audit and testnet milestones: phased validator onboarding, with the bridge audit as the gating item. Until then, testnet trading earns <a href="/tge.html">MTF points</a> each week, counted from genesis.</p>
-      </details>
-      <details>
-        <summary>What does integration look like?</summary>
-        <p>One gateway serves POST /info, POST /exchange, WebSocket and EVM JSON-RPC. Orders are signed in a standard EIP-712 envelope, so hardware signers and browser wallets work unmodified; agent wallets sign every order and never hold withdrawal authority. The SDKs (TypeScript and Rust, preview) map agent wallets, sub-accounts, vaults, cross and isolated margin and client order ids one to one. <a href="https://docs.mtf.exchange/">Docs →</a></p>
-      </details>
-      <details>
-        <summary>Who is the testnet for?</summary>
-        <p>Anyone. There is no application and no allow-list. Take test USDC from the faucet, point your client at the gateway, and trade. We especially want to hear from market makers and teams shipping production trading systems: <a href="mailto:builders@mtf.exchange">builders@mtf.exchange</a>.</p>
-      </details>
+<section class="light sec tight" id="markets" aria-labelledby="mh">
+  <div class="wrap">
+    <div class="label">Markets</div>
+    <div class="sec-head">
+      <h2 id="mh">28 perpetual markets</h2>
+      <p class="mute">Seven native crypto markets, and 21 US stock, A-share, commodity and FX markets on the ipo dex. A-shares follow the Shanghai and Shenzhen calendar. Prices come from the testnet as they change.</p>
     </div>
-  </section>
-</div>
+    <div class="filters" role="group" aria-label="Filter markets">
+      <button type="button" data-f="all" aria-pressed="true">All</button>
+      <button type="button" data-f="Crypto" aria-pressed="false">Crypto</button>
+      <button type="button" data-f="Stock" aria-pressed="false">US stocks</button>
+      <button type="button" data-f="AShare" aria-pressed="false">A-shares</button>
+      <button type="button" data-f="Commodity" aria-pressed="false">Commodities</button>
+      <button type="button" data-f="FX" aria-pressed="false">FX</button>
+    </div>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Market</th><th class="r">Price</th><th class="r">24h</th><th class="r">Max leverage</th><th>Class</th><th></th></tr></thead>
+        <tbody id="rows"><tr class="wait"><td colspan="6" class="mute">Prices load from the testnet.</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="light sec tight" id="apps" aria-labelledby="ah">
+  <div class="wrap">
+    <div class="label" id="ah">Apps</div>
+    <div class="list">
+      <a href={`${APP}/`}><b>ipo</b><span>US stocks, A-shares, commodities and FX as perpetuals</span><em>APP.MTF.EXCHANGE</em><i>↗</i></a>
+      <a href="https://grad2.xyz/"><b>Grad2</b><span>Deposit native ETH to MetaFlux. BTC and SOL are next.</span><em>GRAD2.XYZ</em><i>↗</i></a>
+      <a href={`${APP}/vaults`}><b>Vaults</b><span>Deposit USDC into a strategy run by a vault leader</span><em>APP.MTF.EXCHANGE/VAULTS</em><i>↗</i></a>
+      <a href={`${APP}/referrals`}><b>Referrals</b><span>Share a code; traders who use it get 5% off fees</span><em>APP.MTF.EXCHANGE/REFERRALS</em><i>↗</i></a>
+      <a href={`${APP}/faucet`}><b>Faucet</b><span>Testnet USDC to start trading</span><em>APP.MTF.EXCHANGE/FAUCET</em><i>↗</i></a>
+    </div>
+  </div>
+</section>
+
+<section class="light sec tight" id="build" aria-labelledby="bh">
+  <div class="wrap two">
+    <div>
+      <div class="label">Deploy a market</div>
+      <h2 id="bh">List your own markets on MetaFlux.</h2>
+    </div>
+    <div>
+      <p class="body">Any team can deploy perpetual markets with its own oracle and leverage caps. The deployer posts a bond in MTF and runs the price feed. MetaFlux runs matching, margin and settlement, and the markets trade from the same accounts as every other market.</p>
+      <p class="body">The ipo dex was deployed this way. It lists US stocks, A-shares, gold, oil, the euro and the pound.</p>
+      <div class="ctas"><a class="pill solid" href="https://docs.mtf.exchange/mip/mip-3">Start building</a><a class="pill ghost" href="https://docs.mtf.exchange/api">API reference</a></div>
+    </div>
+  </div>
+</section>
+
+<section class="vision dark sec" aria-label="Principles">
+  <div class="wrap">
+    <ol>
+      <li><span class="n">01</span><p>MetaFlux is a derivatives exchange built as its own blockchain. The order book, the margin engine and settlement are one system.</p></li>
+      <li><span class="n">02</span><p>Every order, cancel, fill and liquidation is a transaction that the validators agree on. Anyone can check it.</p></li>
+      <li><span class="n">03</span><p>A trade is final in the block that prints it. There is no settlement queue behind the exchange.</p></li>
+      <li><span class="n">04</span><p>One account trades every market, and cross positions share one balance.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="light sec" id="security" aria-labelledby="sh">
+  <div class="wrap two">
+    <div>
+      <div class="label">Security</div>
+      <h2 id="sh">MetaFlux is secured by MetaFluxBFT, a proof-of-stake consensus built for low latency.</h2>
+    </div>
+    <div>
+      <p class="body">A block commits when validators holding more than two thirds of the stake sign it. The testnet runs five validators.</p>
+      <p class="body">Matching, clearing and the EVM run inside the same consensus rounds. Every order, cancel, trade and liquidation happens on chain, with one-block finality.</p>
+      <p class="body">MetaFlux is non-custodial. Orders are signed with EIP-712 by the account or by an agent wallet the account approves, and an agent wallet can never withdraw.</p>
+    </div>
+  </div>
+</section>
+
+<section class="points dark sec" id="points" aria-labelledby="pth">
+  <div class="wrap">
+    <div>
+      <div class="label">MTF Points</div>
+      <h2 id="pth">Trade the testnet. Earn points every week.</h2>
+      <p>Each week shares 1,000,000 points by qualifying volume, counted from genesis. Up to 100,000,000 MTF across four seasons, claimable at the TGE.</p>
+    </div>
+    <div class="clock" aria-live="off">
+      <div class="lab" id="clock-lab">This week closes in</div>
+      <div class="t num"><div><b id="cd-d">0</b><span>days</span></div><div><b id="cd-h">00</b><span>hours</span></div><div><b id="cd-m">00</b><span>minutes</span></div><div><b id="cd-s">00</b><span>seconds</span></div></div>
+      <a class="pill solid" href={`${APP}/points`}>Check your points</a>
+      <div class="foot">Weeks close Wednesday 00:00 UTC. TGE target 1 March 2027.</div>
+    </div>
+  </div>
+</section>
+
+<section class="light sec tight" id="updates" aria-labelledby="uh">
+  <div class="wrap">
+    <div class="label" id="uh">Updates</div>
+    <div class="list news">
+      <a href={`${APP}/announcements`}><span class="src">METAFLUX<br><time datetime="2026-10-05">OCT 5, 2026</time></span><b>21 stock, commodity and FX markets open on the ipo dex</b><i>↗</i></a>
+      <a href={`${APP}/announcements`}><span class="src">METAFLUX<br><time datetime="2026-10-05">OCT 5, 2026</time></span><b>MTF Points: Season 1, Ginnungagap, counts every trade since genesis</b><i>↗</i></a>
+      <a href={`${APP}/announcements`}><span class="src">METAFLUX<br><time datetime="2026-10-05">OCT 5, 2026</time></span><b>Referral codes: 5% off trading fees for referred traders</b><i>↗</i></a>
+      <a href={`${APP}/announcements`}><span class="src">GRAD2<br><time datetime="2026-10-05">OCT 5, 2026</time></span><b>Grad2 opens on testnet with native ETH deposits</b><i>↗</i></a>
+    </div>
+  </div>
+</section>
+
+<section class="light sec tight" id="faq" aria-labelledby="fh">
+  <div class="wrap">
+    <div class="label" id="fh">FAQ</div>
+    <div class="faq">
+      <details><summary>What is MetaFlux?</summary><p>MetaFlux is a layer-1 blockchain built for derivatives. It runs perpetual futures and spot markets on order books that the validators match inside consensus, and it has its own EVM.</p></details>
+      <details><summary>What can I trade?</summary><p>Perpetuals on BTC, ETH, SOL and other crypto, and on the ipo dex, US stocks, A-shares, gold, oil and FX. A-shares follow the Shanghai and Shenzhen trading calendar.</p></details>
+      <details><summary>Is MetaFlux live?</summary><p>The testnet is live and open to everyone. Get testnet USDC from the <a href={`${APP}/faucet`}>faucet</a> and trade. Mainnet follows the audits.</p></details>
+      <details><summary>What are MTF Points?</summary><p>Points for testnet trading volume, counted each week from genesis. They convert to MTF at the TGE, targeted for 1 March 2027. The formula is public on the <a href="/tge.html">points page</a>.</p></details>
+      <details><summary>What is MTF?</summary><p>MTF is the native token of MetaFlux, with a fixed supply of 1,000,000,000.</p></details>
+    </div>
+  </div>
+</section>
 
 <Footer />
 </Base>
+
+<script>
+  const canvas = document.getElementById('stage') as HTMLCanvasElement;
+  const fallback = () => {
+    canvas.hidden = true;
+    document.getElementById('stage-fallback')!.hidden = false;
+  };
+  import('three').then(({ WebGLRenderer, Scene, PerspectiveCamera, Group, BufferGeometry, BufferAttribute, ShaderMaterial, AdditiveBlending, Points }) => {
+    const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    const scene = new Scene();
+    const camera = new PerspectiveCamera(32, 1, 0.1, 100);
+    const group = new Group();
+    scene.add(group);
+
+    // Each row is the price distribution at one horizon: narrow at the front, wider and flatter as it recedes.
+    const NX = 320, NZ = 170;
+    const pos = new Float32Array(NX * NZ * 3), row = new Float32Array(NX * NZ);
+    let k = 0;
+    for (let j = 0; j < NZ; j++) for (let i = 0; i < NX; i++, k++) {
+      pos[k * 3] = -3.4 + (6.8 * i) / (NX - 1);
+      row[k] = j / NZ;
+    }
+    const geo = new BufferGeometry();
+    geo.setAttribute('position', new BufferAttribute(pos, 3));
+    geo.setAttribute('aRow', new BufferAttribute(row, 1));
+    const mat = new ShaderMaterial({
+      transparent: true, depthWrite: false, blending: AdditiveBlending,
+      uniforms: { uTime: { value: 0 }, uPx: { value: renderer.getPixelRatio() } },
+      vertexShader: `
+        attribute float aRow; uniform float uTime; uniform float uPx; varying float vA;
+        void main() {
+          float r = fract(aRow + uTime * 0.018);
+          float t = mix(1.0, 9.0, r);
+          float s0 = 0.36, s = s0 * sqrt(t);
+          float x = position.x;
+          float h = 2.3 * exp(-x * x / (2.0 * s * s)) * (s0 / s) + 0.035 * sin(x * 3.0 + uTime * 0.7 + r * 9.0);
+          vec3 p = vec3(x, h, -r * 7.5);
+          vec4 mv = modelViewMatrix * vec4(p, 1.0);
+          gl_Position = projectionMatrix * mv;
+          gl_PointSize = uPx * (1.5 + 2.6 * (h / 2.3)) * (7.0 / -mv.z);
+          vA = smoothstep(1.0, 0.78, r) * smoothstep(0.0, 0.04, r) * (0.3 + 0.7 * clamp(h / 1.1, 0.0, 1.0));
+        }`,
+      fragmentShader: `
+        varying float vA;
+        void main() {
+          float d = length(gl_PointCoord - 0.5);
+          float a = smoothstep(0.5, 0.15, d) * vA;
+          gl_FragColor = vec4(vec3(0.94, 0.95, 0.97) * a, a);
+        }`,
+    });
+    group.add(new Points(geo, mat));
+
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const resize = () => {
+      const w = canvas.clientWidth, h = canvas.clientHeight, a = w / h;
+      renderer.setSize(w, h, false); camera.aspect = a; camera.updateProjectionMatrix();
+      const wide = a > 1.4;
+      group.userData.x = wide ? 1.9 : 0;
+      group.userData.ry = wide ? -0.34 : 0;
+      group.scale.setScalar(wide ? 1.6 : 0.92);
+      camera.position.set(0, wide ? 2.6 : 3.0, wide ? 7.4 : 9.6);
+      camera.lookAt(0, wide ? 1.05 : 0.9, -3.0);
+      if (still) requestAnimationFrame(frame);
+    };
+    let mx = 0, my = 0, visible = true;
+    addEventListener('pointermove', (e) => { mx = e.clientX / innerWidth - 0.5; my = e.clientY / innerHeight - 0.5; });
+    new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(canvas);
+    const t0 = performance.now();
+    const frame = (now: number) => {
+      if (visible || still) {
+        mat.uniforms.uTime.value = still ? 6 : (now - t0) / 1000;
+        group.position.x = group.userData.x;
+        group.rotation.y = group.userData.ry + mx * 0.18;
+        group.rotation.x = my * 0.06;
+        renderer.render(scene, camera);
+      }
+      if (!still) requestAnimationFrame(frame);
+    };
+    resize(); addEventListener('resize', resize);
+    if (!still) requestAnimationFrame(frame);
+  }).catch(fallback);
+</script>
+
+<style is:global>
+  section.hero{position:relative;overflow:hidden;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;background:radial-gradient(70% 90% at 66% 46%,#1b1e24 0,var(--ink) 62%)}
+  .hero>.wrap{position:relative;flex:1;width:100%;display:grid;grid-template-columns:minmax(0,600px) 1fr;align-items:center;padding-block:120px 64px}
+  .hero h1{font-size:clamp(50px,6.8vw,100px);line-height:.98}
+  .hero p.lede{margin:26px 0 0;max-width:40ch;font-size:19px;line-height:1.5;color:#b9bec7}
+  .ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:36px}
+  .light .ctas{margin-top:30px}
+  #stage{position:absolute;inset:0;width:100%;height:100%;display:block}
+  #stage-fallback{position:absolute;right:6%;top:50%;width:46%;transform:translateY(-50%);color:#d6d9de;opacity:.9}
+  #stage-fallback .mark{width:100%;height:auto;aspect-ratio:52/45}
+  .announce{display:inline-flex;align-items:center;gap:10px;margin-bottom:30px;padding:5px 14px 5px 5px;border-radius:999px;box-shadow:inset 0 0 0 1px #2c3036;background:rgba(17,19,22,.7);font-size:14px;color:#c8ccd3;transition:box-shadow .2s,color .2s}
+  .announce:hover{box-shadow:inset 0 0 0 1px #4a4f58;color:#fff}
+  .announce .tag{padding:3px 10px;border-radius:999px;background:#f3f4f6;color:#0b0c0e;font-size:12px;font-weight:600}
+
+  .hero-tape{position:relative;z-index:1;min-height:65px;border-top:1px solid var(--line-d);background:rgba(11,12,14,.86);overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
+  .hero-tape .track{display:flex;width:max-content;animation:mq 80s linear infinite}
+  .hero-tape .track>div{display:flex}
+  .tick{flex:none;display:flex;align-items:center;gap:12px;padding:18px 28px;border-right:1px solid var(--line-d);white-space:nowrap}
+  .tick img{width:28px;height:28px;border-radius:50%;background:#fff}
+  .tick .s{font-size:14.5px;font-weight:600}
+  .tick .p{font-size:14.5px;color:#d9dce1}
+  .tick .c{font-size:13px}
+  @keyframes mq{to{transform:translateX(-50%)}}
+
+  .sec.tight{padding-block:96px}
+  .sec-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:24px 64px}
+  .sec-head h2{font-size:clamp(36px,4.4vw,60px);line-height:1.02;max-width:14ch}
+  .sec-head p{margin:0;max-width:44ch;font-size:17.5px;line-height:1.55}
+  #trade .sec-head{align-items:center}
+  .frame{margin-top:48px;border-radius:28px;background:var(--ink);padding:clamp(16px,4vw,56px);overflow:hidden}
+  .shot{display:block;width:100%;height:auto;border-radius:12px;box-shadow:0 0 0 1px #262a31,0 40px 80px -30px rgba(0,0,0,.8)}
+  .cap{margin-top:22px;text-align:center;font-size:13px;color:var(--mute-l)}
+
+  .filters{display:flex;flex-wrap:wrap;gap:8px;margin-top:48px}
+  .filters button{font:inherit;font-size:14.5px;font-weight:540;height:38px;padding:0 16px;border-radius:999px;border:0;cursor:pointer;background:var(--paper-2);color:var(--text);transition:background .15s,color .15s}
+  .filters button:hover{background:#e9ebee}
+  .filters button[aria-pressed="true"]{background:var(--text);color:#fff}
+  .tbl{margin-top:20px;overflow-x:auto}
+  .tbl table{width:100%;border-collapse:collapse;min-width:720px}
+  .tbl th{font-size:13px;font-weight:500;color:var(--mute-l);text-align:left;padding:12px 16px;border-bottom:1px solid var(--text)}
+  .tbl td{padding:16px;border-bottom:1px solid var(--line-l);font-size:16px}
+  .tbl .r{text-align:right}
+  .tbl tbody tr{transition:background .15s;cursor:pointer}
+  .tbl tbody tr:hover{background:var(--paper-2)}
+  .mk{display:flex;align-items:center;gap:14px}
+  .mk img{width:34px;height:34px;border-radius:50%}
+  .mk b{display:block;font-weight:580}
+  .mk span{display:block;font-size:13.5px;color:var(--mute-l)}
+  .go{display:inline-flex;align-items:center;height:36px;padding:0 16px;border-radius:999px;box-shadow:inset 0 0 0 1px #d5d8dd;font-size:14px;font-weight:560}
+  .go:hover{background:var(--text);color:#fff;box-shadow:none}
+
+  .list.news a{grid-template-columns:minmax(0,180px) minmax(0,1fr) 24px}
+  .list.news .src{font-size:12.5px;font-weight:540;letter-spacing:.06em;color:var(--text);line-height:1.5}
+  .list.news time{color:var(--mute-l)}
+  .list.news b{font-size:21px}
+  .two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px 80px;align-items:start}
+  .two h2{font-size:clamp(30px,3.2vw,44px);line-height:1.08;letter-spacing:-.03em}
+  .body{margin:0 0 18px;max-width:52ch;font-size:17.5px;line-height:1.6;color:var(--mute-l)}
+
+  .vision ol{list-style:none;margin:0;padding:0;display:grid;gap:56px;max-width:980px}
+  .vision li{display:grid;grid-template-columns:64px minmax(0,1fr);gap:16px}
+  .vision .n{font-family:var(--mono);font-size:12px;color:var(--mute-d);padding-top:12px}
+  .vision p{margin:0;font-family:var(--display);font-variation-settings:'opsz' 60;font-size:clamp(26px,3vw,40px);line-height:1.2;font-weight:300;letter-spacing:-.02em;color:#e4e6ea;text-wrap:pretty}
+
+  .points .wrap{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:64px;align-items:center}
+  .points .label{margin-bottom:18px}
+  .points h2{font-size:clamp(36px,4.4vw,60px);line-height:1.02}
+  .points p{margin:22px 0 0;max-width:46ch;font-size:17.5px;line-height:1.55;color:#b9bec7}
+  .clock{background:var(--ink-2);border-radius:20px;padding:30px;box-shadow:inset 0 0 0 1px var(--line-d)}
+  .clock .lab{font-size:14px;color:var(--mute-d)}
+  .clock .t{margin-top:10px;display:flex;gap:18px}
+  .clock .t div{display:flex;flex-direction:column}
+  .clock .t b{font-family:var(--mono);font-size:44px;font-weight:500;letter-spacing:-.03em;line-height:1}
+  .clock .t span{margin-top:6px;font-size:12.5px;color:var(--mute-d)}
+  .clock .pill{margin-top:28px;width:100%;justify-content:center}
+  .clock .foot{margin-top:16px;font-size:13px;color:var(--mute-d)}
+
+  @media (max-width:1100px){
+    .hero>.wrap{order:1;flex:0 0 auto;grid-template-columns:1fr;padding-block:112px 8px}
+    #stage,#stage-fallback{order:2;position:relative;inset:auto;width:100%;flex:1 1 300px;min-height:300px;height:auto;transform:none}
+    #stage-fallback{max-width:420px;margin:0 auto}
+    .hero-tape{order:3}
+    .points .wrap,.two{grid-template-columns:1fr}
+    .list.news a{grid-template-columns:1fr auto}
+    .list.news b{grid-column:1}
+  }
+  @media (max-width:760px){
+    .tbl table{min-width:0}
+    .tbl th:nth-child(n+4),.tbl td:nth-child(n+4){display:none}
+    .tbl th,.tbl td{padding-inline:6px}
+    .tbl th:first-child,.tbl td:first-child{padding-left:0}
+    .tbl th:nth-child(3),.tbl td:nth-child(3){padding-right:0}
+    .mk{gap:10px}
+    .mk img{width:28px;height:28px}
+    .clock .t{gap:12px}
+    .clock .t b{font-size:34px}
+  }
+  @media (prefers-reduced-motion:reduce){.hero-tape .track{animation:none}}
+</style>

@@ -10,21 +10,22 @@ import Footer from '../components/Footer.astro';
   ogType="article"
   bodyClass="paper"
 >
-<Nav current="whitepaper" />
+<Nav current="whitepaper" overlay={false} />
 
-<header class="paper-hero">
+<header class="dark head">
   <div class="wrap">
-    <div class="paper-kicker">/ MetaFlux whitepaper · v1.0 · 2026</div>
-    <h1>Derivatives,<br>on <span class="accent">first principles</span>.</h1>
-    <p class="paper-sub">MetaFlux is an independent Layer 1 blockchain whose state machine <em>is</em> a derivatives exchange. The order book and clearinghouse execute inside consensus, a parallel EVM shares every block for programmable strategies, and a validator-cosigned bridge moves assets under the same trust assumption as the chain itself. This paper specifies the protocol.</p>
-    <div class="paper-meta">
+    <div class="label">MetaFlux whitepaper · v1.0 · 2026</div>
+    <h1>Derivatives,<br>on first principles.</h1>
+    <p class="sub">MetaFlux is an independent Layer 1 blockchain whose state machine <em>is</em> a derivatives exchange. The order book and clearinghouse execute inside consensus, a parallel EVM shares every block for programmable strategies, and a validator-cosigned bridge moves assets under the same trust assumption as the chain itself. This paper specifies the protocol.</p>
+    <p class="meta">
       <span><span class="k">Authorship</span> MetaFlux Foundation</span>
       <span><span class="k">Edition</span> v1.0 · July 2026</span>
       <span><span class="k">PDF</span> <a href="whitepaper.pdf" download>Download whitepaper.pdf ↓</a></span>
-    </div>
+    </p>
   </div>
 </header>
 
+<div class="light">
 <div class="paper-body wrap">
 
   <aside class="toc" aria-label="Table of contents">
@@ -258,9 +259,9 @@ import Footer from '../components/Footer.astro';
     <section id="bridge" class="ps">
       <div class="ps-num">08</div>
       <h2>MetaBridge</h2>
-      <p>Assets enter and leave MetaFlux through MetaBridge — all of them, including USDC. There is deliberately no third-party bridge and no external attestation service on the critical path: the bridge&#8217;s trust assumption is exactly the chain&#8217;s own two-thirds of stake, enforced by the same secp256k1 keys that sign consensus. There is no admin account anywhere in the design.</p>
+      <p>USDC enters and leaves MetaFlux through MetaBridge. Native ETH uses Grad2, a separate deposit bridge. MetaBridge deliberately puts no third-party bridge and no external attestation service on its critical path: its trust assumption is exactly the chain&#8217;s own two-thirds of stake, enforced by the same secp256k1 keys that sign consensus. There is no admin account anywhere in the design.</p>
       <h3>8.1 Deposits</h3>
-      <p>A deposit on a source chain — EVM corridors such as Base and Arbitrum, or the Solana corridor — is observed by every validator, but only once the source chain reports it <em>finalized</em>: a reorged deposit can never mint an unbacked balance. Validators attest independently, and the credit lands when attestations reach a two-thirds stake-weighted quorum. Every transfer carries a deterministic message id</p>
+      <p>MetaBridge runs on Base and Arbitrum. A deposit on either chain is observed by every validator, but only once the source chain reports it <em>finalized</em>: a reorged deposit can never mint an unbacked balance. Validators attest independently, and the credit lands when attestations reach a two-thirds stake-weighted quorum. Every transfer carries a deterministic message id</p>
       <div class="eq"><span><i>id</i> = <span class="rm">keccak256</span>( chain ‖ direction ‖ user ‖ asset ‖ amount ‖ destination ‖ nonce )</span><span class="eqno">(18)</span></div>
       <p>and each id is honored exactly once, so replays and duplicate attestations are idempotent by construction, even across validator-set changes.</p>
       <h3>8.2 Withdrawals</h3>
@@ -424,6 +425,93 @@ import Footer from '../components/Footer.astro';
 
   </article>
 </div>
+</div>
 
 <Footer />
 </Base>
+
+<style>
+  .head{padding-block:72px 88px}
+  .head .label{color:var(--mute-d)}
+  .head h1{font-size:clamp(44px,6.2vw,88px);line-height:.98}
+  .head .sub{margin:28px 0 0;max-width:60ch;font-size:19px;line-height:1.55;color:#b9bec7}
+  .head .meta{display:flex;flex-wrap:wrap;gap:8px 32px;margin:32px 0 0;font-size:14.5px}
+  .head .k{margin-right:8px;font-size:12.5px;font-weight:540;letter-spacing:.08em;text-transform:uppercase;color:var(--mute-d)}
+  .head a,.ps a{text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+
+  .paper-body{display:grid;grid-template-columns:200px minmax(0,720px);gap:88px;padding-block:88px 128px}
+
+  .toc{position:sticky;top:32px;align-self:start;font-size:14.5px}
+  .toc-label{padding-bottom:12px;border-bottom:1px solid var(--text);font-size:12.5px;font-weight:540;letter-spacing:.08em;text-transform:uppercase;color:var(--mute-l)}
+  .toc ol{list-style:none;margin:8px 0 0;padding:0;counter-reset:toc}
+  .toc li{break-inside:avoid}
+  .toc a{display:flex;gap:12px;padding:6px 0;color:var(--mute-l);transition:color .15s}
+  .toc a::before{counter-increment:toc;content:counter(toc,decimal-leading-zero);flex:none;padding-top:2px;font-family:var(--mono);font-size:12px}
+  .toc a:hover,.toc a.active{color:var(--text)}
+
+  .paper-content{min-width:0;font-size:17.5px;line-height:1.7;color:var(--text)}
+  .ps{scroll-margin-top:24px;margin-top:88px;padding-top:20px;border-top:1px solid var(--text)}
+  .ps:first-child{margin-top:0}
+  .ps-num{font-family:var(--mono);font-size:12.5px;color:var(--mute-l)}
+  .ps-num::before{content:"§ "}
+  .ps h2{margin-top:12px;font-size:clamp(32px,3.6vw,46px);line-height:1.06}
+  .ps h3{margin-top:52px;font-size:25px;line-height:1.2}
+  .ps p{margin:20px 0 0}
+  .ps h3+p{margin-top:14px}
+  .ps .lead{font-size:20px;line-height:1.6}
+  .ps b,.ps strong{font-weight:600}
+  .ps sub,.ps sup{line-height:0}
+  .mono,.rm{font-family:var(--mono);font-size:.86em}
+
+  .axes{margin-top:28px;border-top:1px solid var(--text)}
+  .axis{padding:20px 0;border-bottom:1px solid var(--line-l)}
+  .axis-tag{font-size:12.5px;font-weight:540;letter-spacing:.08em;text-transform:uppercase;color:var(--mute-l)}
+  .ps .axis p{margin-top:8px;font-size:16px;line-height:1.6}
+
+  .spec-table{margin-top:28px;overflow-x:auto}
+  .spec-table table{width:100%;min-width:0;border-collapse:collapse;font-size:15px;line-height:1.55;font-variant-numeric:tabular-nums}
+  .spec-table table:has(th:nth-child(3)){min-width:560px}
+  .spec-table th{padding:0 16px 10px 0;border-bottom:1px solid var(--text);font-size:13px;font-weight:500;color:var(--mute-l);text-align:left;vertical-align:bottom}
+  .spec-table td{padding:14px 16px 14px 0;border-bottom:1px solid var(--line-l);font-size:15px;vertical-align:top}
+  .spec-table :is(th,td):last-child{padding-right:0}
+  .spec-table td.fn{font-weight:560;white-space:nowrap}
+  .spec-table td.nope{color:var(--mute-l)}
+
+  .eq{display:flex;justify-content:space-between;align-items:center;gap:24px;margin-top:24px;padding:18px 22px;border-radius:12px;background:var(--paper-2);font-size:16.5px;line-height:1.6;overflow-x:auto}
+  .eqno{flex:none;font-family:var(--mono);font-size:12.5px;color:var(--mute-l)}
+
+  .split{margin-top:28px;border-top:1px solid var(--text)}
+  .split-row{display:grid;grid-template-columns:88px minmax(0,1fr);gap:20px;padding:20px 0;border-bottom:1px solid var(--line-l)}
+  .split-pct{font-family:var(--display);font-weight:300;font-variation-settings:'opsz' 60;font-size:32px;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .split-label{font-size:16px;line-height:1.6}
+
+  .threats{list-style:none;margin:28px 0 0;padding:0;border-top:1px solid var(--text)}
+  .threats li{padding:20px 0;border-bottom:1px solid var(--line-l);font-size:16px;line-height:1.6}
+  .t-name{display:block;margin-bottom:4px;font-weight:600}
+
+  .refs{list-style:none;margin:20px 0 0;padding:0;counter-reset:ref;font-size:15px;line-height:1.6;color:var(--mute-l)}
+  .refs li{counter-increment:ref;position:relative;padding:12px 0 12px 48px;border-bottom:1px solid var(--line-l)}
+  .refs li::before{content:"[" counter(ref) "]";position:absolute;left:0;font-family:var(--mono);font-size:13px}
+
+  .ps .closing{margin-top:40px;font-family:var(--display);font-weight:300;font-variation-settings:'opsz' 60;font-size:32px;line-height:1.15;letter-spacing:-.02em}
+
+  @media (max-width:1000px){
+    .paper-body{grid-template-columns:minmax(0,1fr);gap:48px;padding-block:56px 96px}
+    .toc{position:static}
+    .toc ol{columns:2;column-gap:32px}
+  }
+  @media (max-width:760px){
+    .head{padding-block:48px 64px}
+    .ps{margin-top:64px}
+    .ps h3{margin-top:40px;font-size:22px}
+    .eq{font-size:15px;padding:16px}
+    /* Two-column tables stack as label over value; wider tables keep their columns and scroll. */
+    .spec-table table:not(:has(th:nth-child(3))){border-top:1px solid var(--text)}
+    .spec-table table:not(:has(th:nth-child(3))) thead{display:none}
+    .spec-table table:not(:has(th:nth-child(3))) :is(tbody,tr,td){display:block}
+    .spec-table table:not(:has(th:nth-child(3))) td.fn{padding:14px 0 2px;border-bottom:0;white-space:normal}
+    .spec-table table:not(:has(th:nth-child(3))) td+td{padding-top:0}
+    .split-row{grid-template-columns:64px minmax(0,1fr);gap:12px}
+    .split-pct{font-size:26px}
+  }
+</style>

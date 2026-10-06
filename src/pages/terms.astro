@@ -8,12 +8,19 @@ import Footer from '../components/Footer.astro';
   description="Terms of Service for MetaFlux, operated by MetaFlux Foundation (England and Wales). Governed by English law; the MetaFlux protocol is autonomous and non-custodial and your use is at your own risk."
   canonical="https://mtf.exchange/terms.html"
 >
-<Nav />
+<Nav current="terms" overlay={false} />
 
-<main class="legal">
-  <div class="kicker">Legal</div>
-<h1>Terms of Service</h1>
-<div class="updated">Last revised — 7 June 2026</div>
+<header class="dark head">
+  <div class="wrap">
+    <div class="label">Legal</div>
+    <h1>Terms of Service</h1>
+    <p class="meta">Last revised — 7 June 2026</p>
+  </div>
+</header>
+
+<main class="light">
+<div class="wrap">
+<div class="doc">
 
 <div class="disclaimer">
   <b>Read first.</b> This document is provided for general information and is not legal advice. The <b>Services</b> — the informational website at <a href="https://mtf.exchange">mtf.exchange</a> and related materials — are operated by <b>MetaFlux Foundation</b>, a foundation established in England &amp; Wales (the &ldquo;Foundation&rdquo;). The <b>Protocol</b> — the MetaFlux Layer-1 blockchain itself — is autonomous, decentralised, non-custodial software run by independent validators; the Foundation holds no keys, takes no custody, executes no trades, and the Protocol is not part of the Services. These Terms are governed by the law of England &amp; Wales. Some terms limit liability and affect how disputes are resolved. <b>If you do not understand or do not agree to these Terms, do not use the Services.</b>
@@ -38,7 +45,7 @@ import Footer from '../components/Footer.astro';
 <div class="view"><span class="vl">Author&rsquo;s note</span> Two things are true at once. There <em>is</em> an entity — the MetaFlux Foundation, established in England &amp; Wales — and it stands behind this informational website. What has no operator is the <em>Protocol</em>: the chain runs on independent validators, takes custody of nothing, and answers to no help desk. We would rather state both plainly than blur them.</div>
 
 <h2><span class="n">02</span>Important notice — disputes</h2>
-<p style="font-family:var(--num);font-size:13px;letter-spacing:0.01em;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;line-height:1.6;">SECTION 08 GOVERNS HOW DISPUTES ARE RESOLVED. IF YOU ARE <strong>NOT A CONSUMER</strong> (FOR EXAMPLE, YOU USE THE SERVICES FOR A BUSINESS), SECTION 08 REQUIRES MOST DISPUTES TO BE RESOLVED BY BINDING INDIVIDUAL ARBITRATION IN LONDON UNDER THE LCIA RULES, AND INCLUDES A WAIVER OF CLASS, COLLECTIVE, AND REPRESENTATIVE PROCEEDINGS, TO THE FULLEST EXTENT THE LAW ALLOWS. <strong>IF YOU ARE A CONSUMER, THIS DOES NOT APPLY TO YOU:</strong> NOTHING IN THESE TERMS REQUIRES A CONSUMER TO ARBITRATE OR TAKES AWAY YOUR RIGHT TO BRING A CLAIM IN COURT, AND NOTHING AFFECTS YOUR NON-EXCLUDABLE STATUTORY RIGHTS.</p>
+<p class="notice">SECTION 08 GOVERNS HOW DISPUTES ARE RESOLVED. IF YOU ARE <strong>NOT A CONSUMER</strong> (FOR EXAMPLE, YOU USE THE SERVICES FOR A BUSINESS), SECTION 08 REQUIRES MOST DISPUTES TO BE RESOLVED BY BINDING INDIVIDUAL ARBITRATION IN LONDON UNDER THE LCIA RULES, AND INCLUDES A WAIVER OF CLASS, COLLECTIVE, AND REPRESENTATIVE PROCEEDINGS, TO THE FULLEST EXTENT THE LAW ALLOWS. <strong>IF YOU ARE A CONSUMER, THIS DOES NOT APPLY TO YOU:</strong> NOTHING IN THESE TERMS REQUIRES A CONSUMER TO ARBITRATE OR TAKES AWAY YOUR RIGHT TO BRING A CLAIM IN COURT, AND NOTHING AFFECTS YOUR NON-EXCLUDABLE STATUTORY RIGHTS.</p>
 
 <h2><span class="n">03</span>Eligibility and prohibited persons</h2>
 <p><strong>3.1 Eligibility.</strong> To use the Services you must be at least <strong>18 years old</strong>, have the legal capacity to enter into these Terms, and not be a Prohibited Person. By using the Services, and each time you access them, you represent that you meet these requirements. These access representations are conditions of the licence in Section 05; they are not a substitute for, and the Foundation does not rely on them in place of, the technical and other controls it operates, nor do they shift to you any responsibility that the law places on the Foundation.</p>
@@ -133,7 +140,35 @@ import Footer from '../components/Footer.astro';
 <p><strong>9.9 Governing law and jurisdiction.</strong> These Terms, and any dispute, claim, or obligation (including any non-contractual dispute, claim, or obligation) arising out of or in connection with them, their subject matter, the Services, or their formation, are governed by and construed in accordance with the <strong>law of England and Wales</strong>. Jurisdiction is dealt with in Section 08. Nothing in this clause deprives a consumer of the protection of the mandatory consumer-protection laws of their country of residence.</p>
 
 <p><strong>9.10 Contact.</strong> Questions about these Terms: <a href="mailto:hello@mtf.exchange?subject=Terms%20of%20Service">hello@mtf.exchange</a>.</p>
+</div>
+</div>
 </main>
 
 <Footer />
 </Base>
+
+<style>
+  .head{padding-block:72px 88px}
+  .head .label{color:var(--mute-d)}
+  .head h1{font-size:clamp(44px,6.2vw,88px);line-height:.98}
+  .head .meta{margin:24px 0 0;font-size:14.5px;color:var(--mute-d)}
+  .doc{max-width:720px;padding-block:88px 128px;font-size:17.5px;line-height:1.7}
+  .doc p{margin:20px 0 0}
+  .doc ul{margin:16px 0 0;padding-left:1.25em}
+  .doc li{margin-top:10px}
+  .doc li::marker{color:var(--mute-l)}
+  .doc b,.doc strong{font-weight:600}
+  .doc a{text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+  .doc h2{margin-top:72px;padding-top:20px;border-top:1px solid var(--text);font-size:clamp(28px,3vw,36px);line-height:1.12}
+  .n{display:block;margin-bottom:10px;font-family:var(--mono);font-size:12.5px;letter-spacing:0;color:var(--mute-l)}
+  .disclaimer{padding:24px 28px;border-radius:16px;background:var(--paper-2);font-size:16px;line-height:1.65}
+  .view{margin-top:28px;padding:2px 0 2px 24px;border-left:2px solid var(--text);font-size:16px;line-height:1.65;color:var(--mute-l)}
+  .vl{display:block;margin-bottom:6px;font-size:12.5px;font-weight:540;letter-spacing:.08em;text-transform:uppercase;color:var(--text)}
+  .doc .notice{padding:18px 22px;border-radius:12px;background:var(--paper-2);font-size:14.5px;line-height:1.6;letter-spacing:.01em}
+  @media (max-width:760px){
+    .head{padding-block:48px 64px}
+    .doc{padding-block:56px 96px}
+    .doc h2{margin-top:56px}
+    .disclaimer{padding:20px}
+  }
+</style>

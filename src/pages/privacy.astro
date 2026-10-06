@@ -8,12 +8,19 @@ import Footer from '../components/Footer.astro';
   description="Privacy Policy for the MetaFlux website, operated by MetaFlux Foundation (England and Wales) under UK GDPR. On-chain data is public and immutable."
   canonical="https://mtf.exchange/privacy.html"
 >
-<Nav />
+<Nav current="privacy" overlay={false} />
 
-<main class="legal">
-  <div class="kicker">Legal</div>
-<h1>Privacy Policy</h1>
-<div class="updated">Last revised — 7 June 2026</div>
+<header class="dark head">
+  <div class="wrap">
+    <div class="label">Legal</div>
+    <h1>Privacy Policy</h1>
+    <p class="meta">Last revised — 7 June 2026</p>
+  </div>
+</header>
+
+<main class="light">
+<div class="wrap">
+<div class="doc">
 
 <div class="disclaimer"><b>Read first.</b> This document is provided for general information and is not legal advice. This Policy explains how the <b>MetaFlux Foundation</b> (a foundation established under the laws of England &amp; Wales) handles personal data when you use the informational website at <a href="https://mtf.exchange">mtf.exchange</a>. The Foundation operates that website and the related materials (the &ldquo;Services&rdquo;) and is the data controller for the off-chain personal data described here. This Policy does <b>not</b>, and cannot, govern the public blockchain itself: the MetaFlux Protocol is autonomous, decentralised, non-custodial software that the Foundation does not operate or control, the data written to it is public and permanent, and that distinction runs through everything below.</div>
 
@@ -156,7 +163,35 @@ import Footer from '../components/Footer.astro';
 <p>We say this plainly because over-broad exclusions are void and we would rather be enforceable than aspirational. <strong>NOTHING IN THIS POLICY OR OUR TERMS OF SERVICE LIMITS OR EXCLUDES: (A) YOUR RIGHT TO COMPENSATION UNDER ARTICLE 82 UK GDPR, INCLUDING FOR MATERIAL AND NON-MATERIAL DAMAGE; (B) ANY OF YOUR STATUTORY DATA-PROTECTION RIGHTS, OR THE POWERS OF THE ICO; (C) LIABILITY FOR DEATH OR PERSONAL INJURY CAUSED BY NEGLIGENCE, OR FOR FRAUD OR FRAUDULENT MISREPRESENTATION; OR (D) ANY OTHER RIGHT OR REMEDY THAT CANNOT BE EXCLUDED OR LIMITED UNDER THE CONSUMER RIGHTS ACT 2015 OR OTHER APPLICABLE CONSUMER-PROTECTION OR DATA-PROTECTION LAW.</strong></p>
 <p>In particular, any liability cap, &ldquo;as is&rdquo; disclaimer or indemnity in our Terms does <strong>not</strong> reach, reduce or restrict your data-protection compensation under Article 82 or your non-excludable consumer rights. If you are a consumer, you have legal rights under the Consumer Rights Act 2015 and other consumer-protection law that this Policy does not affect, and any term that would be unfair under section 62 of that Act is not binding on you. The binding-arbitration and class-action-waiver provisions in our Terms do <strong>not</strong> apply to any claim you bring under data-protection law, to any claim where a pre-dispute arbitration agreement would be unfair under the Consumer Rights Act 2015 or unenforceable under section 91 of the Arbitration Act 1996 (including, for consumers, claims up to GBP 5,000), or to your right to complain to the ICO or to bring a claim under Articles 79 and 82 UK GDPR in the courts of your place of domicile.</p>
 
+</div>
+</div>
 </main>
 
 <Footer />
 </Base>
+
+<style>
+  .head{padding-block:72px 88px}
+  .head .label{color:var(--mute-d)}
+  .head h1{font-size:clamp(44px,6.2vw,88px);line-height:.98}
+  .head .meta{margin:24px 0 0;font-size:14.5px;color:var(--mute-d)}
+  .doc{max-width:720px;padding-block:88px 128px;font-size:17.5px;line-height:1.7}
+  .doc p{margin:20px 0 0}
+  .doc ul{margin:16px 0 0;padding-left:1.25em}
+  .doc li{margin-top:10px}
+  .doc li::marker{color:var(--mute-l)}
+  .doc b,.doc strong{font-weight:600}
+  .doc a{text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+  .doc h2{margin-top:72px;padding-top:20px;border-top:1px solid var(--text);font-size:clamp(28px,3vw,36px);line-height:1.12}
+  .n{display:block;margin-bottom:10px;font-family:var(--mono);font-size:12.5px;letter-spacing:0;color:var(--mute-l)}
+  .disclaimer{padding:24px 28px;border-radius:16px;background:var(--paper-2);font-size:16px;line-height:1.65}
+  .view{margin-top:28px;padding:2px 0 2px 24px;border-left:2px solid var(--text);font-size:16px;line-height:1.65;color:var(--mute-l)}
+  .vl{display:block;margin-bottom:6px;font-size:12.5px;font-weight:540;letter-spacing:.08em;text-transform:uppercase;color:var(--text)}
+  .doc .notice{padding:18px 22px;border-radius:12px;background:var(--paper-2);font-size:14.5px;line-height:1.6;letter-spacing:.01em}
+  @media (max-width:760px){
+    .head{padding-block:48px 64px}
+    .doc{padding-block:56px 96px}
+    .doc h2{margin-top:56px}
+    .disclaimer{padding:20px}
+  }
+</style>

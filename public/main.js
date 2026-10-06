@@ -1,6 +1,6 @@
 // TOC scroll-spy. Loaded by whitepaper.html (where the .toc lives) and by the
 // legal pages (where it no-ops). Highlights the table-of-contents link for the
-// section currently in view; site.css styles the .active state. The home page
+// section currently in view; the page styles the .active state. The home page
 // runs home.js instead.
 
 (() => {

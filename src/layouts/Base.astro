@@ -1,9 +1,4 @@
 ---
-// The one <head> for the whole site. Every page's meta, fonts and icons come
-// from here — before this existed the four pages had drifted apart (different
-// font URLs, a dead favicon.ico, no OG tags on the legal pages at all).
-//
-// Page-specific <head> extras (index's preloader CSS) go in the "head" slot.
 const {
   title,
   description,
@@ -11,7 +6,7 @@ const {
   ogType = 'website',
   ogTitle = title,
   ogDescription = description,
-  themeColor = '#f4f6f7',
+  themeColor = '#0b0c0e',
   bodyClass,
   script = true,
 } = Astro.props;
@@ -59,9 +54,9 @@ import '../styles/site.css';
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Inter:wght@400;500&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=PT+Serif:ital@1&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Inter:wght@400;500&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=PT+Serif:ital@1&display=swap" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Inter:wght@400;500&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=PT+Serif:ital@1&display=swap"></noscript>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,200..700&family=Hanken+Grotesk:wght@300..800&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,200..700&family=Hanken+Grotesk:wght@300..800&family=Geist+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,200..700&family=Hanken+Grotesk:wght@300..800&family=Geist+Mono:wght@400;500&display=swap"></noscript>
 <slot name="head" />
 </head>
 <body class={bodyClass}>

@@ -464,9 +464,9 @@ a { color: inherit; text-decoration: none; }
     <section id="bridge" class="ps">
       <div class="ps-num">8</div>
       <h2>8.&nbsp; MetaBridge</h2>
-      <p>Assets enter and leave MetaFlux through MetaBridge — all of them, including USDC. There is deliberately no third-party bridge and no external attestation service on the critical path: the bridge&#8217;s trust assumption is exactly the chain&#8217;s own two-thirds of stake, enforced by the same secp256k1 keys that sign consensus. There is no admin account anywhere in the design.</p>
+      <p>USDC enters and leaves MetaFlux through MetaBridge. Native ETH uses Grad2, a separate deposit bridge. MetaBridge deliberately puts no third-party bridge and no external attestation service on its critical path: its trust assumption is exactly the chain&#8217;s own two-thirds of stake, enforced by the same secp256k1 keys that sign consensus. There is no admin account anywhere in the design.</p>
       <h3>8.1 Deposits</h3>
-      <p>A deposit on a source chain — EVM corridors such as Base and Arbitrum, or the Solana corridor — is observed by every validator, but only once the source chain reports it <em>finalized</em>: a reorged deposit can never mint an unbacked balance. Validators attest independently, and the credit lands when attestations reach a two-thirds stake-weighted quorum. Every transfer carries a deterministic message id</p>
+      <p>MetaBridge runs on Base and Arbitrum. A deposit on either chain is observed by every validator, but only once the source chain reports it <em>finalized</em>: a reorged deposit can never mint an unbacked balance. Validators attest independently, and the credit lands when attestations reach a two-thirds stake-weighted quorum. Every transfer carries a deterministic message id</p>
       <div class="eq"><span><i>id</i> = <span class="rm">keccak256</span>( chain ‖ direction ‖ user ‖ asset ‖ amount ‖ destination ‖ nonce )</span><span class="eqno">(18)</span></div>
       <p>and each id is honored exactly once, so replays and duplicate attestations are idempotent by construction, even across validator-set changes.</p>
       <h3>8.2 Withdrawals</h3>

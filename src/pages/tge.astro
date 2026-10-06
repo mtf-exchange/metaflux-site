@@ -6,7 +6,6 @@ import Footer from '../components/Footer.astro';
 const DAY = 86_400_000;
 const GENESIS = Date.UTC(2026, 8, 1, 15, 8);
 const W1_END = Date.UTC(2026, 8, 9);
-// The first Wednesday 00:00 UTC cut after this page goes live. Move it to 14 Oct if it ships after 7 Oct.
 const S1_END = Date.UTC(2026, 9, 7);
 const S2_END = S1_END + 56 * DAY;
 const S3_END = S2_END + 56 * DAY;
@@ -14,10 +13,10 @@ const TGE = Date.UTC(2027, 2, 1);
 const SPAN = TGE - GENESIS;
 
 const seasons = [
-  { n: 1, name: 'Ginnungagap', start: GENESIS, end: S1_END, weeks: String((S1_END - W1_END) / (7 * DAY) + 1), ceiling: 'At most 5,000,000 MTF' },
-  { n: 2, name: 'Yggdrasil', start: S1_END, end: S2_END, weeks: '8', ceiling: 'At most 10,000,000 MTF' },
-  { n: 3, name: 'Bifrost', start: S2_END, end: S3_END, weeks: '8', ceiling: 'Set at season start' },
-  { n: 4, name: 'Ragnarok', start: S3_END, end: TGE, weeks: '', ceiling: 'Set at season start' },
+  { n: 1, name: 'Ginnungagap', runes: 'ᚴᛁᚾᚢᚴᛅᚴᛅᛒ', start: GENESIS, end: S1_END, weeks: String((S1_END - W1_END) / (7 * DAY) + 1), ceiling: 'At most 5,000,000 MTF' },
+  { n: 2, name: 'Yggdrasil', runes: 'ᚢᚴᛏᚱᛅᛋᛁᛚ', start: S1_END, end: S2_END, weeks: '8', ceiling: 'At most 10,000,000 MTF' },
+  { n: 3, name: 'Bifrost', runes: 'ᛒᛁᚠᚱᚢᛋᛏ', start: S2_END, end: S3_END, weeks: '8', ceiling: 'Set at season start' },
+  { n: 4, name: 'Ragnarok', runes: 'ᚱᛅᚴᚾᛅᚱᚢᚴ', start: S3_END, end: TGE, weeks: '', ceiling: 'Set at season start' },
 ].map((s) => ({ ...s, f0: (s.start - GENESIS) / SPAN, f1: (s.end - GENESIS) / SPAN }));
 
 const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -29,19 +28,27 @@ const current = [...seasons].reverse().find((s) => now >= s.start);
 const next = seasons.find((s) => now < s.start);
 const status = (s) => (s === current ? 'In progress' : now >= s.start ? 'Closed' : s.n === 4 ? 'Last' : s === next ? 'Next' : 'Later');
 
-// Cubic Bezier with an arc-length table, so time maps to distance along the bow.
-function bow(P, n = 1200) {
+// The stone, in a 600 x 1000 box. Each row is one cubic: x0 y0, two control points, x1 y1.
+const SLAB = [[30, 1000, 14, 840, 4, 640, 18, 420], [18, 420, 30, 230, 120, 40, 262, 26], [262, 26, 420, 12, 548, 110, 576, 290], [576, 290, 600, 450, 596, 780, 578, 1000]];
+const TRACK = [[92, 940, 80, 800, 70, 620, 82, 440], [82, 440, 94, 270, 170, 104, 270, 94], [270, 94, 400, 82, 492, 170, 514, 320], [514, 320, 534, 460, 530, 760, 516, 940]];
+const pathD = (segs) => `M${segs[0][0]} ${segs[0][1]}` + segs.map((s) => `C${s.slice(2).join(' ')}`).join('');
+const TAIL = 'M67 938C67 964 84 984 98 996C104 976 117 958 117 938Z';
+const HEAD = 'M490 936C480 962 499 990 515 996C531 990 552 962 542 936Z';
+// Time fills this share of the band from the tail. The rest, up to the head, is Gimle.
+const TIME = 0.86;
+const BAND = 50;
+
+// Arc-length table, so a time fraction maps to a distance along the band.
+function track(segs, n = 400) {
   const pts = [];
-  const len = [0];
-  for (let i = 0; i <= n; i++) {
+  for (const P of segs) for (let i = pts.length ? 1 : 0; i <= n; i++) {
     const t = i / n, u = 1 - t;
-    const x = u * u * u * P[0] + 3 * u * u * t * P[2] + 3 * u * t * t * P[4] + t * t * t * P[6];
-    const y = u * u * u * P[1] + 3 * u * u * t * P[3] + 3 * u * t * t * P[5] + t * t * t * P[7];
-    if (i) len.push(len[i - 1] + Math.hypot(x - pts[i - 1][0], y - pts[i - 1][1]));
-    pts.push([x, y]);
+    pts.push([u * u * u * P[0] + 3 * u * u * t * P[2] + 3 * u * t * t * P[4] + t * t * t * P[6], u * u * u * P[1] + 3 * u * u * t * P[3] + 3 * u * t * t * P[5] + t * t * t * P[7]]);
   }
-  const total = len[n];
-  const at = (f) => {
+  const len = [0];
+  for (let i = 1; i < pts.length; i++) len.push(len[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+  const total = len[len.length - 1];
+  return (f) => {
     const L = Math.min(Math.max(f, 0), 1) * total;
     const i = Math.max(1, len.findIndex((l) => l >= L));
     const [x0, y0] = pts[i - 1], [x1, y1] = pts[i];
@@ -49,64 +56,29 @@ function bow(P, n = 1200) {
     const m = Math.hypot(x1 - x0, y1 - y0) || 1;
     return { x: x0 + (x1 - x0) * k, y: y0 + (y1 - y0) * k, nx: (y1 - y0) / m, ny: -(x1 - x0) / m };
   };
-  return { d: `M${P[0]} ${P[1]}C${P[2]} ${P[3]} ${P[4]} ${P[5]} ${P[6]} ${P[7]}`, at };
 }
+const at = track(TRACK);
+const r1 = (v) => Math.round(v * 10) / 10;
+const pct = (f) => `${r1(f * 1000) / 10}%`;
 
-function art(id, W, H, P, band, rays, stars, seed) {
-  const b = bow(P);
-  let s = seed;
-  const rnd = () => ((s = (s * 16807) % 2147483647) / 2147483647);
-  const r1 = (v) => Math.round(v * 10) / 10;
-  let starSvg = '';
-  for (let i = 0; i < stars; i++) starSvg += `<circle cx="${r1(rnd() * W)}" cy="${r1(rnd() * H * 0.92)}" r="${r1(0.4 + rnd() * rnd() * 1.3)}" opacity="${r1(0.15 + rnd() * 0.6)}"/>`;
-  let raySvg = '';
-  const step = (W + 160) / rays;
-  for (let i = 0; i < rays; i++) raySvg += `<rect x="${r1(-80 + i * step + rnd() * step)}" y="0" width="${r1(0.6 + rnd() * rnd() * 5)}" height="${H}" opacity="${r1(0.2 + rnd() * 0.8)}"/>`;
-  const ticks = seasons.slice(0, 3).map((x) => {
-    const p = b.at(x.f1), h = band * 0.55;
-    return `<line x1="${r1(p.x - p.nx * h)}" y1="${r1(p.y - p.ny * h)}" x2="${r1(p.x + p.nx * h)}" y2="${r1(p.y + p.ny * h)}"/>`;
-  }).join('');
-  const end = b.at(1);
-  const box = `x="-200" y="-300" width="${W + 400}" height="${H + 600}"`;
-  const svg = `<svg class="bow" viewBox="0 0 ${W} ${H}" aria-hidden="true" focusable="false">
-<defs>
-<linearGradient id="g${id}" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="${W}" y2="0"><stop offset="0" stop-color="#5BCEFA"/><stop offset=".38" stop-color="#5BCEFA"/><stop offset=".62" stop-color="#cfc0e8"/><stop offset=".86" stop-color="#F5A9B8"/><stop offset="1" stop-color="#ffffff"/></linearGradient>
-<filter id="wide${id}" ${box} filterUnits="userSpaceOnUse"><feGaussianBlur stdDeviation="${band * 0.5}"/></filter>
-<filter id="soft${id}" ${box} filterUnits="userSpaceOnUse"><feGaussianBlur stdDeviation="${band * 0.14}"/></filter>
-<filter id="edge${id}" ${box} filterUnits="userSpaceOnUse"><feGaussianBlur stdDeviation="1.6"/></filter>
-<mask id="curtain${id}" maskUnits="userSpaceOnUse" ${box}>
-<path d="${b.d}" fill="none" stroke="#fff" stroke-width="${band}" filter="url(#soft${id})"/>
-<path d="${b.d}" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="${band * 1.6}" transform="translate(0 ${-band * 0.85})" filter="url(#wide${id})"/>
-</mask>
-<mask id="reveal${id}" maskUnits="userSpaceOnUse" ${box}><path class="draw" pathLength="1000" d="${b.d}" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="${band * 7}"/></mask>
-</defs>
-<g class="stars" fill="#e8f1f5">${starSvg}</g>
-<g mask="url(#reveal${id})">
-<path d="${b.d}" fill="none" stroke="url(#g${id})" stroke-width="${band * 2.6}" opacity=".2" filter="url(#wide${id})"/>
-<g mask="url(#curtain${id})"><g class="rays" fill="url(#g${id})">${raySvg}</g></g>
-<path d="${b.d}" fill="none" stroke="url(#g${id})" stroke-width="3" filter="url(#edge${id})"/>
-<path class="ahead" d="${b.d}" fill="none" stroke="#e8f1f5" stroke-opacity=".55" stroke-width="1.2" stroke-dasharray="1.5 7" stroke-linecap="round"/>
-<path class="past" pathLength="1000" d="${b.d}" fill="none" stroke="#fff" stroke-width="1.8" stroke-dasharray="0 1000"/>
-<g class="ticks" stroke="#e8f1f5" stroke-opacity=".7" stroke-width="1.2">${ticks}</g>
-<circle cx="${r1(end.x)}" cy="${r1(end.y)}" r="${band * 0.55}" fill="#fff" opacity=".22" filter="url(#soft${id})"/>
-<circle cx="${r1(end.x)}" cy="${r1(end.y)}" r="5" fill="#fff"/>
-</g>
-<g class="now" style="display:none"><circle r="10" fill="#fff" opacity=".18"/><circle r="4.5" fill="#fff"/></g>
-</svg>`;
-  const pct = (p) => `left:${r1((p.x / W) * 1000) / 10}%;top:${r1((p.y / H) * 1000) / 10}%`;
-  return { svg, b, pct };
-}
-
-const D = art('d', 1440, 820, [-70, 760, 230, 10, 1060, -60, 1240, 700], 64, 260, 140, 7);
-const M = art('m', 390, 760, [16, 772, -24, -96, 414, -96, 374, 772], 34, 90, 60, 11);
-
-// Season 1 sits inside the bow, and a narrow window pins it off the left edge.
-const dLabels = seasons.map((x) => {
-  const p = D.b.at((x.f0 + x.f1) / 2);
-  const out = x.n === 1 ? -78 : 66;
-  const style = D.pct({ x: p.x + p.nx * out, y: p.y + p.ny * out });
-  return { ...x, style: x.n === 1 ? style.replace(/left:([\d.]+)%/, 'left:max($1%,100px)') : style };
+const ticks = [...seasons.map((s) => s.f1)].map((f) => {
+  const p = at(f * TIME), h = BAND / 2;
+  return { x1: r1(p.x - p.nx * h), y1: r1(p.y - p.ny * h), x2: r1(p.x + p.nx * h), y2: r1(p.y + p.ny * h) };
 });
+const inscriptions = [
+  ...seasons.map((s) => ({ text: s.runes, at: pct(((s.f0 + s.f1) / 2) * TIME) })),
+  { text: 'ᚴᛁᛘᛚᛁ', at: pct((TIME + 1) / 2) },
+];
+
+const OUT = 92;
+const side = (p) => (Math.abs(p.ny) > 0.85 ? 't' : (p.nx < 0 ? 'l' : 'r') + (p.ny < -0.4 ? ' up' : ''));
+const place = (p) => ({ cls: side(p), style: `left:${r1((p.x + p.nx * OUT) / 6)}%;top:${r1((p.y + p.ny * OUT) / 10)}%` });
+const range = (s) => (s.n === 4 ? `${day(s.start)} – TGE` : `${day(s.start, false)} – ${day(s.end)}`);
+const labels = seasons.map((s) => ({ ...s, ...place(at(((s.f0 + s.f1) / 2) * TIME)), range: range(s) }));
+const gimle = place(at(1));
+
+const fNow = Math.min(Math.max((now - GENESIS) / SPAN, 0), 1);
+const mark = at(fNow * TIME);
 
 const client = JSON.stringify({ GENESIS, W1_END, TGE, seasons: seasons.map(({ n, name, start }) => ({ n, name, start })) });
 ---
@@ -114,470 +86,497 @@ const client = JSON.stringify({ GENESIS, W1_END, TGE, seasons: seasons.map(({ n,
   title="MTF Points — MetaFlux"
   description="Testnet trading volume earns MTF points each week, counted from genesis. Four seasons, a public formula, and a claim at the TGE."
   canonical="https://mtf.exchange/tge.html"
-  themeColor="#04141f"
+  themeColor="#0b0c0e"
   bodyClass="tge"
   script={false}
 >
 <Fragment slot="head">
-<script type="application/json" id="pts-cfg" is:inline set:html={client}></script>
-<script src="/tge.js" is:inline defer></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Runic&family=Source+Serif+4:ital,opsz,wght@1,8..60,300..400&display=swap">
 </Fragment>
-<Nav current="tge" />
+<Nav current="tge" overlay />
 
-<header class="tge-hero">
-  <div class="art art-d">
-    <Fragment set:html={D.svg} />
-    {dLabels.map((s) => (
-      <div class="slab" style={s.style}><span class="sn">Season {s.n}</span><span class="nm">{s.name}</span><span class="from">{s.n === 1 ? 'From genesis, 1 Sep 2026' : `From ${day(s.start, false)}`}</span></div>
-    ))}
-    <div class="target foot-d" style={D.pct(D.b.at(1))}><span class="nm">Gimle</span><span class="date">TGE target · 1 March 2027</span><span class="may">The date may move.</span></div>
-  </div>
-  <div class="art art-m">
-    <Fragment set:html={M.svg} />
-    <div class="mfoot genesis"><span class="k">Genesis</span><span class="date">1 Sep 2026</span></div>
-    <div class="target mfoot"><span class="nm">Gimle</span><span class="date">TGE target · 1 March 2027</span><span class="may">The date may move.</span></div>
-  </div>
-  <div class="copy">
-    <p class="status"><span>Testnet points</span><span class="sep"> · </span><span>counted from genesis</span></p>
-    <h1>MTF <em>Points</em></h1>
-    <p class="lede">Trade on the testnet and earn points each week, counted from genesis. At the TGE, your points convert to&nbsp;MTF.</p>
-    <p class="week"><span data-week>Weeks cut Wednesday 00:00 UTC</span><span class="cut" data-cut></span></p>
-    <div class="ctas">
-      <a class="btn" href="https://app.mtf.exchange/" target="_blank" rel="noopener">Trade on testnet <span aria-hidden="true">→</span></a>
-      <a class="more" href="#formula">Read the formula</a>
+<header class="stone-hero dark" aria-labelledby="pts-h">
+  <div class="wrap">
+    <div class="copy">
+      <h1 id="pts-h">MTF Points</h1>
+      <p class="lede">Testnet trading earns points every week, counted from genesis, and at the TGE your points convert to MTF.</p>
+      <div class="live">
+        <p class="week" data-week>Weeks cut Wednesday 00:00 UTC</p>
+        <div class="cd num" role="timer" aria-label="Time to the next weekly cut" hidden>
+          <div><b data-cd="d">0</b><span>days</span></div>
+          <div><b data-cd="h">00</b><span>hours</span></div>
+          <div><b data-cd="m">00</b><span>minutes</span></div>
+          <div><b data-cd="s">00</b><span>seconds</span></div>
+        </div>
+        <p class="cut" data-cut></p>
+      </div>
+      <div class="ctas">
+        <a class="pill solid" href="https://app.mtf.exchange/" target="_blank" rel="noopener">Trade on testnet</a>
+        <a class="pill line" href="#formula">Read the formula</a>
+      </div>
+    </div>
+
+    <div class="art">
+      <div class="stone">
+        <div class="slab-box">
+          <canvas aria-hidden="true"></canvas>
+          <svg class="band" viewBox="0 0 600 1000" data-span={TIME} aria-hidden="true" focusable="false">
+            <defs>
+              <path id="rs-slab" d={pathD(SLAB) + 'Z'} />
+              <mask id="rs-lit" maskUnits="userSpaceOnUse" x="-50" y="-50" width="700" height="1100">
+                <path class="lit-mask" d={pathD(TRACK)} pathLength="1000" fill="none" stroke="#fff" stroke-width="90" stroke-dasharray={`${r1(fNow * TIME * 1000)} 1000`} />
+              </mask>
+            </defs>
+            <path id="rs-track" d={pathD(TRACK)} fill="none" />
+            {['dim', 'lit'].map((k) => (
+              <g class={k} mask={k === 'lit' ? 'url(#rs-lit)' : undefined}>
+                <path d={pathD(TRACK)} fill="none" stroke="currentColor" stroke-width={BAND + 3} stroke-opacity=".7" />
+                <path d={pathD(TRACK)} fill="none" stroke="#0b0c0e" stroke-width={BAND} />
+                <g stroke="currentColor" stroke-width="1.6" stroke-opacity=".7">{ticks.map((t) => <line {...t} />)}</g>
+                {inscriptions.map((w) => (
+                  <text class="runes" text-anchor="middle" dominant-baseline="central"><textPath href="#rs-track" startOffset={w.at}>᛬{w.text}᛬</textPath></text>
+                ))}
+              </g>
+            ))}
+            <path class="end tail" d={TAIL} />
+            <path class="end head" d={HEAD} />
+            <circle class="eye" cx="527" cy="961" r="3.5" />
+            <g class="now" transform={`translate(${r1(mark.x)} ${r1(mark.y)})`}><circle r="15" /><circle r="6" /></g>
+          </svg>
+        </div>
+        <ol class="segs" aria-label="Seasons on the stone">
+          {labels.map((s) => (
+            <li class={`seg ${s.cls}${s.n === current?.n ? ' is-now' : ''}`} data-seg={s.n} style={s.style}><span class="sn">Season {s.n}</span><span class="nm">{s.name}</span><span class="dt">{s.range}</span></li>
+          ))}
+          <li class={`seg gimle ${gimle.cls}`} style={gimle.style}><span class="nm">Gimle</span><span class="dt">TGE target 1&nbsp;March&nbsp;2027</span><span class="may">The date may move.</span></li>
+        </ol>
+      </div>
     </div>
   </div>
 </header>
 
-<main class="wrap">
-  <section class="part" id="seasons" aria-labelledby="seasons-h">
-    <h2 id="seasons-h">Four seasons, then Gimle.</h2>
-    <p class="intro">A week closes every Wednesday at 00:00 UTC, and each week shares a pool of 1,000,000 points. Season 1 counts back from genesis and closes at the first weekly cut after this page went live. Season 4 ends at the TGE snapshot, so its last week is partial and its pool is 1,000,000 × whole hours / 168.</p>
-    <p class="intro">The names come from Norse myth: the void, the world tree, the bridge, the end. The number is what the API and the tables use.</p>
+<main>
+  <section class="light sec tight" id="seasons" aria-labelledby="seasons-h">
+    <div class="wrap">
+      <div class="label">Seasons</div>
+      <h2 id="seasons-h">Four seasons, then Gimle.</h2>
+      <p class="intro">A week closes every Wednesday at 00:00 UTC, and each week shares a pool of 1,000,000 points. Season 1 counts back from genesis and closes at the 7 October cut. Season 4 ends at the TGE snapshot, so its last week is partial and its pool is 1,000,000 × whole hours / 168.</p>
+      <p class="intro">The names come from Norse myth: the void, the world tree, the bridge, the end. The number is what the API and the tables use.</p>
 
-    <table class="seasons">
-      <thead><tr><th scope="col">Season</th><th scope="col">Window (UTC)</th><th scope="col">Weeks</th><th scope="col">MTF ceiling</th></tr></thead>
-      <tbody>
-        {seasons.map((s) => (
-          <tr class={s === current ? 'is-now' : undefined}>
-            <th scope="row"><span class="sn">{s.n}</span><span class="nm">{s.name}</span><span class="st" data-status={s.n}>{status(s)}</span></th>
-            <td class="num">{s.n === 1 ? `${day(s.start)}, 15:08 UTC` : day(s.start)} → {s.n === 4 ? 'TGE snapshot' : day(s.end)}</td>
-            <td class="num">{s.weeks ? <>{s.weeks}<span class="mo"> weeks</span></> : 'To the snapshot'}</td>
-            <td class="ceil">{s.ceiling}</td>
+      <table class="seasons">
+        <thead><tr><th scope="col">Season</th><th scope="col">Window (UTC)</th><th scope="col">Weeks</th><th scope="col">MTF ceiling</th></tr></thead>
+        <tbody>
+          {seasons.map((s) => (
+            <tr class={s === current ? 'is-now' : undefined}>
+              <th scope="row"><span class="sn">{s.n}</span><span class="nm">{s.name}</span><span class="st" data-status={s.n}>{status(s)}</span></th>
+              <td class="num">{s.n === 1 ? `${day(s.start)}, 15:08 UTC` : day(s.start)} → {s.n === 4 ? 'TGE snapshot' : day(s.end)}</td>
+              <td class="num">{s.weeks ? <>{s.weeks}<span class="mo"> weeks</span></> : 'To the snapshot'}</td>
+              <td class="ceil">{s.ceiling}</td>
+            </tr>
+          ))}
+          <tr class="claim">
+            <th scope="row"><span class="sn"></span><span class="nm">Gimle</span><span class="st">The claim</span></th>
+            <td colspan="2">Opens at the TGE snapshot, on mainnet</td>
+            <td class="ceil">At most 100,000,000 MTF in all</td>
           </tr>
-        ))}
-        <tr class="claim">
-          <th scope="row"><span class="sn"></span><span class="nm">Gimle</span><span class="st">The claim</span></th>
-          <td colspan="2">Opens at the TGE snapshot, on mainnet</td>
-          <td class="ceil">At most 100,000,000 MTF in all</td>
-        </tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section class="part" id="formula" aria-labelledby="formula-h">
-    <h2 id="formula-h">One pool a week, shared pro rata.</h2>
-    <div class="glass formula">
-      <div class="eqn" role="math" aria-label="points equals 1,000,000 times qv, divided by the larger of the sum of all qv and Q floor">
-        <span class="lhs"><i>points</i> =</span>
-        <span class="frac"><span><b>1,000,000</b> × <i>qv</i></span><span>max(<span class="sig">Σ</span><i>qv</i>, <i>Q</i><sub>floor</sub>)</span></span>
-      </div>
-      <p class="plain"><code><span>points = 1,000,000 × qv</span> <span>/ max(Σqv, Q_floor)</span></code></p>
-      <dl class="terms">
-        <div><dt><i>qv</i></dt><dd>Your qualifying volume for the week, in USD.</dd></div>
-        <div><dt><span class="sig">Σ</span><i>qv</i></dt><dd>The qualifying volume of all accounts for the week.</dd></div>
-        <div><dt><i>Q</i><sub>floor</sub></dt><dd>$50,000,000, published for each season. In a thin week it limits what $1 can earn: at most 0.02 points.</dd></div>
-        <div><dt>Rounding</dt><dd>Toward zero, to one millionth of a point.</dd></div>
-      </dl>
-    </div>
-    <p class="aside">There is no cap per account. The share is linear, so ten accounts earn what one account earns with the same volume.</p>
-
-    <h3>A worked week</h3>
-    <p class="aside">One account, one week, with fills more than 24 hours apart.</p>
-    <dl class="ladder num">
-      <div><dt>Raw volume</dt><dd>$3,000,000</dd></div>
-      <div><dt>Of it, against one counterparty cluster</dt><dd>$1,100,000</dd></div>
-      <div><dt>25% of raw, the limit for that cluster</dt><dd>$750,000</dd></div>
-      <div><dt>Volume above the limit</dt><dd>−$350,000</dd></div>
-      <div class="sum"><dt>Qualifying volume, <i>qv</i></dt><dd>$2,650,000</dd></div>
-    </dl>
-    <div class="example">
-      <div class="wk">
-        <h4>A busy week</h4>
-        <dl class="num">
-          <div><dt>All qualifying volume, <span class="sig">Σ</span><i>qv</i></dt><dd>$200,000,000</dd></div>
-          <div><dt>Divisor, the larger of <span class="sig">Σ</span><i>qv</i> and <i>Q</i><sub>floor</sub></dt><dd>$200,000,000</dd></div>
-          <div class="res"><dt>Points<span class="calc">1,000,000 × 2,650,000 / 200,000,000</span></dt><dd>13,250</dd></div>
-          <div><dt>Pool issued</dt><dd>1,000,000 of 1,000,000</dd></div>
-        </dl>
-      </div>
-      <div class="wk">
-        <h4>A thin week</h4>
-        <dl class="num">
-          <div><dt>All qualifying volume, <span class="sig">Σ</span><i>qv</i></dt><dd>$8,000,000</dd></div>
-          <div><dt>Divisor, the larger of <span class="sig">Σ</span><i>qv</i> and <i>Q</i><sub>floor</sub></dt><dd>$50,000,000</dd></div>
-          <div class="res"><dt>Points<span class="calc">1,000,000 × 2,650,000 / 50,000,000</span></dt><dd>53,000</dd></div>
-          <div><dt>Pool issued</dt><dd>160,000 of 1,000,000</dd></div>
-        </dl>
-        <p class="note">The rest is not issued. No MTF is paid for it.</p>
-      </div>
+        </tbody>
+      </table>
     </div>
   </section>
 
-  <section class="part" id="budget" aria-labelledby="budget-h">
-    <h2 id="budget-h">A ceiling, not a promise.</h2>
-    <p class="intro">MTF has a fixed supply of 1,000,000,000. The community allocation is 30% of it, 300,000,000 MTF. The points program pays at most 100,000,000 MTF of that across all four seasons, and the rate is set at the TGE, under each season's ceiling.</p>
-    <figure class="alloc">
-      <div class="bar-head"><span>Community allocation</span><span class="num">300,000,000 MTF</span></div>
-      <div class="bar" role="img" aria-label="Of the 300,000,000 MTF community allocation, at most 100,000,000 goes to the points program and 200,000,000 stays reserved.">
-        <span class="prog" style="flex-grow:100"></span><span class="rsv" style="flex-grow:200"></span>
-      </div>
-      <dl class="legend">
-        <div><dt><i class="sw prog"></i>Points program ceiling</dt><dd class="num">At most 100,000,000 MTF</dd></div>
-        <div><dt><i class="sw rsv"></i>Reserved</dt><dd><span class="num">200,000,000 MTF</span>. No use is assigned.</dd></div>
-      </dl>
-      <svg class="zoom" viewBox="0 0 300 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-        <path d="M0 0 L100 0 L300 100 L0 100 Z" fill="url(#zoomfill)"/>
-        <path d="M100 0 L300 100" fill="none" stroke="rgba(91,206,250,.35)" vector-effect="non-scaling-stroke"/>
-        <defs><linearGradient id="zoomfill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5BCEFA" stop-opacity=".16"/><stop offset="1" stop-color="#5BCEFA" stop-opacity=".02"/></linearGradient></defs>
-      </svg>
-      <div class="bar-head"><span>Points program ceiling</span><span class="num">100,000,000 MTF</span></div>
-      <div class="bar" role="img" aria-label="Of the 100,000,000 MTF program ceiling, Season 1 takes at most 5,000,000 and Season 2 at most 10,000,000. Seasons 3 and 4 get their ceilings at season start.">
-        <span class="s1" style="flex-grow:5"></span><span class="s2" style="flex-grow:10"></span><span class="s34" style="flex-grow:85"></span>
-      </div>
-      <dl class="legend">
-        <div><dt><i class="sw s1"></i>Season 1</dt><dd class="num">At most 5,000,000 MTF</dd></div>
-        <div><dt><i class="sw s2"></i>Season 2</dt><dd class="num">At most 10,000,000 MTF</dd></div>
-        <div><dt><i class="sw s34"></i>Seasons 3 and 4</dt><dd>Set at season start, inside the ceiling</dd></div>
-      </dl>
-    </figure>
-    <div class="glass rate">
-      <p class="fx"><span>MTF per point ≤ season ceiling</span> <span>/ (weeks × 1,000,000)</span></p>
-      <p>Season 2, for example: 10,000,000 / (8 × 1,000,000), so <b class="num">at most 1.25 MTF per point</b>. Points that are not issued are not paid. Their MTF stays reserved.</p>
-    </div>
-  </section>
-
-  <section class="part" id="rules" aria-labelledby="rules-h">
-    <h2 id="rules-h">What counts.</h2>
-    <div class="cols">
-      <div>
-        <h3>A fill qualifies when all five hold</h3>
-        <ol class="steps">
-          <li>The market is a governance-listed perp. Spot markets, builder-deployed (MIP-3) markets, options and the MTF perp do not count.</li>
-          <li>The fill is not a liquidation.</li>
-          <li>The price is inside the market's 1-minute mark bar, ±1%: <code>0.99 × low ≤ px ≤ 1.01 × high</code>. A minute with no bar uses the latest earlier bar.</li>
-          <li>The two sides have different root accounts, and they are not in one cluster.</li>
-          <li>Neither side is excluded. One exception: a fill against protocol vault id 1 counts for the other side when that side is the taker.</li>
-        </ol>
-      </div>
-      <div>
-        <h3>Your qualifying volume, each week</h3>
-        <ol class="steps">
-          <li>Raw volume is the notional of your qualifying fills. Maker and taker fills count the same.</li>
-          <li>Volume against one counterparty cluster counts up to 25% of raw. Protocol vault id 1 is exempt.</li>
-          <li>Qualifying volume is raw volume minus the volume above that limit.</li>
-          <li>Under $1,000, or with first and last fills less than 24 hours apart, the week's qualifying volume is zero.</li>
-        </ol>
-      </div>
-    </div>
-
-    <h3 class="rules-h">The rules</h3>
-    <dl class="rules">
-      <div><dt>Scope</dt><dd>Only trading volume on the testnet earns points. Mainnet activity earns none.</dd></div>
-      <div><dt>Root account</dt><dd>A sub-account earns as its parent, and a user vault as its leader. A fill between a root and its own sub-account or vault earns nothing.</dd></div>
-      <div><dt>Exclusion</dt><dd>Protocol accounts, validators, protocol vaults and accounts operated by the MetaFlux team earn no points.</dd></div>
-      <div><dt>Cluster</dt><dd>Two roots are one cluster when one of these links them: transfers in both directions between them, above a threshold; one agent wallet that signs for both; a closed trading group, where most of each member's volume is against the other members. A link one side makes alone, such as a small transfer to someone else's account, never joins two accounts. Faucet grants never link accounts. A fill inside a cluster earns nothing, and the 25% rule counts a cluster as one counterparty.</dd></div>
-      <div><dt>Referrals</dt><dd>A referrer gets no share of a referee's points.</dd></div>
-      <div><dt>Eligibility</dt><dd>Claims are screened at the TGE against sanctions lists and the <a href="/terms.html">Terms</a>. UK retail consumers are excluded from crypto-derivatives. IP data serves screening only, never scoring.</dd></div>
-      <div><dt>Final review</dt><dd>Weekly numbers are provisional. One review at the TGE snapshot may remove points for abuse. Removed points are not paid.</dd></div>
-    </dl>
-  </section>
-
-  <section class="part" id="points" aria-labelledby="points-h">
-    <h2 id="points-h">Your points.</h2>
-    <div class="cols check">
-      <form class="glass lookup" data-lookup novalidate>
-        <label for="addr">Address</label>
-        <input id="addr" name="address" type="text" autocomplete="off" spellcheck="false" placeholder="0x…" />
-        <div class="row">
-          <label class="sr" for="season">Season</label>
-          <select id="season" name="season">
-            {seasons.map((s) => <option value={s.n} selected={s === current}>Season {s.n}, {s.name}</option>)}
-          </select>
-          <button class="btn" type="submit">Look up</button>
+  <section class="light sec tight" id="formula" aria-labelledby="formula-h">
+    <div class="wrap">
+      <div class="label">Formula</div>
+      <h2 id="formula-h">One pool a week, shared pro rata.</h2>
+      <div class="panel formula">
+        <div class="eqn" role="math" aria-label="points equals 1,000,000 times qv, divided by the larger of the sum of all qv and Q floor">
+          <span class="lhs"><i>points</i> =</span>
+          <span class="frac"><span><b>1,000,000</b> × <i>qv</i></span><span>max(Σ<i>qv</i>, <i>Q</i><sub>floor</sub>)</span></span>
         </div>
-        <div class="out" data-out aria-live="polite"></div>
-      </form>
-      <div class="about">
-        <p>The lookup shows your raw volume, qualifying volume and points for each week of a season. A sub-account or a user vault reads as its root.</p>
-        <p>The archive publishes these as <code>points_weeks</code>, <code>points_leaderboard</code> and <code>points_user</code>; the <a href="https://docs.mtf.exchange/api">docs</a> describe them.</p>
+        <p class="plain"><code><span>points = 1,000,000 × qv</span> <span>/ max(Σqv, Q_floor)</span></code></p>
+        <dl class="terms">
+          <div><dt><i>qv</i></dt><dd>Your qualifying volume for the week, in USD.</dd></div>
+          <div><dt>Σ<i>qv</i></dt><dd>The qualifying volume of all accounts for the week.</dd></div>
+          <div><dt><i>Q</i><sub>floor</sub></dt><dd>$50,000,000, published for each season. In a thin week it limits what $1 can earn: at most 0.02 points.</dd></div>
+          <div><dt>Rounding</dt><dd>Toward zero, to one millionth of a point.</dd></div>
+        </dl>
+      </div>
+      <p class="aside">There is no cap per account. The share is linear, so ten accounts earn what one account earns with the same volume.</p>
+
+      <h3>A worked week</h3>
+      <p class="aside">One account, one week, with fills more than 24 hours apart.</p>
+      <dl class="ladder num">
+        <div><dt>Raw volume</dt><dd>$3,000,000</dd></div>
+        <div><dt>Of it, against one counterparty cluster</dt><dd>$1,100,000</dd></div>
+        <div><dt>25% of raw, the limit for that cluster</dt><dd>$750,000</dd></div>
+        <div><dt>Volume above the limit</dt><dd>−$350,000</dd></div>
+        <div class="sum"><dt>Qualifying volume, <i>qv</i></dt><dd>$2,650,000</dd></div>
+      </dl>
+      <div class="example">
+        <div class="wk">
+          <h4>A busy week</h4>
+          <dl class="num">
+            <div><dt>All qualifying volume, Σ<i>qv</i></dt><dd>$200,000,000</dd></div>
+            <div><dt>Divisor, the larger of Σ<i>qv</i> and <i>Q</i><sub>floor</sub></dt><dd>$200,000,000</dd></div>
+            <div class="res"><dt>Points<span class="calc">1,000,000 × 2,650,000 / 200,000,000</span></dt><dd>13,250</dd></div>
+            <div><dt>Pool issued</dt><dd>1,000,000 of 1,000,000</dd></div>
+          </dl>
+        </div>
+        <div class="wk">
+          <h4>A thin week</h4>
+          <dl class="num">
+            <div><dt>All qualifying volume, Σ<i>qv</i></dt><dd>$8,000,000</dd></div>
+            <div><dt>Divisor, the larger of Σ<i>qv</i> and <i>Q</i><sub>floor</sub></dt><dd>$50,000,000</dd></div>
+            <div class="res"><dt>Points<span class="calc">1,000,000 × 2,650,000 / 50,000,000</span></dt><dd>53,000</dd></div>
+            <div><dt>Pool issued</dt><dd>160,000 of 1,000,000</dd></div>
+          </dl>
+          <p class="note">The rest is not issued. No MTF is paid for it.</p>
+        </div>
       </div>
     </div>
-
-    <h3>Published weeks</h3>
-    <p class="aside">A published week never changes. Its table has a row for each root account with raw volume, except excluded accounts. Download a week to get that table. The file is the exact text that the table SHA-256 covers, and the page compares the two when the download ends. The <a href="https://docs.mtf.exchange/concepts/points#how-to-check">docs</a> show how to recompute a row. Gap blocks are blocks the archive misses in that week. The pool stays the same.</p>
-    <table class="weeks">
-      <thead><tr><th scope="col">Week ending</th><th scope="col">Season</th><th scope="col" class="r">Qualifying volume</th><th scope="col" class="r">Issued points</th><th scope="col" class="r">Gap blocks</th><th scope="col">Table SHA-256</th></tr></thead>
-      <tbody data-weeks><tr class="st"><td colspan="6">Reading the archive…</td></tr></tbody>
-    </table>
   </section>
 
-  <section class="part" id="gimle" aria-labelledby="gimle-h">
-    <h2 id="gimle-h">Gimle, the claim.</h2>
-    <div class="prose">
-      <p class="when">TGE target: <time datetime="2027-03-01">1 March 2027</time>. The date may move.</p>
-      <p>Gimle opens at the TGE, on mainnet. Each root account claims the MTF for its points.</p>
-      <p>The rate is set at the TGE. It never exceeds the season ceiling divided by the season's possible points. The points allocation is fully claimable at the TGE, with an optional lock bonus that the <a href="https://docs.mtf.exchange/concepts/tokenomics">tokenomics page</a> describes.</p>
-      <p>Before payment, each claim is screened against sanctions lists and the <a href="/terms.html">Terms</a>.</p>
-      <a class="btn" href="https://app.mtf.exchange/" target="_blank" rel="noopener">Trade on testnet <span aria-hidden="true">→</span></a>
+  <section class="light sec tight" id="budget" aria-labelledby="budget-h">
+    <div class="wrap">
+      <div class="label">Allocation</div>
+      <h2 id="budget-h">A ceiling, not a promise.</h2>
+      <p class="intro">MTF has a fixed supply of 1,000,000,000. The community allocation is 30% of it, 300,000,000 MTF. The points program pays at most 100,000,000 MTF of that across all four seasons, and the rate is set at the TGE, under each season's ceiling.</p>
+      <figure class="alloc">
+        <div class="bar-head"><span>Community allocation</span><span class="num">300,000,000 MTF</span></div>
+        <div class="bar" role="img" aria-label="Of the 300,000,000 MTF community allocation, at most 100,000,000 goes to the points program and 200,000,000 stays reserved.">
+          <span class="ink" style="flex-grow:100"></span><span class="grey" style="flex-grow:200"></span>
+        </div>
+        <dl class="legend">
+          <div><dt><i class="sw ink"></i>Points program ceiling</dt><dd class="num">At most 100,000,000 MTF</dd></div>
+          <div><dt><i class="sw grey"></i>Reserved</dt><dd><span class="num">200,000,000 MTF</span>. No use is assigned.</dd></div>
+        </dl>
+        <svg class="zoom" viewBox="0 0 300 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+          <path d="M0 0 L100 0 L300 100 L0 100 Z" />
+          <path class="edge" d="M100 0 L300 100" vector-effect="non-scaling-stroke" />
+        </svg>
+        <div class="bar-head"><span>Points program ceiling</span><span class="num">100,000,000 MTF</span></div>
+        <div class="bar" role="img" aria-label="Of the 100,000,000 MTF program ceiling, Season 1 takes at most 5,000,000 and Season 2 at most 10,000,000. Seasons 3 and 4 get their ceilings at season start.">
+          <span class="ink" style="flex-grow:5"></span><span class="grey" style="flex-grow:10"></span><span class="hatch" style="flex-grow:85"></span>
+        </div>
+        <dl class="legend">
+          <div><dt><i class="sw ink"></i>Season 1</dt><dd class="num">At most 5,000,000 MTF</dd></div>
+          <div><dt><i class="sw grey"></i>Season 2</dt><dd class="num">At most 10,000,000 MTF</dd></div>
+          <div><dt><i class="sw hatch"></i>Seasons 3 and 4</dt><dd>Set at season start, inside the ceiling</dd></div>
+        </dl>
+      </figure>
+      <div class="panel rate">
+        <p class="fx"><span>MTF per point ≤ season ceiling</span> <span>/ (weeks × 1,000,000)</span></p>
+        <p>Season 2, for example: 10,000,000 / (8 × 1,000,000), so <b class="num">at most 1.25 MTF per point</b>. Points that are not issued are not paid. Their MTF stays reserved.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="light sec tight" id="rules" aria-labelledby="rules-h">
+    <div class="wrap">
+      <div class="label">Rules</div>
+      <h2 id="rules-h">What counts.</h2>
+      <div class="cols">
+        <div>
+          <h3>A fill qualifies when all five hold</h3>
+          <ol class="steps">
+            <li>The market is a governance-listed perp. Spot markets, builder-deployed (MIP-3) markets, options and the MTF perp do not count.</li>
+            <li>The fill is not a liquidation.</li>
+            <li>The price is inside the market's 1-minute mark bar, ±1%: <code>0.99 × low ≤ px ≤ 1.01 × high</code>. A minute with no bar uses the latest earlier bar.</li>
+            <li>The two sides have different root accounts, and they are not in one cluster.</li>
+            <li>Neither side is excluded. One exception: a fill against protocol vault id 1 counts for the other side when that side is the taker.</li>
+          </ol>
+        </div>
+        <div>
+          <h3>Your qualifying volume, each week</h3>
+          <ol class="steps">
+            <li>Raw volume is the notional of your qualifying fills. Maker and taker fills count the same.</li>
+            <li>Volume against one counterparty cluster counts up to 25% of raw. Protocol vault id 1 is exempt.</li>
+            <li>Qualifying volume is raw volume minus the volume above that limit.</li>
+            <li>Under $1,000, or with first and last fills less than 24 hours apart, the week's qualifying volume is zero.</li>
+          </ol>
+        </div>
+      </div>
+
+      <h3 class="rules-h">The rules</h3>
+      <div class="faq rules">
+        <details><summary>Scope</summary><p>Only trading volume on the testnet earns points. Mainnet activity earns none.</p></details>
+        <details><summary>Root account</summary><p>A sub-account earns as its parent, and a user vault as its leader. A fill between a root and its own sub-account or vault earns nothing.</p></details>
+        <details><summary>Exclusion</summary><p>Protocol accounts, validators, protocol vaults and accounts operated by the MetaFlux team earn no points.</p></details>
+        <details><summary>Cluster</summary><p>Two roots are one cluster when one of these links them: transfers in both directions between them, above a threshold; one agent wallet that signs for both; a closed trading group, where most of each member's volume is against the other members. A link one side makes alone, such as a small transfer to someone else's account, never joins two accounts. Faucet grants never link accounts. A fill inside a cluster earns nothing, and the 25% rule counts a cluster as one counterparty.</p></details>
+        <details><summary>Referrals</summary><p>A referrer gets no share of a referee's points.</p></details>
+        <details><summary>Eligibility</summary><p>Claims are screened at the TGE against sanctions lists and the <a href="/terms.html">Terms</a>. IP data serves screening only, never scoring.</p></details>
+        <details><summary>Final review</summary><p>Weekly numbers are provisional. One review at the TGE snapshot may remove points for abuse. Removed points are not paid.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="light sec tight" id="points" aria-labelledby="points-h">
+    <div class="wrap">
+      <div class="label">Lookup</div>
+      <h2 id="points-h">Your points.</h2>
+      <div class="cols check">
+        <form class="panel lookup" data-lookup novalidate>
+          <label for="addr">Address</label>
+          <input id="addr" name="address" type="text" autocomplete="off" spellcheck="false" placeholder="0x…" />
+          <div class="lk-row">
+            <label class="sr" for="season">Season</label>
+            <select id="season" name="season">
+              {seasons.map((s) => <option value={s.n} selected={s === current}>Season {s.n}, {s.name}</option>)}
+            </select>
+            <button class="pill solid" type="submit">Look up</button>
+          </div>
+          <div class="out" data-out aria-live="polite"></div>
+        </form>
+        <div class="about">
+          <p>The lookup shows your raw volume, qualifying volume and points for each week of a season. A sub-account or a user vault reads as its root.</p>
+          <p>The archive publishes these as <code>points_weeks</code>, <code>points_leaderboard</code> and <code>points_user</code>; the <a href="https://docs.mtf.exchange/api">docs</a> describe them.</p>
+        </div>
+      </div>
+
+      <h3>Published weeks</h3>
+      <p class="aside">A published week never changes. Its table has a row for each root account with raw volume, except excluded accounts. Download a week to get that table. The file is the exact text that the table SHA-256 covers, and the page compares the two when the download ends. The <a href="https://docs.mtf.exchange/concepts/points#how-to-check">docs</a> show how to recompute a row. Gap blocks are blocks the archive misses in that week. The pool stays the same.</p>
+      <div class="scroll">
+        <table class="weeks">
+          <thead><tr><th scope="col">Week ending</th><th scope="col">Season</th><th scope="col" class="r">Qualifying volume</th><th scope="col" class="r">Issued points</th><th scope="col" class="r">Gap blocks</th><th scope="col">Table SHA-256</th></tr></thead>
+          <tbody data-weeks><tr class="st"><td colspan="6">Reading the archive…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="dark sec claim-band" id="gimle" aria-labelledby="gimle-h">
+    <div class="wrap">
+      <div>
+        <div class="label">The claim</div>
+        <h2 id="gimle-h">Gimle, the claim.</h2>
+        <p class="when"><span>TGE target</span><time datetime="2027-03-01">1 March 2027</time><span>The date may move.</span></p>
+      </div>
+      <div class="prose">
+        <p>Gimle opens at the TGE, on mainnet. Each root account claims the MTF for its points.</p>
+        <p>The rate is set at the TGE. It never exceeds the season ceiling divided by the season's possible points. The points allocation is fully claimable at the TGE, with an optional lock bonus that the <a href="https://docs.mtf.exchange/concepts/tokenomics">tokenomics page</a> describes.</p>
+        <p>Before payment, each claim is screened against sanctions lists and the <a href="/terms.html">Terms</a>.</p>
+        <a class="pill solid" href="https://app.mtf.exchange/" target="_blank" rel="noopener">Trade on testnet</a>
+      </div>
     </div>
   </section>
 </main>
 
 <Footer />
+<script type="application/json" id="pts-cfg" is:inline set:html={client}></script>
+<script src="/tge.js" is:inline defer></script>
 </Base>
 
 <style is:global>
-.tge{
-  --night:#04141f;
-  --glass:rgba(10,44,63,.32);
-  --ring:inset 0 1px 0 rgba(255,255,255,.09),inset 0 -1px 0 rgba(255,255,255,.02),0 0 0 1px rgba(255,255,255,.06),0 24px 60px -16px rgba(0,0,0,.55);
-  --sig:'Iowan Old Style',Cambria,Georgia,'Times New Roman','Liberation Serif','DejaVu Serif',serif;
-  background:var(--night); color:var(--on-deep); color-scheme:dark;
-  scrollbar-color:var(--on-deep-line) var(--night);
-}
-html:has(body.tge){background:#04141f}
-.tge ::selection{background:rgba(91,206,250,.32);color:#fff}
-.tge :focus-visible{outline:2px solid var(--aurora);outline-offset:3px}
-.tge a{color:var(--aurora);text-underline-offset:3px}
-.tge a:hover{color:#fff}
-
-.tge nav.site{background:rgba(4,20,31,.66);border-bottom-color:rgba(255,255,255,.06)}
-.tge .brand,.tge .brand .b-meta,.tge .brand:hover{color:#fff}
-.tge nav.site .bar>ul a{color:var(--on-deep-mid)}
-.tge nav.site .bar>ul a:hover,.tge nav.site .bar>ul a[aria-current]{color:#fff}
-.tge .btn{background:#f4f6f7;color:var(--night)}
-.tge .btn:hover{background:#fff;color:var(--night);box-shadow:0 14px 40px -10px rgba(91,206,250,.55)}
-.tge .btn.ghost{background:transparent;color:var(--on-deep);box-shadow:inset 0 0 0 1px rgba(255,255,255,.16)}
-.tge .btn.ghost:hover{color:var(--rose);box-shadow:inset 0 0 0 1px rgba(245,169,184,.5)}
-.tge .menu summary{color:#fff}
-.tge .menu ul{background:var(--night);border-bottom-color:var(--on-deep-line)}
-.tge .menu li a{color:#fff;border-bottom-color:var(--on-deep-line)}
-.tge .foot{background:transparent;margin-top:160px}
-.tge .more{color:var(--on-deep)}
-.tge .more:hover{color:#fff}
+.tge{background:var(--ink)}
 
 /* hero */
-.tge .tge-hero{position:relative;display:grid;overflow-x:clip;background:radial-gradient(60% 45% at 50% 55%,rgba(91,206,250,.07),transparent 70%),radial-gradient(36% 30% at 86% 66%,rgba(245,169,184,.07),transparent 70%)}
-.tge .art,.tge .copy{grid-area:1/1}
-.tge .art{position:relative;width:100%;align-self:start}
-.tge .art-d{aspect-ratio:1440/820}
-.tge .art-m{display:none;aspect-ratio:390/760}
-.tge .bow{position:absolute;inset:0;width:100%;height:100%;display:block;overflow:visible}
-.tge .draw{stroke-dasharray:1000 1000;stroke-dashoffset:0}
-@media(prefers-reduced-motion:no-preference){
-  .tge .draw{stroke-dashoffset:1000;animation:tge-draw 2.6s cubic-bezier(.16,1,.3,1) .15s forwards}
-  .tge .rays{animation:tge-drift 26s ease-in-out infinite alternate}
-  .tge .slab,.tge .target,.tge .mfoot,.tge .bow .now{animation:tge-in .9s cubic-bezier(.16,1,.3,1) 1.4s both}
-}
-@keyframes tge-draw{to{stroke-dashoffset:0}}
-@keyframes tge-drift{to{transform:translateX(-36px)}}
-@keyframes tge-in{from{opacity:0;filter:blur(6px)}to{opacity:1;filter:none}}
+.tge .stone-hero{position:relative;min-height:100vh;min-height:100svh;display:flex;overflow-x:clip;background:radial-gradient(60% 80% at 74% 50%,#1b1e24 0,var(--ink) 64%);color:var(--on-ink)}
+.tge .stone-hero>.wrap{flex:1;width:100%;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:40px;align-items:center;padding-block:116px 56px}
+.tge .stone-hero h1{font-size:clamp(56px,7vw,104px);line-height:.95}
+.tge .lede{margin:26px 0 0;max-width:36ch;font-size:19px;line-height:1.5;color:#b9bec7}
+.tge .live{margin-top:40px;padding-top:24px;border-top:1px solid var(--line-d);max-width:440px}
+.tge .week{margin:0;font-size:15px;font-weight:540;color:var(--on-ink)}
+.tge .cd{margin-top:14px;display:flex;gap:22px}
+.tge .cd[hidden]{display:none}
+.tge .cd div{display:flex;flex-direction:column}
+.tge .cd b{font-family:var(--mono);font-size:44px;font-weight:500;letter-spacing:-.03em;line-height:1}
+.tge .cd span{margin-top:6px;font-size:12.5px;color:var(--mute-d)}
+.tge .cut{margin:16px 0 0;font-family:var(--mono);font-size:13px;color:var(--mute-d)}
+.tge .cut:empty{display:none}
+.tge .stone-hero .ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:36px}
 
-.tge .slab{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:4px;white-space:nowrap;text-align:center;pointer-events:none}
-.tge .sn,.tge .k{font-family:var(--sans);font-size:13px;color:var(--on-deep-mid)}
-.tge .slab .nm{font-family:var(--serif);font-style:italic;font-size:clamp(20px,1.9vw,28px);line-height:1;color:var(--on-deep)}
-.tge .slab .from{font-family:var(--num);font-size:12.5px;color:var(--on-deep-mid)}
-.tge .target{display:flex;flex-direction:column;gap:5px;white-space:nowrap}
-.tge .target .nm{font-family:var(--serif);font-style:italic;font-size:clamp(28px,2.6vw,38px);line-height:1;color:#fff}
-.tge .target .date{font-family:var(--sans);font-size:clamp(15px,1.2vw,17px);line-height:1.2;color:#fff}
-.tge .target .may{font-size:12.5px;color:var(--on-deep-mid)}
-.tge .foot-d{position:absolute;transform:translate(28px,-62%)}
-@media(max-width:1200px){.tge .foot-d{transform:translate(-100%,20px);align-items:flex-end;text-align:right}}
+/* the stone */
+.tge .art{padding-inline:96px 100px;display:flex;justify-content:center}
+.tge .stone{position:relative;width:min(100%,460px);width:min(100%,calc((100svh - 180px) * .6),460px)}
+.tge .slab-box{position:relative;aspect-ratio:600/1000}
+.tge .slab-box canvas,.tge .band{position:absolute;inset:0;width:100%;height:100%;display:block;overflow:visible}
+.tge .band .dim{color:#3c4149}
+.tge .band .lit{color:var(--on-ink)}
+.tge .band .runes{font-family:'Noto Sans Runic','Segoe UI Historic',sans-serif;font-size:28px;letter-spacing:.14em;fill:currentColor}
+.tge .band .dim .runes{fill:#626872}
+.tge .band .end{fill:var(--ink);stroke-width:1.6}
+.tge .band .tail{stroke:var(--on-ink);stroke-opacity:.7}
+.tge .band .head{stroke:#3c4149}
+.tge .band .eye{fill:#5b616c}
+.tge .band .now circle:first-child{fill:none;stroke:#fff;stroke-opacity:.45;stroke-width:1.6}
+.tge .band .now circle:last-child{fill:#fff}
+.tge .segs{position:absolute;inset:0;margin:0;padding:0;list-style:none;pointer-events:none}
+.tge .seg{position:absolute;display:flex;flex-direction:column;gap:3px;white-space:nowrap}
+.tge .seg.l{transform:translate(-100%,-50%);align-items:flex-end;text-align:right}
+.tge .seg.r{transform:translateY(-50%)}
+.tge .seg.t{transform:translate(-50%,-100%);align-items:center;text-align:center}
+.tge .seg.l.up{transform:translate(-100%,-100%)}
+.tge .seg.r.up{transform:translateY(-100%)}
+.tge .seg .sn,.tge .seg .may{font-size:12.5px;color:var(--mute-d)}
+.tge .seg .nm{font-family:var(--display);font-weight:300;font-variation-settings:'opsz' 60;font-size:22px;line-height:1.1;letter-spacing:-.01em;color:var(--on-ink)}
+.tge .seg .dt{font-family:var(--mono);font-size:11.5px;color:var(--mute-d)}
+.tge .seg.is-now .sn,.tge .seg.is-now .dt{color:var(--on-ink)}
+.tge .seg.gimle .dt{max-width:7.5em;white-space:normal;font-family:var(--sans);font-size:14px;color:var(--on-ink)}
 
-.tge .copy{position:relative;z-index:1;justify-self:center;width:min(640px,80%);padding-top:19vw;text-align:center}
-.tge .status{margin:0;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--on-deep-mid)}
-.tge h1{margin:18px 0 0;font-family:var(--serif);font-weight:400;font-size:clamp(72px,9vw,136px);line-height:.9;letter-spacing:-.02em;color:#fff}
-.tge h1 em{font-style:italic;color:var(--rose)}
-.tge .lede{margin:24px auto 0;max-width:40ch;font-size:clamp(16px,1.35vw,19px);line-height:1.55;color:var(--on-deep)}
-.tge .week{margin:22px 0 0;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:14px;color:#fff}
-.tge .week .cut{font-family:var(--num);font-size:12.5px;color:var(--on-deep-mid)}
-.tge .week .cut:empty{display:none}
-.tge .ctas{display:flex;gap:22px;justify-content:center;align-items:center;margin-top:28px}
-
-/* sections */
-.tge .part{padding-top:150px}
-.tge h2{margin:0;font-family:var(--serif);font-weight:400;font-size:clamp(40px,4.6vw,64px);line-height:1;letter-spacing:-.02em;color:#fff;max-width:20ch;text-wrap:balance}
-.tge h3{margin:64px 0 0;font-size:19px;font-weight:500;letter-spacing:-.01em;color:#fff}
-.tge h4{margin:0;font-size:16px;font-weight:500;color:#fff}
-.tge .intro{margin:24px 0 0;max-width:64ch;font-size:17px;line-height:1.6;color:var(--on-deep-mid)}
+/* reading sections */
+.tge main .light h2{font-size:clamp(36px,4.4vw,60px);line-height:1.02;max-width:18ch}
+.tge main h3{margin:72px 0 0;font-size:clamp(24px,2.4vw,32px);line-height:1.1}
+.tge main h4{margin:0;font-size:16px;font-weight:600}
+.tge .intro{margin:28px 0 0;max-width:64ch;font-size:17.5px;line-height:1.6;color:var(--mute-l)}
 .tge .intro+.intro{margin-top:14px}
-.tge .aside{margin:18px 0 0;max-width:68ch;font-size:15px;line-height:1.6;color:var(--on-deep-mid)}
-.tge .num{font-family:var(--num);font-variant-numeric:tabular-nums;font-feature-settings:'tnum','cv11'}
-.tge code{font-family:var(--mono);font-size:.88em;color:var(--on-deep);background:rgba(255,255,255,.05);padding:1px 5px;border-radius:5px}
-.tge .sig{font-family:var(--sig);font-style:normal}
-.tge .glass{position:relative;border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.035),transparent 40%),var(--glass);backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%);box-shadow:var(--ring)}
-.tge table{width:100%;border-collapse:collapse}
+.tge .aside{margin:20px 0 0;max-width:68ch;font-size:16px;line-height:1.6;color:var(--mute-l)}
+.tge main .light a:not(.pill){text-decoration:underline;text-underline-offset:3px}
+.tge code{font-family:var(--mono);font-size:.86em;background:var(--paper-2);padding:1px 6px;border-radius:6px}
+.tge i{font-family:var(--display);font-style:italic}
+.tge .panel{border-radius:20px;background:var(--paper-2)}
+.tge table{width:100%;min-width:0;border-collapse:collapse}
+.tge table th,.tge table td{text-align:left;font-weight:400}
+.tge tbody tr:hover{background:none}
+.tge .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
 /* seasons */
-.tge .seasons{margin-top:44px}
-.tge .seasons th,.tge .seasons td{padding:22px 16px 22px 0;border-bottom:1px solid var(--on-deep-line);text-align:left;vertical-align:baseline;font-weight:400}
-.tge .seasons thead th{padding:0 16px 12px 0;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--on-deep-mid)}
-.tge .seasons tbody th{display:grid;grid-template-columns:42px 1fr;align-items:baseline}
-.tge .seasons tbody th .st{grid-column:2;margin-top:6px;font-size:14px;color:var(--on-deep-mid)}
-.tge .seasons tbody th .nm{font-family:var(--serif);font-size:30px;line-height:1.05;color:#fff}
-.tge .seasons td{font-size:15px;color:var(--on-deep)}
+.tge .seasons{margin-top:48px}
+.tge .seasons thead th{padding:12px 16px 12px 0;font-size:13px;font-weight:500;color:var(--mute-l);border-bottom:1px solid var(--text)}
+.tge .seasons tbody tr{border-bottom:1px solid var(--line-l)}
+.tge .seasons tbody th,.tge .seasons tbody td{padding:22px 16px 22px 0;border:0;vertical-align:baseline}
+.tge .seasons tbody th{display:grid;grid-template-columns:42px 1fr;align-items:baseline;color:var(--text)}
+.tge .seasons .sn{font-family:var(--mono);font-size:12.5px;color:var(--mute-l)}
+.tge .seasons .nm{font-family:var(--display);font-weight:300;font-variation-settings:'opsz' 60;font-size:30px;line-height:1.05;letter-spacing:-.02em}
+.tge .seasons .st{grid-column:2;margin-top:6px;font-size:14px;color:var(--mute-l)}
+.tge .seasons td{font-size:16px}
 .tge .seasons .mo{display:none}
-.tge .seasons tr.is-now .sn,.tge .seasons tr.is-now .st{color:var(--aurora)}
-.tge .seasons tr.claim .nm{font-style:italic}
-.tge .seasons tr.claim td{color:#fff}
+.tge .seasons tr.is-now .st{color:var(--text);font-weight:600}
+.tge .seasons tr.is-now .st::before{content:"";display:inline-block;width:7px;height:7px;margin-right:8px;border-radius:50%;background:currentColor;vertical-align:1px}
 
 /* formula */
-.tge .formula{margin-top:52px;padding:52px 56px 44px}
-.tge .eqn{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px 22px;font-family:var(--serif);font-size:clamp(28px,4.4vw,60px);line-height:1;color:#fff}
-.tge .eqn i{font-style:italic}
-.tge .eqn b{font-family:var(--sans);font-weight:400;font-size:.8em;font-variant-numeric:tabular-nums lining-nums;letter-spacing:-.01em}
-.tge .eqn sub{font-size:.5em;font-style:italic;vertical-align:-.25em}
+.tge .formula{margin-top:52px;padding:56px 56px 44px}
+.tge .eqn{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px 22px;font-family:var(--display);font-weight:300;font-variation-settings:'opsz' 60;font-size:clamp(28px,4.4vw,60px);line-height:1}
+.tge .eqn b{font-weight:300;font-variant-numeric:lining-nums tabular-nums}
+.tge .eqn sub,.tge .terms sub,.tge .wk sub{font-size:.5em;font-style:italic;vertical-align:-.25em}
 .tge .frac{display:inline-grid;text-align:center}
 .tge .frac>span{padding:8px 14px;white-space:nowrap}
-.tge .frac>span:first-child{border-bottom:1px solid rgba(232,241,245,.55)}
+.tge .frac>span:first-child{border-bottom:1px solid var(--text)}
 .tge .plain{margin:30px 0 0;text-align:center}
-.tge .plain code{display:inline-block;padding:7px 12px;font-size:13.5px;color:var(--on-deep-mid);user-select:all}
+.tge .plain code{display:inline-block;padding:7px 12px;font-size:13.5px;color:var(--mute-l);background:var(--paper);user-select:all}
 .tge .plain code span{display:inline-block}
-.tge .terms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 48px;margin:36px 0 0;padding-top:28px;border-top:1px solid rgba(255,255,255,.07)}
+.tge .terms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 48px;margin:36px 0 0;padding-top:28px;border-top:1px solid var(--line-l)}
 .tge .terms div{display:grid;grid-template-columns:96px 1fr;gap:12px;align-items:baseline}
-.tge .terms dt{font-family:var(--serif);font-size:24px;line-height:1;color:#fff}
-.tge .terms dt:not(:has(i)){font-family:var(--sans);font-size:14px;font-weight:500}
-.tge .terms dt i{font-style:italic}
-.tge .terms dt sub{font-size:.55em;font-style:italic}
-.tge .terms dd{margin:0;font-size:15px;line-height:1.55;color:var(--on-deep-mid)}
+.tge .terms dt{font-family:var(--display);font-weight:300;font-size:26px;line-height:1}
+.tge .terms dt:not(:has(i)){font-family:var(--sans);font-size:14px;font-weight:600}
+.tge .terms dd{margin:0;font-size:15.5px;line-height:1.55;color:var(--mute-l)}
+.tge .ladder{margin:24px 0 0;max-width:640px;border-top:1px solid var(--text)}
+.tge .ladder div,.tge .wk dl div{display:flex;justify-content:space-between;align-items:baseline;gap:20px;padding:12px 0;border-bottom:1px solid var(--line-l);font-size:15px}
+.tge .ladder dt,.tge .wk dt{color:var(--mute-l)}
+.tge .ladder dd,.tge .wk dd{margin:0;text-align:right;white-space:nowrap}
+.tge .ladder .sum{border-bottom:none;padding-top:16px}
+.tge .ladder .sum dt,.tge .ladder .sum dd{color:var(--text);font-size:18px;font-weight:560}
+.tge .example{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:56px;margin-top:56px}
+.tge .wk dl{margin:16px 0 0;border-top:1px solid var(--text)}
+.tge .wk .res{padding:18px 0}
+.tge .wk .res dt{color:var(--text)}
+.tge .wk .res dd{font-family:var(--display);font-weight:300;font-size:36px;line-height:1}
+.tge .wk .calc{display:block;margin-top:4px;font-family:var(--mono);font-size:12px;color:var(--mute-l)}
+.tge .note{margin:14px 0 0;font-size:15px}
 
-/* worked week */
-.tge .ladder{margin:24px 0 0;max-width:640px}
-.tge .ladder div,.tge .wk dl div{display:flex;justify-content:space-between;align-items:baseline;gap:20px;padding:11px 0;border-bottom:1px solid var(--on-deep-line);font-size:14.5px}
-.tge .ladder dt,.tge .wk dt{color:var(--on-deep-mid);font-family:var(--sans)}
-.tge .ladder dd,.tge .wk dd{margin:0;color:var(--on-deep);text-align:right;white-space:nowrap}
-.tge .ladder .sum{border-bottom:none;padding-top:14px}
-.tge .ladder .sum dt,.tge .ladder .sum dd{color:#fff;font-size:17px}
-.tge .ladder i,.tge .wk dt i{font-family:var(--serif);font-size:1.15em}
-.tge .wk dt sub{font-size:.6em}
-.tge .example{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px;margin-top:44px}
-.tge .wk dl{margin:16px 0 0}
-.tge .wk .res{padding:16px 0}
-.tge .wk .res dt{color:#fff}
-.tge .wk .res dd{font-size:26px;color:#fff}
-.tge .wk .calc{display:block;margin-top:4px;font-size:12.5px;color:var(--on-deep-mid)}
-.tge .note{margin:14px 0 0;font-size:14px;color:var(--on-deep)}
-
-/* budget */
+/* allocation */
 .tge .alloc{margin:56px 0 0}
-.tge .bar-head{display:flex;justify-content:space-between;gap:16px;margin-bottom:10px;font-size:14px;color:#fff}
-.tge .bar{display:flex;gap:3px;height:22px}
+.tge .bar-head{display:flex;justify-content:space-between;gap:16px;margin-bottom:10px;font-size:15px;font-weight:540}
+.tge .bar{display:flex;gap:3px;height:24px}
 .tge .bar span{min-width:3px;border-radius:4px}
-.tge .prog{background:linear-gradient(90deg,#5BCEFA,#cfc0e8)}
-.tge .rsv{background:transparent;box-shadow:inset 0 0 0 1px rgba(232,241,245,.22)}
-.tge .s1{background:#5BCEFA}
-.tge .s2{background:#cfc0e8}
-.tge .s34{background:repeating-linear-gradient(135deg,rgba(245,169,184,.75) 0 2px,rgba(245,169,184,.16) 2px 7px)}
+.tge .ink{background:var(--text)}
+.tge .grey{background:#c4c8ce}
+.tge .hatch{background:repeating-linear-gradient(135deg,var(--text) 0 1.5px,transparent 1.5px 7px);box-shadow:inset 0 0 0 1px var(--text)}
 .tge .legend{display:flex;flex-wrap:wrap;gap:14px 48px;margin:16px 0 0}
-.tge .legend dt{display:flex;align-items:center;gap:10px;font-size:14px;color:#fff}
-.tge .legend dd{margin:4px 0 0 22px;font-size:14px;color:var(--on-deep-mid)}
+.tge .legend dt{display:flex;align-items:center;gap:10px;font-size:15px}
+.tge .legend dd{margin:4px 0 0 22px;font-size:14.5px;color:var(--mute-l)}
 .tge .sw{display:inline-block;width:12px;height:12px;border-radius:3px;flex:none}
 .tge .zoom{display:block;width:100%;height:56px;margin:22px 0 14px}
-.tge .rate{margin-top:56px;padding:30px 36px}
-.tge .fx{margin:0;font-family:var(--mono);font-size:clamp(15px,1.6vw,20px);line-height:1.4;color:#fff}
+.tge .zoom path{fill:var(--paper-2)}
+.tge .zoom .edge{fill:none;stroke:#c4c8ce}
+.tge .rate{margin-top:56px;padding:32px 36px}
+.tge .fx{margin:0;font-family:var(--mono);font-size:clamp(15px,1.6vw,20px);line-height:1.4}
 .tge .fx span{display:inline-block}
-.tge .rate p:last-child{margin:14px 0 0;font-size:15px;line-height:1.6;color:var(--on-deep-mid)}
-.tge .rate b{font-weight:500;color:#fff}
+.tge .rate p:last-child{margin:14px 0 0;font-size:16px;line-height:1.6;color:var(--mute-l)}
+.tge .rate b{font-weight:600;color:var(--text)}
 
 /* rules */
 .tge .cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:56px}
-.tge .cols h3{margin-top:44px}
-.tge .steps{margin:20px 0 0;padding:0;list-style:none;counter-reset:st}
-.tge .steps li{counter-increment:st;position:relative;padding:14px 0 14px 40px;border-bottom:1px solid var(--on-deep-line);font-size:15px;line-height:1.6;color:var(--on-deep)}
-.tge .steps li::before{content:counter(st);position:absolute;left:0;top:14px;font-family:var(--mono);font-size:12px;color:var(--on-deep-mid)}
-.tge .rules-h{margin-top:80px}
-.tge .rules{margin:20px 0 0;border-top:1px solid var(--on-deep-line)}
-.tge .rules div{display:grid;grid-template-columns:200px 1fr;gap:24px;padding:18px 0;border-bottom:1px solid var(--on-deep-line)}
-.tge .rules dt{font-size:15px;font-weight:500;line-height:1.6;color:#fff}
-.tge .rules dd{margin:0;max-width:72ch;font-size:15px;line-height:1.6;color:var(--on-deep-mid)}
+.tge .cols h3{margin-top:48px;font-size:clamp(22px,2vw,26px)}
+.tge .steps{margin:20px 0 0;padding:0;list-style:none;counter-reset:st;border-top:1px solid var(--text)}
+.tge .steps li{counter-increment:st;position:relative;padding:16px 0 16px 40px;border-bottom:1px solid var(--line-l);font-size:16px;line-height:1.6}
+.tge .steps li::before{content:counter(st,decimal-leading-zero);position:absolute;left:0;top:18px;font-family:var(--mono);font-size:12px;color:var(--mute-l)}
+.tge .rules-h{margin-top:88px}
+.tge .rules{margin-top:24px}
 
 /* your points */
-.tge .check{margin-top:44px;align-items:start}
-.tge .lookup{padding:30px 32px}
-.tge .lookup label{display:block;font-size:13.5px;color:var(--on-deep-mid);margin-bottom:8px}
-.tge .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
-.tge input,.tge select{-webkit-appearance:none;appearance:none;font:inherit;font-size:15px;color:#fff;background:rgba(4,20,31,.7);border:1px solid var(--on-deep-line);border-radius:10px;padding:12px 14px;width:100%;caret-color:var(--aurora)}
+.tge .check{margin-top:48px;align-items:start}
+.tge .lookup{padding:32px}
+.tge .lookup label{display:block;margin-bottom:8px;font-size:14px;color:var(--mute-l)}
+.tge input,.tge select{-webkit-appearance:none;appearance:none;width:100%;height:48px;padding:0 16px;font:inherit;font-size:15px;color:var(--text);background:var(--paper);border:1px solid var(--line-l);border-radius:12px}
 .tge input{font-family:var(--mono);font-size:14px}
-.tge input::placeholder{color:#6f8794}
-.tge input:focus,.tge select:focus{outline:none;border-color:var(--aurora);box-shadow:0 0 0 3px rgba(91,206,250,.18)}
-.tge .lookup .row{display:flex;gap:10px;margin-top:12px}
-.tge .lookup select{flex:1;min-width:0;padding-right:38px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%239fb3bf' stroke-width='1.4'/%3E%3C/svg%3E") no-repeat right 14px center,rgba(4,20,31,.7)}
-.tge select option{background:#04141f;color:#fff}
-.tge button.btn{border:none;cursor:pointer;font-family:var(--mono)}
-.tge button.btn:disabled{opacity:.6;cursor:progress}
-.tge .out{margin-top:18px;min-height:24px;font-size:14.5px;line-height:1.55;color:var(--on-deep)}
-.tge .out.bad{color:var(--rose)}
-.tge .out .scroll{overflow-x:auto}
-.tge .about p{margin:0 0 16px;max-width:52ch;font-size:15px;line-height:1.6;color:var(--on-deep-mid)}
+.tge input::placeholder{color:#8a9099}
+.tge input:focus,.tge select:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px rgba(11,12,14,.08)}
+.tge .lookup .lk-row{display:flex;gap:10px;margin-top:12px}
+.tge .lookup select{flex:1;min-width:0;padding-right:40px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%235b616c' stroke-width='1.4'/%3E%3C/svg%3E") no-repeat right 16px center,var(--paper)}
+.tge button.pill{border:0;cursor:pointer;font-family:inherit}
+.tge button.pill:disabled{opacity:.6;cursor:progress}
+.tge .out{margin-top:18px;min-height:24px;font-size:15px;line-height:1.55}
+.tge .out.bad{font-weight:600}
+.tge .scroll{overflow-x:auto}
+.tge .about p{margin:0 0 16px;max-width:52ch;font-size:16px;line-height:1.6;color:var(--mute-l)}
 .tge .weeks{margin-top:24px}
-.tge .weeks,.tge .mine{font-size:14px}
-.tge .weeks th,.tge .weeks td,.tge .mine th,.tge .mine td{padding:12px 16px 12px 0;border-bottom:1px solid var(--on-deep-line);text-align:left;white-space:nowrap}
-.tge .weeks thead th,.tge .mine thead th{font-family:var(--mono);font-weight:400;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--on-deep-mid)}
+.tge .weeks,.tge .mine{font-size:14.5px}
+.tge .weeks th,.tge .weeks td,.tge .mine th,.tge .mine td{padding:13px 16px 13px 0;border-bottom:1px solid var(--line-l);white-space:nowrap}
+.tge .weeks thead th,.tge .mine thead th{font-size:13px;font-weight:500;color:var(--mute-l);border-bottom-color:var(--text)}
 .tge .weeks .r,.tge .mine .r{text-align:right}
 .tge .weeks th:last-child,.tge .weeks td.hash{padding-left:32px}
-.tge .weeks .hash{font-family:var(--mono);font-size:12.5px;color:var(--on-deep-mid)}
+.tge .weeks .hash{font-family:var(--mono);font-size:12.5px;color:var(--mute-l)}
 .tge .weeks .hash .h{display:inline-block;max-width:13ch;overflow:hidden;text-overflow:ellipsis;vertical-align:bottom}
-.tge .save{margin-left:14px;padding:0;border:0;background:none;font:inherit;font-family:var(--sans);font-size:13px;color:var(--aurora);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
-.tge .save:hover{color:#fff}
-.tge .save:disabled{cursor:progress;color:var(--on-deep-mid)}
-.tge .saved{margin-left:14px;font-size:13px;color:var(--on-deep-mid)}
-.tge .saved.bad{color:var(--rose)}
-.tge .weeks tr.sub td{color:#fff}
-.tge .weeks tr.st td{white-space:normal;padding:22px 0;color:var(--on-deep);font-size:15px}
-.tge .mine tfoot td{color:#fff;border-bottom:none}
+.tge .save{margin-left:14px;padding:0;border:0;background:none;font:inherit;font-family:var(--sans);font-size:13.5px;color:var(--text);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.tge .save:disabled{cursor:progress;color:var(--mute-l)}
+.tge .saved{margin-left:14px;font-family:var(--sans);font-size:13.5px;color:var(--mute-l)}
+.tge .saved.bad{color:var(--text);font-weight:600}
+.tge .weeks tr.sub td{font-weight:600}
+.tge .weeks tr.st td{white-space:normal;padding:22px 0;font-size:15.5px;color:var(--mute-l)}
+.tge .mine tfoot td{font-weight:600;border-bottom:none}
 
 /* gimle */
-.tge .prose{margin-top:32px}
-.tge .prose .when{color:#fff}
-.tge .prose p{margin:0 0 18px;max-width:58ch;font-size:16px;line-height:1.65;color:var(--on-deep-mid)}
-.tge .prose .btn{margin-top:10px}
+.tge .claim-band{background:var(--ink);color:var(--on-ink)}
+.tge .claim-band .label{color:var(--mute-d)}
+.tge .claim-band .wrap{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:48px 80px;align-items:end}
+.tge .claim-band h2{font-size:clamp(30px,3.2vw,44px);line-height:1.08}
+.tge .when{margin:48px 0 0;display:flex;flex-direction:column;gap:10px}
+.tge .when span{font-size:14px;color:var(--mute-d)}
+.tge .when time{font-family:var(--display);font-weight:300;font-variation-settings:'opsz' 60;font-size:clamp(52px,7.4vw,112px);line-height:.95;letter-spacing:-.03em;white-space:nowrap}
+.tge .prose p{margin:0 0 18px;max-width:52ch;font-size:17px;line-height:1.6;color:#b9bec7}
+.tge .prose a:not(.pill){color:var(--on-ink);text-decoration:underline;text-underline-offset:3px}
+.tge .prose .pill{margin-top:12px}
 
-@media(max-width:900px){
-  .tge .art-d{display:none}
-  .tge .art-m{display:block;justify-self:center;max-width:560px}
-  .tge .art-m .bow{-webkit-mask-image:linear-gradient(#000 84%,transparent);mask-image:linear-gradient(#000 84%,transparent)}
-  .tge .copy{width:min(420px,78%);padding-top:calc(min(100vw,560px) * .52)}
-  .tge .status{letter-spacing:.08em}
-  .tge h1{font-size:clamp(54px,16vw,84px)}
-  .tge .lede{margin-top:18px;font-size:16px}
-  .tge .week{margin-top:18px;font-size:13.5px}
-  .tge .ctas{flex-direction:column;align-items:stretch;gap:16px;margin-top:22px}
-  .tge .ctas .btn{justify-content:center}
-  .tge .mfoot{position:absolute;bottom:16px;display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--on-deep-mid)}
-  .tge .mfoot.genesis{left:40px}
-  .tge .mfoot.target{right:40px;align-items:flex-end;text-align:right}
-  .tge .mfoot .nm{font-size:24px}
-  .tge .mfoot .date{font-family:var(--serif);font-size:18px;line-height:1.1;color:#fff}
-  .tge .mfoot .may{font-size:12px}
-  .tge .part{padding-top:96px}
-  .tge h2{font-size:clamp(34px,9.5vw,44px)}
-  .tge .intro{font-size:16px}
+@media (max-width:1100px){
+  .tge .claim-band .wrap{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:900px){
+  .tge .stone-hero>.wrap{grid-template-columns:minmax(0,1fr);gap:40px;padding-block:104px 64px}
+  .tge .art,.tge .stone{display:contents}
+  .tge .slab-box{order:-1;justify-self:center;width:min(78%,320px)}
+  .tge .segs{order:1;position:static;pointer-events:auto}
+  .tge .seg{position:static;transform:none;display:grid;grid-template-columns:76px minmax(0,1fr) auto;align-items:baseline;gap:4px 12px;padding:14px 0;border-top:1px solid var(--line-d);white-space:normal}
+  .tge .seg.l,.tge .seg.r,.tge .seg.t{transform:none!important;text-align:left;align-items:baseline}
+  .tge .seg .sn{grid-column:1}
+  .tge .seg .nm{grid-column:2;font-size:20px}
+  .tge .seg .dt{grid-column:3;text-align:right}
+  .tge .seg.gimle .nm{grid-column:2}
+  .tge .seg.gimle .dt{grid-column:3;max-width:none}
+  .tge .seg.gimle .may{grid-column:2/-1}
   .tge .seasons thead{display:none}
-  .tge .seasons tr{display:block;padding:18px 0;border-bottom:1px solid var(--on-deep-line)}
-  .tge .seasons th,.tge .seasons td{padding:0;border:none}
-  .tge .seasons tbody th{display:grid}
-  .tge .seasons td{display:inline;padding:0}
+  .tge .seasons tr{display:block;padding:18px 0;border-bottom:1px solid var(--line-l)}
+  .tge .seasons tbody th,.tge .seasons tbody td{padding:0;border:none}
+  .tge .seasons td{display:inline}
   .tge .seasons td:nth-of-type(1){display:block;margin:10px 0 4px 42px}
-  .tge .seasons td:nth-of-type(2){margin-left:42px;color:var(--on-deep-mid)}
-  .tge .seasons td.ceil{color:var(--on-deep-mid)}
+  .tge .seasons td:nth-of-type(2){margin-left:42px;color:var(--mute-l)}
+  .tge .seasons td.ceil{color:var(--mute-l)}
   .tge .seasons td:nth-of-type(2)+td.ceil::before{content:" · "}
   .tge .seasons tr.claim td.ceil{display:block;margin-left:42px}
   .tge .seasons .mo{display:inline}
-  .tge .seasons tbody th .nm{font-size:27px}
+  .tge .seasons .nm{font-size:27px}
   .tge .formula{padding:32px 18px 26px}
   .tge .eqn{gap:6px 12px}
-  .tge .frac>span{padding:6px 6px}
+  .tge .frac>span{padding:6px}
   .tge .plain code{font-size:12.5px}
   .tge .terms{grid-template-columns:minmax(0,1fr)}
   .tge .terms div{grid-template-columns:72px 1fr}
@@ -587,18 +586,16 @@ html:has(body.tge){background:#04141f}
   .tge .zoom{height:40px}
   .tge .rate{padding:24px 20px}
   .tge .fx{font-size:14.5px}
-  .tge .rules div{grid-template-columns:minmax(0,1fr);gap:6px}
   .tge .lookup{padding:24px 20px}
-  .tge .lookup .row{flex-direction:column}
-  .tge .lookup .row .btn{justify-content:center}
+  .tge .lookup .lk-row{flex-direction:column}
+  .tge .lookup select{flex:none}
+  .tge .lookup .lk-row .pill{justify-content:center}
   .tge .weeks,.tge .weeks tbody{display:block}
   .tge .weeks thead{display:none}
-  .tge .weeks tr{display:grid;grid-template-columns:1fr auto;gap:4px 16px;padding:14px 0;border-bottom:1px solid var(--on-deep-line)}
+  .tge .weeks tr{display:grid;grid-template-columns:1fr auto;gap:4px 16px;padding:14px 0;border-bottom:1px solid var(--line-l)}
   .tge .weeks td{padding:0;border:none}
   .tge .weeks td:nth-child(n+3){grid-column:1/-1}
-  .tge .mine th,.tge .mine td{padding-right:8px;font-size:12.5px}
-  .tge .mine thead th{font-size:10px;letter-spacing:.04em}
-  .tge .weeks td[data-k]::before{content:attr(data-k) " ";color:var(--on-deep-mid)}
+  .tge .weeks td[data-k]::before{content:attr(data-k) " ";color:var(--mute-l)}
   .tge .weeks td.r{text-align:left}
   .tge .weeks td.hash{grid-column:1/-1;padding-left:0;white-space:normal;word-break:break-all}
   .tge .weeks .hash .h{display:inline;max-width:none}
@@ -606,16 +603,15 @@ html:has(body.tge){background:#04141f}
   .tge .weeks tr.sub td:nth-child(2){grid-column:1/-1}
   .tge .weeks tr.st{display:block}
   .tge .weeks tr.st td{display:block;padding:8px 0}
+  .tge .mine th,.tge .mine td{padding-right:8px;font-size:12.5px}
 }
-@media(max-width:480px){
-  .tge .status span{display:block}
-  .tge .status .sep{display:none}
-  .tge .ctas{width:min(100%,260px);margin-inline:auto}
-}
-@media(max-width:900px) and (min-width:761px){
-  .tge .copy{width:min(460px,70%)}
-}
-@media(prefers-reduced-motion:reduce){
-  .tge .draw{stroke-dashoffset:0}
+@media (max-width:480px){
+  .tge .cd{gap:14px}
+  .tge .cd b{font-size:34px}
+  .tge .seg{grid-template-columns:minmax(0,1fr) auto}
+  .tge .seg .sn{grid-column:1/-1}
+  .tge .seg .nm,.tge .seg.gimle .nm{grid-column:1}
+  .tge .seg .dt,.tge .seg.gimle .dt{grid-column:2}
+  .tge .seg.gimle .may{grid-column:1/-1}
 }
 </style>

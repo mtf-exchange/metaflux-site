@@ -1,209 +1,115 @@
-// The home page's one script: the WebGL sky under the hero, the live
-// markets (REST snapshot, then the `markets` WebSocket channel) feeding the
-// asset row, and the scroll reveals. Raw WebGL2, raw
-// fetch, raw WebSocket — no library.
+// Home page: live markets (a REST snapshot, then the `markets` WebSocket channel) and the points clock.
 (() => {
   const API = 'https://api.testnet.mtf.exchange';
   const APP = 'https://app.mtf.exchange/';
-  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const NAMES = {
+    BTC: 'Bitcoin', ETH: 'Ethereum', SOL: 'Solana', BNB: 'BNB', MTF: 'MetaFlux', PUMP: 'Pump', ARB: 'Arbitrum',
+    'ipo:AAPL': 'Apple', 'ipo:MSFT': 'Microsoft', 'ipo:NVDA': 'NVIDIA', 'ipo:TSLA': 'Tesla', 'ipo:AMZN': 'Amazon',
+    'ipo:GOOGL': 'Alphabet', 'ipo:META': 'Meta Platforms', 'ipo:SPCX': 'SpaceX', 'ipo:CRCL': 'Circle',
+    'ipo:MOUTAI': 'Kweichow Moutai', 'ipo:CATL': 'CATL', 'ipo:PINGAN': 'Ping An Insurance', 'ipo:CMB': 'China Merchants Bank',
+    'ipo:BYD': 'BYD', 'ipo:CXMT': 'CXMT',
+    'ipo:XAU': 'Gold', 'ipo:XAG': 'Silver', 'ipo:WTI': 'WTI crude oil', 'ipo:BRENT': 'Brent crude oil',
+    'ipo:EUR': 'Euro', 'ipo:GBP': 'British pound',
+  };
+  const ORDER = Object.keys(NAMES);
+  const LABEL = { Stock: 'US stock', AShare: 'A-share' };
+  const classOf = (c) => !c.includes(':') ? 'Crypto'
+    : /^ipo:(MOUTAI|CATL|PINGAN|CMB|BYD|CXMT)$/.test(c) ? 'AShare'
+    : /^ipo:(XAU|XAG|WTI|BRENT)$/.test(c) ? 'Commodity'
+    : /^ipo:(EUR|GBP)$/.test(c) ? 'FX' : 'Stock';
+  // Coins go into innerHTML, and only the native and ipo dexes are classified, so admit nothing else.
+  const COIN = /^(ipo:)?[A-Za-z0-9]+$/;
 
-  /* ── reveals ─────────────────────────────────────────────────────────── */
-  const io = new IntersectionObserver((es) => es.forEach((e) => {
-    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-  }), { rootMargin: '0px 0px -12% 0px' });
-  document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+  const rows = document.getElementById('rows');
+  const halves = document.querySelectorAll('#tape > div');
+  const seen = new Map(); // coin -> { els: [tr, tick, tick], dp }
+  const lev = new Map();
+  let filter = 'all';
 
-  /* ── the sky ─────────────────────────────────────────────────────────── */
-  // The Milky Way from the ground: a wide band of stars running corner to
-  // corner, a brighter bulge toward the centre, dust lanes cutting the haze,
-  // and a scatter of field stars around it. The sky drifts slowly along the
-  // band, as it does over a night. Two additive passes: a wide soft one that
-  // builds the haze, a tight one for the stars.
-  const canvas = document.querySelector('.stream canvas');
-  const gl = canvas && canvas.getContext('webgl2', { antialias: false, alpha: true, premultipliedAlpha: true });
-  if (gl) {
-    const vs = `#version 300 es
-    in vec4 a;                       // u0, v (gaussian), seed, kind (0 band, 1 field, 2 meteor)
-    uniform float t, dpr, pass; uniform vec2 res, mouse;
-    uniform vec4 meteor;             // x, y, dx, dy of the current streak
-    uniform float mprog;             // 0..1 along it, <0 when none is flying
-    out float haze; out float warm; out float star; out float seed;
-    float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7)))*43758.5453); }
-    float vnoise(vec2 p){
-      vec2 i = floor(p), f = fract(p); f = f*f*(3.0 - 2.0*f);
-      return mix(mix(hash(i), hash(i + vec2(1,0)), f.x), mix(hash(i + vec2(0,1)), hash(i + vec2(1,1)), f.x), f.y);
-    }
-    void main(){
-      float drift = t*0.006;
-      float u = mod(a.x + drift + 1.5, 3.0) - 1.5;              // along the band, wraps
-      float bulge = exp(-pow((u - 0.25)*1.6, 2.0));            // the galactic centre, right of middle
-      float width = 0.20 + 0.16*bulge;
-      float v = a.y*width;                                     // across the band
-      vec2 p = mix(vec2(u, v), vec2(a.x*2.6 - 1.3 + drift*0.3, a.y*1.1), a.w);
-      // dust: dark lanes through the haze, denser near the plane
-      float lane = vnoise(vec2(u*4.0 + 3.0, a.y*2.2)) * vnoise(vec2(u*9.0, a.y*4.0 + 7.0));
-      float dust = smoothstep(0.22, 0.42, lane)*smoothstep(1.0, 0.2, abs(a.y));
-      haze = (1.0 - a.w)*(0.35 + 0.65*bulge)*(1.0 - dust*0.85)*(1.0 - abs(a.y)*abs(a.y)*0.6);
-      warm = bulge;
-      seed = a.z;
-      star = 1.0 - dust*0.5*(1.0 - a.w);
-      // tilt the band across the frame
-      float ang = 0.42 + mouse.y*0.01;
-      vec2 q = vec2(p.x*cos(ang) - p.y*sin(ang), p.x*sin(ang) + p.y*cos(ang));
-      q += mouse*vec2(0.02, 0.015)*(1.0 + a.w);
-      q.x *= res.y/res.x*1.9;
-      q.y *= 1.15;
-      float big = step(0.93, a.z);
-      float sz = (0.9 + fract(a.z*17.0)*1.6 + big*1.6)*dpr*(1.0 - a.w*0.3);
-      float glow = res.y*0.10*(0.5 + fract(a.z*7.0)*0.7);
-      if (a.w > 1.5) {
-        // a meteor: the point sits a.x of the way back along the streak's tail
-        float back = a.x*0.16;
-        q = meteor.xy + meteor.zw*(mprog - back);
-        float on = step(0.0, mprog)*step(mprog, 1.0)*step(back, mprog);
-        haze = 0.0; warm = 0.0; seed = a.z;
-        star = on*(1.0 - a.x)*(1.0 - a.x)*2.4;
-        sz = (3.4 - a.x*2.8)*dpr*on;
-        glow = 0.0;
-      }
-      gl_Position = vec4(q, 0.0, 1.0);
-      gl_PointSize = pass < 0.5 ? glow : sz;
-    }`;
-    const fs = `#version 300 es
-    precision highp float;
-    in float haze; in float warm; in float star; in float seed;
-    uniform float pass, t; out vec4 o;
-    void main(){
-      float d = length(gl_PointCoord - 0.5);
-      vec3 cool = vec3(0.42, 0.78, 1.0), cream = vec3(1.0, 0.86, 0.80), rose = vec3(0.96, 0.66, 0.72);
-      if (pass < 0.5) {
-        vec3 c = mix(cool, mix(cream, rose, 0.45), warm*0.9);
-        float a = exp(-d*d*14.0)*0.020*haze;
-        o = vec4(c*a, a);
-      } else {
-        float tw = 0.7 + 0.3*sin(t*(1.0 + fract(seed*3.0)*2.0) + seed*80.0);
-        vec3 c = mix(vec3(0.85, 0.93, 1.0), cream, step(0.72, fract(seed*11.0)));
-        float a = smoothstep(0.5, 0.1, d)*tw*star*(0.5 + 0.5*fract(seed*29.0));
-        o = vec4(c*a, a);
-      }
-    }`;
-    const sh = (type, src) => {
-      const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
-      if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
-      return s;
-    };
-    const prog = gl.createProgram();
-    gl.attachShader(prog, sh(gl.VERTEX_SHADER, vs));
-    gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, fs));
-    gl.linkProgram(prog);
-    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
-    gl.useProgram(prog);
-    // Deterministic pseudo-random so every visitor sees the same sky.
-    let seed = 7; const rnd = () => (seed = (seed*16807) % 2147483647)/2147483647;
-    const N = 16000, M = 40, pts = new Float32Array((N + M)*4);
-    for (let i = N; i < N + M; i++) { pts[i*4] = (i - N)/M; pts[i*4 + 2] = rnd(); pts[i*4 + 3] = 2; }
-    for (let i = 0; i < N; i++) {
-      const field = i % 4 === 0 ? 1 : 0;
-      const g = (rnd() + rnd() + rnd() + rnd())/2 - 1;       // roughly gaussian, -1..1
-      pts[i*4] = field ? rnd() : rnd()*3.0 - 1.5;
-      pts[i*4 + 1] = field ? rnd()*2 - 1 : g;
-      pts[i*4 + 2] = rnd(); pts[i*4 + 3] = field;
-    }
-    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
-    gl.bufferData(gl.ARRAY_BUFFER, pts, gl.STATIC_DRAW);
-    const loc = gl.getAttribLocation(prog, 'a');
-    gl.enableVertexAttribArray(loc);
-    gl.vertexAttribPointer(loc, 4, gl.FLOAT, false, 0, 0);
-    gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE);     // additive: light adds up
-    const U = (n) => gl.getUniformLocation(prog, n);
-    const uT = U('t'), uDpr = U('dpr'), uRes = U('res'), uMouse = U('mouse'), uPass = U('pass'), uMeteor = U('meteor'), uProg = U('mprog');
-    // One meteor every few seconds, from a seeded corner of the sky, crossing
-    // in about a second. The period is irregular so it never reads as a loop.
-    const h = (n) => { const x = Math.sin(n*12.9898)*43758.5453; return x - Math.floor(x); };
-    const meteor = (t) => {
-      const cycle = Math.floor(t/4.7), ph = (t - cycle*4.7)/4.7, gap = 0.3 + h(cycle + 0.5)*0.4;
-      const dur = 0.18 + h(cycle + 0.2)*0.08;
-      const x = -0.9 + h(cycle)*1.6, y = 0.2 + h(cycle + 0.1)*0.7, len = 0.5 + h(cycle + 0.3)*0.5;
-      const ang = -0.9 - h(cycle + 0.4)*0.9;
-      gl.uniform4f(uMeteor, x, y, Math.cos(ang)*len, Math.sin(ang)*len);
-      gl.uniform1f(uProg, ph > gap && ph < gap + dur ? (ph - gap)/dur : -1);
-    };
-    const dpr = Math.min(devicePixelRatio || 1, 2);
-    const target = [0, 0], cur = [0, 0];
-    addEventListener('pointermove', (e) => { target[0] = (e.clientX/innerWidth)*2 - 1; target[1] = 1 - (e.clientY/innerHeight)*2; }, { passive: true });
-    const resize = () => {
-      const w = canvas.clientWidth*dpr | 0, h = canvas.clientHeight*dpr | 0;
-      if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
-      gl.viewport(0, 0, w, h); gl.uniform2f(uRes, w, h); gl.uniform1f(uDpr, dpr);
-    };
-    new ResizeObserver(resize).observe(canvas); resize();
-    let visible = true;
-    new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(canvas);
-    const frame = (ms) => {
-      if (visible) {
-        gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
-        cur[0] += (target[0] - cur[0])*0.03; cur[1] += (target[1] - cur[1])*0.03;
-        gl.uniform2f(uMouse, cur[0], cur[1]);
-        gl.uniform1f(uT, ms/1000); meteor(ms/1000);
-        gl.uniform1f(uPass, 0); gl.drawArrays(gl.POINTS, 0, N);
-        gl.uniform1f(uPass, 1); gl.drawArrays(gl.POINTS, 0, N + M);
-      }
-      if (!still) requestAnimationFrame(frame);
-    };
-    frame(0);
-  }
+  const dpOf = (v) => { const s = String(v), i = s.indexOf('.'); return i < 0 ? 0 : Math.min(s.length - i - 1, 6); };
+  const fmt = (v, dp) => Number(v).toLocaleString('en-US', { minimumFractionDigits: dp, maximumFractionDigits: dp });
+  const rank = (c) => { const i = ORDER.indexOf(c); return i < 0 ? ORDER.length : i; };
+  const place = (parent, el) => parent.insertBefore(el, [...parent.children].find((x) => +x.dataset.r > +el.dataset.r) || null);
+  const setLev = (coin) => { const e = seen.get(coin), l = lev.get(coin); if (e && l) e.els[0].querySelector('[data-lev]').textContent = l + 'x'; };
 
-  /* ── markets ─────────────────────────────────────────────────────────── */
-  const chips = document.querySelector('.assets');
-  if (!chips) return;
-
-  const px = (s) => { const n = +s; return n.toLocaleString('en-US', { minimumFractionDigits: n >= 1000 ? 1 : n >= 1 ? 2 : 4, maximumFractionDigits: n >= 1000 ? 1 : n >= 1 ? 2 : 4 }); };
-  const pct = (s) => { const n = +s*100; return isNaN(n) ? '' : (n >= 0 ? '+' : '−') + Math.abs(n).toFixed(2) + '%'; };
-  const sign = (s) => s == null ? '' : +s >= 0 ? 'up' : 'down';
-  const rows = new Map(); // coin -> { li, tl, last }
+  const make = (coin) => {
+    const sym = coin.replace(/^ipo:/, ''), cls = classOf(coin), icon = `${APP}symbols/${sym}.svg`;
+    rows.querySelector('.wait')?.remove();
+    const tr = document.createElement('tr');
+    tr.dataset.c = cls; tr.dataset.r = rank(coin); tr.hidden = filter !== 'all' && filter !== cls;
+    tr.innerHTML = `<td><a class="mk" href="${APP}trade/perp/${coin}-USDC"><img src="${icon}" alt="" width="34" height="34" loading="lazy"><div><b>${NAMES[coin] || sym}</b><span>${sym}-USDC</span></div></a></td><td class="r num" data-px></td><td class="r num"><span data-chg></span></td><td class="r num" data-lev>–</td><td class="mute">${LABEL[cls] || cls}</td><td class="r"><a class="go" href="${APP}trade/perp/${coin}-USDC">Trade</a></td>`;
+    place(rows, tr);
+    const ticks = [...halves].map((half) => {
+      const t = document.createElement('div');
+      t.className = 'tick'; t.dataset.r = tr.dataset.r;
+      t.innerHTML = `<img src="${icon}" alt="" width="28" height="28"><span class="s">${sym}</span><span class="p num" data-px></span><span class="c num"><span data-chg></span></span>`;
+      place(half, t);
+      return t;
+    });
+    const e = { els: [tr, ...ticks], dp: 0 };
+    seen.set(coin, e);
+    setLev(coin);
+    return e;
+  };
 
   const paint = (m) => {
-    let r = rows.get(m.coin);
-    if (!r) {
-      r = { li: document.createElement('li'), last: null };
-      r.li.innerHTML = `<a href="${APP}trade/perp/${m.coin}-USDC" target="_blank" rel="noopener"><img src="${APP}symbols/${m.coin}.svg" alt="" width="28" height="28" loading="lazy"><b>${m.coin}</b><span class="num price"></span><span class="num chg"></span></a>`;
-      rows.set(m.coin, r); chips.appendChild(r.li);
-    }
-    {
-      const el = r.li;
-      const p = el.querySelector('.price'), c = el.querySelector('.chg');
-      p.textContent = px(m.mark_px);
-      c.textContent = pct(m.change_24h); c.className = 'num chg ' + sign(m.change_24h);
-      if (r.last !== null && r.last !== m.mark_px) {
-        p.classList.remove('tick-up', 'tick-down'); void p.offsetWidth;
-        p.classList.add(+m.mark_px > +r.last ? 'tick-up' : 'tick-down');
-      }
-    }
-    r.last = m.mark_px;
-  };
-  const apply = (data) => {
-    // Native perps only: the snapshot sends { perp, spot } but a socket frame can be
-    // one flat list, and a spot pair slipping in read as a second MTF chip.
-    // A deployer dex coin ("ipo:XAU") stays off the home page.
-    const list = Array.isArray(data) ? data : data.perp || [];
-    list.filter((m) => m && m.coin && !m.coin.includes(':') && m.mark_px && !m.halted && (m.kind || 'perp') === 'perp').forEach(paint);
+    const e = seen.get(m.coin) || make(m.coin);
+    e.dp = Math.max(e.dp, dpOf(m.mark_px)); // the widest precision seen, so a price does not jitter in width
+    const n = (+m.change_24h || 0) * 100, flat = Math.abs(n) < 0.005;
+    const txt = flat ? '0.00%' : (n > 0 ? '+' : '−') + Math.abs(n).toFixed(2) + '%';
+    e.els.forEach((el, i) => {
+      el.querySelector('[data-px]').textContent = fmt(m.mark_px, e.dp);
+      const c = el.querySelector('[data-chg]');
+      c.textContent = txt;
+      c.className = flat ? 'flat' : (n > 0 ? 'up' : 'down') + (i ? '-d' : '-l');
+    });
   };
 
-  const snapshot = () => fetch(API + '/info', { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{"type":"markets"}' })
-    .then((r) => r.json()).then((j) => apply(j.data)).catch(() => {});
+  // The snapshot sends { perp, spot }; a socket frame is one flat list that also carries spot rows.
+  const apply = (data) => {
+    const list = Array.isArray(data) ? data : (data && data.perp) || [];
+    list.filter((m) => m && COIN.test(m.coin) && m.mark_px && !m.halted && (m.kind || 'perp') === 'perp').forEach(paint);
+  };
+
+  const post = (type) => fetch(API + '/info', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ type }) })
+    .then((r) => r.json()).then((j) => j.data);
+  const snapshot = () => post('markets').then(apply).catch(() => {});
+  post('markets_meta').then((d) => {
+    (d.perp || []).forEach((m) => lev.set(m.coin, m.max_leverage));
+    seen.forEach((_, c) => setLev(c));
+  }).catch(() => {});
   snapshot();
 
-  // Live: the `markets` channel pushes a frame whenever any row changes.
-  // If the socket never comes up, poll instead.
   let poll = 0;
   const live = () => {
     let ws;
     try { ws = new WebSocket(API.replace('https', 'wss') + '/ws'); } catch { poll = setInterval(snapshot, 5000); return; }
     ws.onopen = () => { clearInterval(poll); ws.send(JSON.stringify({ method: 'subscribe', subscription: { type: 'markets' } })); };
     ws.onmessage = (e) => { try { const f = JSON.parse(e.data); if (f.channel === 'markets') apply(f.data); } catch {} };
-    // Clear before re-arming: each failed reconnect used to stack another poll.
+    // Clear before re-arming, or each failed reconnect stacks another poll.
     ws.onclose = () => { clearInterval(poll); poll = setInterval(snapshot, 5000); setTimeout(live, 15000); };
     ws.onerror = () => ws.close();
   };
   live();
+
+  rows.addEventListener('click', (e) => { if (!e.target.closest('a')) e.target.closest('tr')?.querySelector('a.mk')?.click(); });
+
+  document.querySelectorAll('.filters button').forEach((b) => b.addEventListener('click', () => {
+    filter = b.dataset.f;
+    document.querySelectorAll('.filters button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    rows.querySelectorAll('tr[data-c]').forEach((tr) => { tr.hidden = filter !== 'all' && tr.dataset.c !== filter; });
+  }));
+
+  const W1 = Date.UTC(2026, 8, 9), WEEK = 7 * 864e5, S1_END = Date.UTC(2026, 9, 7);
+  const pad = (n) => String(n).padStart(2, '0');
+  const $ = (id) => document.getElementById(id);
+  const tick = () => {
+    const now = Date.now(), next = W1 + Math.ceil((now - W1) / WEEK) * WEEK, d = Math.max(0, next - now);
+    $('clock-lab').textContent = next === S1_END ? 'Season 1, Ginnungagap, closes in' : 'This week closes in';
+    $('cd-d').textContent = Math.floor(d / 864e5);
+    $('cd-h').textContent = pad(Math.floor(d / 36e5) % 24);
+    $('cd-m').textContent = pad(Math.floor(d / 6e4) % 60);
+    $('cd-s').textContent = pad(Math.floor(d / 1e3) % 60);
+  };
+  tick(); setInterval(tick, 1000);
 })();

@@ -1,28 +1,29 @@
 ---
-const { current } = Astro.props;
+interface Props {
+  current?: 'home' | 'tge' | 'whitepaper' | 'terms' | 'privacy';
+  overlay?: boolean;
+}
+const { current, overlay = false } = Astro.props;
+const links = [
+  { href: '/#markets', text: 'Markets' },
+  { href: '/tge.html', text: 'Points', page: 'tge' },
+  { href: '/#build', text: 'Build' },
+  { href: 'https://docs.mtf.exchange/', text: 'Docs' },
+  { href: '/whitepaper.html', text: 'Whitepaper', page: 'whitepaper' },
+];
+const items = links.map((l) => ({ ...l, current: l.page === current ? 'page' : undefined }));
 ---
-<nav class="site">
-  <div class="bar">
-    <a class="brand" href="/"><img class="brand-mark" src="/logo/metaflux-mark.svg" alt="" aria-hidden="true"><span class="b-word"><span class="b-meta">Meta</span><span class="b-flux">Flux</span></span></a>
+<nav class:list={['site', { overlay }]} aria-label="Main">
+  <div class="wrap">
+    <a class="brand" href="/" aria-label="MetaFlux home"><i class="mark" aria-hidden="true"></i><span>MetaFlux</span></a>
     <ul>
-      <li><a href="/whitepaper.html" aria-current={current === "whitepaper" ? "page" : undefined}>Whitepaper</a></li>
-      <li><a href="/tge.html" aria-current={current === "tge" ? "page" : undefined}>Points</a></li>
-      <li><a href="https://docs.mtf.exchange/" target="_blank">Docs</a></li>
-      <li><a href="https://docs.mtf.exchange/evm" target="_blank">EVM</a></li>
+      {items.map((l) => <li><a href={l.href} aria-current={l.current}>{l.text}</a></li>)}
     </ul>
-    <div class="actions">
-      <a class="btn ghost" href="https://docs.mtf.exchange/integration/quickstart" target="_blank">Build</a>
-      <a class="btn" href="https://app.mtf.exchange/" target="_blank" rel="noopener">Trade</a>
-    </div>
-    <!-- Below 760px the links above are hidden; this is how they are reached. No script. -->
+    <a class="pill solid" href="https://app.mtf.exchange/">Launch app</a>
     <details class="menu">
       <summary><span class="o">Menu</span><span class="c">Close</span></summary>
       <ul>
-        <li><a href="/whitepaper.html">Whitepaper</a></li>
-        <li><a href="/tge.html">Points</a></li>
-        <li><a href="https://docs.mtf.exchange/" target="_blank">Docs</a></li>
-        <li><a href="https://docs.mtf.exchange/evm" target="_blank">EVM</a></li>
-        <li><a href="https://docs.mtf.exchange/integration/quickstart" target="_blank">Build</a></li>
+        {items.map((l) => <li><a href={l.href} aria-current={l.current}>{l.text}</a></li>)}
       </ul>
     </details>
   </div>
