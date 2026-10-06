@@ -187,7 +187,7 @@
     });
   }).catch((e) => {
     weeks.innerHTML = stateRow(e.message === NOT_LIVE
-      ? 'Not live yet. The archive does not serve points_weeks yet. Points still count from genesis, so no week is lost.'
+      ? 'Not available yet. The archive does not serve points_weeks yet. Points still count from genesis, so no week is lost.'
       : why(e));
   });
 
@@ -210,7 +210,7 @@
       out.className = 'out';
       out.innerHTML = `<div class="scroll"><table class="mine"><thead><tr><th>Week ending</th><th class="r">Raw</th><th class="r">Qualifying</th><th class="r">Points</th></tr></thead><tbody>${rows.map((w) => `<tr><td class="num">${esc(dayTxt(w.week_end))}</td><td class="num r">${esc(usd(w.raw_volume))}</td><td class="num r">${esc(usd(w.qualifying_volume))}</td><td class="num r">${esc(pts(w.points))}</td></tr>`).join('')}</tbody><tfoot><tr><td colspan="3">Season ${s}, provisional</td><td class="num r">${esc(pts(total))}</td></tr></tfoot></table></div>${as}`;
     }).catch((e) => {
-      say(e.message === NOT_LIVE ? 'Not live yet. The archive does not serve points_user yet.' : why(e), e.message !== NOT_LIVE);
+      say(e.message === NOT_LIVE ? 'Not available yet. The archive does not serve points_user yet.' : why(e), e.message !== NOT_LIVE);
     }).finally(() => { button.disabled = false; });
   });
 })();
